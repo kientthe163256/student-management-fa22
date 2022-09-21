@@ -11,15 +11,11 @@ import javax.persistence.Id;
 @Entity
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+@NoArgsConstructor
+public class Role {
     @Id
-    private String username;
+    private Integer id;
 
-    private String password;
-
-    private boolean is_enabled;
-
-    private int role_id;
+    private String role_name;
 }
