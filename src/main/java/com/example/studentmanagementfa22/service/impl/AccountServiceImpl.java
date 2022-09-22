@@ -5,6 +5,7 @@ import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
+import com.example.studentmanagementfa22.utility.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,27 +27,29 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private RoleService roleService;
 
+    private Utility utility;
+
     @Override
     public UserDetails loadUserByUsername(String username) {
-        Optional<Account> optionalAccount = accountRepository.findByUsername(username);
-        if (!optionalAccount.isPresent()){
-            throw new UsernameNotFoundException("Username can not be found!");
+        Account optionalAccount = accountRepository.findByUsername(username);
+        if (optionalAccount == null){
+            throw new UsernameNotFoundException("Username is not found!");
         }
 
-        Account validAccount = optionalAccount.get();
+        Account validAccount = optionalAccount;
         UserDetails userDetails = new User(validAccount.getUsername(),
                 validAccount.getPassword(),
-                mapRoleToAuthorities(validAccount.getRole_id()));
+                utility.mapRoleToAuthorities(validAccount.getRole_id()));
         return userDetails;
     }
 
-    private Collection<? extends GrantedAuthority> mapRoleToAuthorities(Integer role_id) {
-        Role role = roleService.findRoleById(role_id);
-        Collection<String> roles = new ArrayList<>();
-        roles.add(role.getRole_name());
 
-        return roles.stream()
-                .map(r -> new SimpleGrantedAuthority(r))
-                .collect(Collectors.toList());
+    @Override
+    public Account findAccountByUsername(String username) {
+        Account optionalAccount = accountRepository.findByUsername(username);
+        if (optionalAccount==null){
+            throw new UsernameNotFoundException("Username is not found!");
+        }
+        return optionalAccount;
     }
 }
