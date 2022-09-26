@@ -27,5 +27,11 @@ public class Classroom {
     @Column(name = "no_student")
     private int noStudent;
 
+    @Column(name = "class_type")
+    private String classType;
+
+    @Column(name = "teacher_id")
+    private int teacherId;
+
     private boolean deleted;
 }

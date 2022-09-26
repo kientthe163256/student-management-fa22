@@ -21,17 +21,6 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
-    private Date dob;
-
-    @Column(name = "student_code")
-    private String studentCode;
-
     @Column(name = "academic_session")
     private int academicSession;
 

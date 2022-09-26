@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Data
@@ -22,9 +23,18 @@ public class Account {
 
     private String password;
 
-    @Column(name = "is_enabled")
     private boolean enabled;
 
     @Column(name = "role_id")
     private int roleId;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    private Date dob;
+
+    private String code;
 }

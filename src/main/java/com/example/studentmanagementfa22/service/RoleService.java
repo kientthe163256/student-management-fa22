@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 
 public interface RoleService {
-    Role findRoleById(int role_id);
+    Role findRoleById(int roleId);
 }

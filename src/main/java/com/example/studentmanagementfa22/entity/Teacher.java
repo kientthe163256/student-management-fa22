@@ -21,17 +21,6 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
-    private Date dob;
-
-    @Column(name = "teacher_code")
-    private String teacherCode;
-
     @Column(name = "subject_id")
     private int subjectId;
 

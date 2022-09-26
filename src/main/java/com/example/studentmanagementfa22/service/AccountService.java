@@ -7,9 +7,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 
-public interface AccountService{// extends UserDetailsService {
-//    @Override
-//    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+public interface AccountService extends UserDetailsService {
+    @Override
+    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
     Account findAccountByUsername(String username);
 }
