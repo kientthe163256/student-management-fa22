@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -19,8 +22,10 @@ import java.util.Date;
 @Table(name = "account")
 public class Account {
     @Id
+    @NotBlank(message = "Username cannot be blank")
     private String username;
 
+    @NotBlank(message = "Password cannot be blank")
     private String password;
 
     private boolean enabled;
@@ -29,12 +34,13 @@ public class Account {
     private int roleId;
 
     @Column(name = "first_name")
+    @NotBlank(message = "Firstname cannot be blank")
     private String firstName;
 
     @Column(name = "last_name")
+    @NotBlank(message = "Lastname cannot be blank")
     private String lastName;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dob;
-
-    private String code;
 }

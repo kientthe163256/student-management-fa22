@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.entity.Account;
+import com.example.studentmanagementfa22.exception.UserAlreadyExistException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,4 +13,6 @@ public interface AccountService extends UserDetailsService {
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
     Account findAccountByUsername(String username);
+
+    void registerNewAccount(Account account) throws UserAlreadyExistException;
 }
