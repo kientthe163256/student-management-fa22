@@ -27,27 +27,25 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private RoleService roleService;
 
-    private Utility utility;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) {
-        Account optionalAccount = accountRepository.findByUsername(username);
-        if (optionalAccount == null){
-            throw new UsernameNotFoundException("Username is not found!");
-        }
-
-        Account validAccount = optionalAccount;
-        UserDetails userDetails = new User(validAccount.getUsername(),
-                validAccount.getPassword(),
-                utility.mapRoleToAuthorities(validAccount.getRole_id()));
-        return userDetails;
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String username) {
+//        Account optionalAccount = accountRepository.findByUsername(username);
+//        if (optionalAccount == null) {
+//            throw new UsernameNotFoundException("Username is not found!");
+//        }
+//
+//        Account validAccount = optionalAccount;
+//        UserDetails userDetails = new User(validAccount.getUsername(),
+//                validAccount.getPassword(),
+//                Utility.mapRoleToAuthorities(validAccount.getRole_id()));
+//        return userDetails;
+//    }
 
 
     @Override
     public Account findAccountByUsername(String username) {
         Account optionalAccount = accountRepository.findByUsername(username);
-        if (optionalAccount==null){
+        if (optionalAccount == null) {
             throw new UsernameNotFoundException("Username is not found!");
         }
         return optionalAccount;

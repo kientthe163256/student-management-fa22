@@ -14,9 +14,9 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "student")
+@Table(name = "teacher")
 @SQLDelete(sql = "UPDATE student SET deleted = true WHERE id=?")
-public class Student {
+public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -29,14 +29,11 @@ public class Student {
 
     private Date dob;
 
-    @Column(name = "student_code")
-    private String studentCode;
+    @Column(name = "teacher_code")
+    private String teacherCode;
 
-    @Column(name = "academic_session")
-    private int academicSession;
-
-    @Column(name = "class_id")
-    private int classId;
+    @Column(name = "subject_id")
+    private int subjectId;
 
     private boolean deleted;
 }

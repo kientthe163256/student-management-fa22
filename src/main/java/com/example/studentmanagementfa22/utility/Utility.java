@@ -12,12 +12,12 @@ import java.util.stream.Collectors;
 
 public class Utility {
     @Autowired
-    private RoleService roleService;
+    private static RoleService roleService;
 
-    public Collection<? extends GrantedAuthority> mapRoleToAuthorities(Integer role_id) {
+    public static Collection<? extends GrantedAuthority> mapRoleToAuthorities(Integer role_id) {
         Role role = roleService.findRoleById(role_id);
         Collection<String> roleList = new ArrayList<>();
-        roleList.add(role.getRole_name());
+        roleList.add(role.getRoleName());
 
         return roleList.stream()
                 .map(role_name -> new SimpleGrantedAuthority(role_name))
