@@ -31,10 +31,10 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String au = authentication.getName();
-        System.out.println("---------"+au);
-        authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+
+//        authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
         Account account = accountService.findAccountByUsername(username);
         if (!account.isEnabled()) {
             redirectStrategy.sendRedirect(request, response, "/login?deactivated");
