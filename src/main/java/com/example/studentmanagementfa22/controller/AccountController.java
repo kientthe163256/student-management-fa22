@@ -33,9 +33,6 @@ public class AccountController {
         if (bindingResult.hasErrors()){
             return "student/register";
         }
-
-        account.setEnabled(true);
-        account.setRoleId(roleService.findByRoleName("ROLE_STUDENT").getId());
         try{
             accountService.registerNewAccount(account);
             return "redirect:/login";

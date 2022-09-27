@@ -29,8 +29,7 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private RoleService roleService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -69,9 +68,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void registerNewAccount(Account account) throws UserAlreadyExistException {
         Account existAccount = accountRepository.findByUsername(account.getUsername());
-        if (existAccount != null){
+        if (existAccount != null) {
             throw new UserAlreadyExistException("There is already an account with that username!");
         }
+        account.setEnabled(true);
+        account.setRoleId(roleService.findByRoleName("ROLE_STUDENT").getId());
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         accountRepository.save(account);
     }

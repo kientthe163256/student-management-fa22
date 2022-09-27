@@ -21,24 +21,34 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 public class SecurityConfig {
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
+
+    @Autowired
+    private CustomSuccessHandler customSuccessHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(auth -> auth       //lambda no need .and()
-//                        .antMatchers("/student/**").hasRole("STUDENT")
-//                        .antMatchers("/teacher/**").hasRole("TEACHER")
-//                        .antMatchers("/admin/**").hasRole("ADMIN")
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+                        .antMatchers("/student/**").hasRole("STUDENT")
+                        .antMatchers("/teacher/**").hasRole("TEACHER")
+                        .antMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+//                                .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
-                .formLogin(Customizer.withDefaults());
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .successHandler(customSuccessHandler)
+                        .permitAll()
+                        .failureUrl("/login?error"));
 
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
