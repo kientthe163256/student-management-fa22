@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Data
@@ -15,14 +14,14 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "teacher")
-@SQLDelete(sql = "UPDATE student SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE teacher SET deleted = true WHERE id=?")
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "subject_id")
-    private int subjectId;
+    @Column(name = "account_id")
+    private int accountId;
 
     private boolean deleted;
 }

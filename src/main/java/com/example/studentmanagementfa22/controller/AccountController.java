@@ -4,6 +4,8 @@ import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.exception.UserAlreadyExistException;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
+import com.example.studentmanagementfa22.service.StudentService;
+import com.example.studentmanagementfa22.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,12 @@ public class AccountController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private StudentService studentService;
+
+    @Autowired
+    private TeacherService teacherService;
 
     @GetMapping("/register/student")
     public String displayRegisterStudentAccount(Model model){
@@ -40,10 +48,35 @@ public class AccountController {
         }
         try{
             accountService.registerNewAccount(account);
+            studentService.addStudentWithNewAccount(account);
         } catch (UserAlreadyExistException ex){
             model.addAttribute("message", "There is already an account with given username!");
             return "student/register";
         }
         return "redirect:/login";
+    }
+
+    @GetMapping("/admin/teacher/add")
+    public String displayAddTeacherForm(){
+        return "admin/teacherManagement/addNewTeacher";
+    }
+
+    @PostMapping("/admin/teacher/add")
+    public String handleAddTeacher(@Valid Account account, BindingResult bindingResult, Model model){
+        if (bindingResult.hasErrors()){
+            model.addAttribute("account", account);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String date = formatter.format(account.getDob());
+            model.addAttribute("dob", date);
+            return "admin/teacherManagement/addNewTeacher";
+        }
+        try{
+            accountService.registerNewAccount(account);
+            teacherService.addTeacherWithNewAccount(account);
+        } catch (UserAlreadyExistException ex){
+            model.addAttribute("message", "Duplicated teacher account!");
+            return "admin/teacherManagement/addNewTeacher";
+        }
+        return "redirect:/admin/teacher/all";
     }
 }

@@ -15,4 +15,6 @@ public interface AccountService extends UserDetailsService {
     Account findAccountByUsername(String username);
 
     void registerNewAccount(Account account) throws UserAlreadyExistException;
+
+
 }

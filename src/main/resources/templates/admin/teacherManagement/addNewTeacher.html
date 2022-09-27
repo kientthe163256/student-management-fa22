@@ -6,17 +6,17 @@
 </head>
 <body>
 
-<h1>Register student account</h1>
-<form th:action="@{/register/student}" th:object="${account}" method="post">
+<h1>Add a new teacher account</h1>
+<form th:action="@{/admin/teacher/add}" th:object="${account}" method="post">
   <input type="text" name="username" placeholder="Enter username" th:value="*{username}"
          pattern="[A-Z]{2}\d{6}"
          oninvalid="setCustomValidity('Username must be your student code! (Ex: HE162123)')"
          oninput="setCustomValidity('')"><br>
 
-
   <div th:if="${message}">
     There is already an account with given username!
   </div>
+
   <br>
   <input type="password" name="password" placeholder="Enter password"
          th:value="*{password}"
@@ -31,7 +31,7 @@
   <input type="date" name="dob" required th:value="${dob}"><br><br>
 
 
-  <input type="submit" value="SAVE">
+  <input type="submit" value="ADD">
 </form>
 </body>
 </html>
