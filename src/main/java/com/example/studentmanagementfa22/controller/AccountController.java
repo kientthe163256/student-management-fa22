@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 
 @Controller
 public class AccountController {
@@ -21,24 +22,28 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @GetMapping("/student/register")
+    @GetMapping("/register/student")
     public String displayRegisterStudentAccount(Model model){
         Account account = new Account();
         model.addAttribute("account", account);
         return "student/register";
     }
 
-    @PostMapping("/student/register")
+    @PostMapping("/register/student")
     public String handleRegisterStudent(@Valid Account account, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors()){
+            model.addAttribute("account", account);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String date = formatter.format(account.getDob());
+            model.addAttribute("dob", date);
             return "student/register";
         }
         try{
             accountService.registerNewAccount(account);
-            return "redirect:/login";
         } catch (UserAlreadyExistException ex){
             model.addAttribute("message", "There is already an account with given username!");
             return "student/register";
         }
+        return "redirect:/login";
     }
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.*;
 
 @Entity
 @Data
@@ -24,8 +24,8 @@ public class Student {
     @Column(name = "academic_session")
     private int academicSession;
 
-    @Column(name = "class_id")
-    private int classId;
+    @Transient
+    private List<Classroom> classrooms;
 
     private boolean deleted;
 }

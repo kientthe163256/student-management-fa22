@@ -1,5 +1,6 @@
-package com.example.studentmanagementfa22;
+package com.example.studentmanagementfa22.service;
 
+import com.example.studentmanagementfa22.StudentManagementFa22Application;
 import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.RoleRepository;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 //@DataJpaTest
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes=StudentManagementFa22Application.class)
+@SpringBootTest(classes= StudentManagementFa22Application.class)
 public class RoleServiceTest {
     @Autowired
     private RoleRepository roleRepository;

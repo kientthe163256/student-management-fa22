@@ -10,8 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.Date;
 
 @Entity
@@ -22,7 +21,6 @@ import java.util.Date;
 @Table(name = "account")
 public class Account {
     @Id
-    @NotBlank(message = "Username cannot be blank")
     private String username;
 
     @NotBlank(message = "Password cannot be blank")

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Register new account</title>
@@ -7,21 +7,28 @@
 <body>
 
 <h1>Add a new student</h1>
-<form th:action="@{/student/register}" th:object="${account}" method="post">
-  <input type="text" name="username" placeholder="Enter username"><br>
-  <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</span><br>
+<form th:action="@{/register/student}" th:object="${account}" method="post">
+  <input type="text" name="username" placeholder="Enter username" th:value="*{username}"
+         pattern="[A-Z]{2}\d{6}"
+         oninvalid="setCustomValidity('Username must be your student code! (Ex: HE162123)')"
+         onchange="setCustomValidity('')">
 
-  <input type="password" name="password" placeholder="Enter password"><br>
-  <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</span><br>
+<!--  <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</span>-->
+  <div th:if="${message}">
+    There is already an account with given username!
+  </div>
+  <br>
+  <input type="password" name="password" placeholder="Enter password" th:value="*{password}" required><br><br>
+<!--  <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</span><br>-->
 
-  <input type="text" name="firstName" placeholder="Enter first name"><br>
-  <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">First name error</span><br>
+  <input type="text" name="firstName" placeholder="Enter first name" th:value="*{firstName}" required><br><br>
+<!--  <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">First name error</span><br>-->
 
-  <input type="text" name="lastName" placeholder="Enter last name"><br>
-  <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last name error</span><br>
+  <input type="text" name="lastName" placeholder="Enter last name" th:value="*{lastName}" required><br><br>
+<!--  <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last name error</span><br>-->
 
-  <input type="date" name="dob" required><br>
-  <span th:if="${#fields.hasErrors('dob')}" th:errors="*{dob}">Dob error</span><br>
+  <input type="date" name="dob" required th:value="${dob}"><br><br>
+<!--  <span th:if="${#fields.hasErrors('dob')}" th:errors="*{dob}">Dob error</span><br>-->
 
   <input type="submit" value="SAVE">
 </form>

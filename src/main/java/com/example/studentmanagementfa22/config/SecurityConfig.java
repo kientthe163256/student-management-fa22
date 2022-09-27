@@ -32,8 +32,8 @@ public class SecurityConfig {
                         .antMatchers("/student/**").hasRole("STUDENT")
                         .antMatchers("/teacher/**").hasRole("TEACHER")
                         .antMatchers("/admin/**").hasRole("ADMIN")
+                        .antMatchers("/register/student").permitAll()
                         .anyRequest().authenticated()
-//                                .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .formLogin(form -> form
