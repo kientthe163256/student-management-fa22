@@ -28,7 +28,7 @@ public class Student {
     private int accountId;
 
     @Transient
-    private List<Classroom> classroom;
+    private List<Classroom> classrooms;
 
     private boolean deleted;
 }

@@ -32,9 +32,11 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String username = authentication.getName();
         Account account = accountService.findAccountByUsername(username);
+
         StudentDTO studentDTO = Utility.mapAccount(account);
         HttpSession session = request.getSession();
         session.setAttribute("userInformation", studentDTO);
+
         if (!account.isEnabled()) {
             redirectStrategy.sendRedirect(request, response, "/login?deactivated");
 //            throw new BadCredentialsException("Your account is deactivated. Contact admin for more information.");

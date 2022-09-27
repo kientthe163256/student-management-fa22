@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Entity
@@ -23,9 +25,11 @@ public class Account {
     private Integer id;
 
     @NotBlank(message = "Username cannot be blank")
+    @Pattern(regexp = "[A-Z]{2}\\d{6}")
     private String username;
 
     @NotBlank(message = "Password cannot be blank")
+    @Length(min = 5)
     private String password;
 
     private boolean enabled;
@@ -42,5 +46,6 @@ public class Account {
     private String lastName;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull
     private Date dob;
 }

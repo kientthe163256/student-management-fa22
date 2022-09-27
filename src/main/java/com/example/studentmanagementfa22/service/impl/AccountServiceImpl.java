@@ -2,10 +2,12 @@ package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Role;
+import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.exception.UserAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
+import com.example.studentmanagementfa22.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,6 +30,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private StudentService studentService;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -71,6 +76,7 @@ public class AccountServiceImpl implements AccountService {
         if (existAccount != null) {
             throw new UserAlreadyExistException("There is already an account with that username!");
         }
+        //Add a new account
         account.setEnabled(true);
         account.setRoleId(roleService.findByRoleName("ROLE_STUDENT").getId());
         account.setPassword(passwordEncoder.encode(account.getPassword()));
