@@ -1,14 +1,15 @@
 package com.example.studentmanagementfa22.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.Column;
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class StudentDTO {
     private String username;
@@ -29,4 +30,6 @@ public class StudentDTO {
     private int academicSession;
 
     private int accountId;
+
+    private int classId;
 }
