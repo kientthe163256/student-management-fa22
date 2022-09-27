@@ -4,29 +4,33 @@
     <meta charset="UTF-8">
     <title>My Information</title>
 </head>
-    <body>
-    <h1>Student Information</h1>
-        <table border="1px">
-            <tr>
-                <td>Code</td>
-                <td th:text="${student.username}"></td>
-            </tr>
-            <tr>
-                <td>First Name</td>
-                <td th:text="${student.firstName}"></td>
-            </tr>
-            <tr>
-                <td>Last Name</td>
-                <td th:text="${student.lastName}"></td>
-            </tr>
-            <tr>
-                <td>Date of birth</td>
-                <td th:text="${#dates.format(student.dob,'dd/MM/yyyy')}"></td>
-            </tr>
-            <tr>
-                <td>Academic Session</td>
-                <td th:text="${student.academicSession}"></td>
-            </tr>
-        </table>
-    </body>
+<body>
+<h1>Student Information</h1>
+<table border="1px">
+    <tr>
+        <td>Code</td>
+        <td th:text="${student.username}"></td>
+    </tr>
+    <form th:action="@{/student/information}" th:object="${student}" method="post">
+        <tr>
+            <td>First Name</td>
+            <td><input type="text" name="firstName" placeholder="Enter first name" th:value="${student.getFirstName()}"></td>
+        </tr>
+        <tr>
+            <td>Last Name</td>
+            <td><input type="text" name="lastName" placeholder="Enter last name" th:value="${student.getLastName()}"></td>
+        </tr>
+        <tr>
+            <td>Date of birth</td>
+            <td><input type="date" name="dob" placeholder="Enter date of birth" th:value="${#dates.format(student.getDob(),'yyyy-MM-dd')}"></td>
+        </tr>
+        <tr><input type="submit" value="SAVE"></tr>
+    </form>
+    <tr>
+        <td>Academic Session</td>
+        <td th:text="${student.academicSession}"></td>
+    </tr>
+</table>
+<a href="/student">Back to Home Screen</a><br>
+</body>
 </html>
