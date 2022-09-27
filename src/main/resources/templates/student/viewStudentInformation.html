@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Information</title>
+</head>
+    <body>
+    <h1>Student Information</h1>
+        <table border="1px">
+            <tr>
+                <td>Code</td>
+                <td th:text="${student.username}"></td>
+            </tr>
+            <tr>
+                <td>First Name</td>
+                <td th:text="${student.firstName}"></td>
+            </tr>
+            <tr>
+                <td>Last Name</td>
+                <td th:text="${student.lastName}"></td>
+            </tr>
+            <tr>
+                <td>Date of birth</td>
+                <td th:text="${#dates.format(student.dob,'dd/MM/yyyy')}"></td>
+            </tr>
+            <tr>
+                <td>Academic Session</td>
+                <td th:text="${student.academicSession}"></td>
+            </tr>
+        </table>
+    </body>
+</html>
