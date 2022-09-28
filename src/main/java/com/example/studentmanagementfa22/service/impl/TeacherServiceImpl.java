@@ -7,6 +7,8 @@ import com.example.studentmanagementfa22.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TeacherServiceImpl implements TeacherService {
     @Autowired
@@ -18,5 +20,10 @@ public class TeacherServiceImpl implements TeacherService {
                 .accountId(account.getId())
                 .build();
         teacherRepository.save(teacher);
+    }
+
+    @Override
+    public List<Teacher> findAllTeachers() {
+        return teacherRepository.findAll();
     }
 }

@@ -2,8 +2,7 @@ package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Role;
-import com.example.studentmanagementfa22.entity.Student;
-import com.example.studentmanagementfa22.exception.UserAlreadyExistException;
+import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,10 +69,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void registerNewAccount(Account account) throws UserAlreadyExistException {
+    public void registerNewAccount(Account account) throws ElementAlreadyExistException {
         Account existAccount = accountRepository.findByUsername(account.getUsername());
         if (existAccount != null) {
-            throw new UserAlreadyExistException("There is already an account with that username!");
+            throw new ElementAlreadyExistException("There is already an account with that username!");
         }
         //Add a new account
         account.setEnabled(true);

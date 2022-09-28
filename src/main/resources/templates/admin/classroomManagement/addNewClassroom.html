@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new classroom</title>
+</head>
+<body>
+
+<h1>Add a new classroom</h1>
+<form th:action="@{/admin/classroom/add}" th:object="${classroom}" method="post">
+    <input type="text" th:field="*{classroomName}" placeholder="Enter class name" th:value="*{classroomName}"
+           pattern="[A-Z]{2}\d{4}"
+           oninvalid="setCustomValidity('Classname must be 2 characters and 4 digits (Ex: SE1615)')"
+           oninput="setCustomValidity('')"><br>
+
+    <div th:if="${message}">
+        There is already a class with given name!
+    </div>
+
+    <br>
+    <label for="noStudent">Maximum number of students</label><br>
+    <input id="noStudent" type="number" th:field="*{noStudent}"
+           th:value="*{noStudent}"
+           oninvalid="setCustomValidity('Class size must be 1 or greater')"
+           oninput="setCustomValidity('')"
+           min="1" ><br><br>
+
+    <label for="classTypeTag">Class type</label><br>
+    <select th:field="*{classType}" onchange="chooseTypeSubject()" id="classTypeTag">
+        <option value="SUB">Subject</option>
+        <option value="SES" selected>Session</option>
+    </select><br>
+
+    <div id="chooseTeacherTag">
+        <label for="teachersTag">Choose teacher</label><br>
+        <select th:field="*{teacherId}" id="teachersTag">
+            <option th:each="teacher : ${teacherList}" th:value="${teacher.id}"
+                    th:text="${teacher.accountId}"></option>
+        </select>
+    </div >
+    <br>
+
+    <input type="submit" value="ADD">
+</form>
+<script>
+    function chooseTypeSubject() {
+        let classTypeTag = document.getElementById("classTypeTag");
+        let selectedType = classTypeTag.options[classTypeTag.selectedIndex].value;
+
+        let chooseTeacherTag = document.getElementById("chooseTeacherTag");
+        if (selectedType == "SUB") {
+            chooseTeacherTag.style.display = "block";
+        } else {
+            chooseTeacherTag.style.display = "none";
+        }
+    }
+</script>
+</body>
+</html>

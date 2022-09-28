@@ -1,7 +1,7 @@
 package com.example.studentmanagementfa22.controller;
 
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.exception.UserAlreadyExistException;
+import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
 import com.example.studentmanagementfa22.service.StudentService;
@@ -49,7 +49,7 @@ public class AccountController {
         try{
             accountService.registerNewAccount(account);
             studentService.addStudentWithNewAccount(account);
-        } catch (UserAlreadyExistException ex){
+        } catch (ElementAlreadyExistException ex){
             model.addAttribute("message", "There is already an account with given username!");
             return "student/register";
         }
@@ -57,7 +57,9 @@ public class AccountController {
     }
 
     @GetMapping("/admin/teacher/add")
-    public String displayAddTeacherForm(){
+    public String displayAddTeacherForm(Model model){
+        Account account = new Account();
+        model.addAttribute("account", account);
         return "admin/teacherManagement/addNewTeacher";
     }
 
@@ -73,7 +75,7 @@ public class AccountController {
         try{
             accountService.registerNewAccount(account);
             teacherService.addTeacherWithNewAccount(account);
-        } catch (UserAlreadyExistException ex){
+        } catch (ElementAlreadyExistException ex){
             model.addAttribute("message", "Duplicated teacher account!");
             return "admin/teacherManagement/addNewTeacher";
         }
