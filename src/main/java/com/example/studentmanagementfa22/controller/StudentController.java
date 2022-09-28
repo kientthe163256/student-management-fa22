@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Controller
@@ -24,23 +27,39 @@ public class StudentController {
     @Autowired
     private AccountRepository accountRepo;
 
+    @Autowired
+    private HttpSession session;
+
     @GetMapping("")
     public String getHomePage(){
         return "student/studentHomePage";
     }
 
-    @GetMapping("/information/{accountId}")
-    public String displayInformation(@PathVariable Integer accountId, Model model) {
-
-        Optional<Account> account = accountRepo.findById(accountId);
-        Account account1 = account.get();
-        Optional<Student> student = studentRepo.findStudentByAccountId(accountId);
+    @GetMapping("/information")
+    public String displayInformation( Model model) {
+        Account account = (Account) session.getAttribute("account");
+        Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
         Student student1 = student.get();
-        Utility utility;
-        utility = new Utility();
-        StudentDTO studentDTO = utility.mapAccount(account1);
+        Utility utility = new Utility();
+        StudentDTO studentDTO = utility.mapAccount(account);
         studentDTO.setAcademicSession(student1.getAcademicSession());
         model.addAttribute("student",studentDTO);
+        model.addAttribute("dob",studentDTO.getDob());
         return "student/viewStudentInformation";
+    }
+    @PostMapping("/information")
+    public String editInformation(@Valid StudentDTO student,  Model model) {
+        Account account = (Account) session.getAttribute("account");
+        Optional<Account> account1 = accountRepo.findById(account.getId());
+        if (!account1.isPresent()) {
+            throw new NoSuchElementException("User is not found");
+        }
+        Account account2 = account1.get();
+        account2.setFirstName(student.getFirstName());
+        account2.setLastName(student.getLastName());
+        account2.setDob(student.getDob());
+        accountRepo.save(account2);
+        session.setAttribute("account",account2);
+        return "redirect:/student/information";
     }
 }
