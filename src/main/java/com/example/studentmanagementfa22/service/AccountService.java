@@ -15,5 +15,5 @@ public interface AccountService extends UserDetailsService {
 
     void registerNewAccount(Account account) throws ElementAlreadyExistException;
 
-
+    Account findById(int id);
 }

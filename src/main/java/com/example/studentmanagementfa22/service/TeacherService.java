@@ -1,5 +1,6 @@
 package com.example.studentmanagementfa22.service;
 
+import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Teacher;
 
@@ -9,4 +10,7 @@ public interface TeacherService {
     void addTeacherWithNewAccount(Account account);
 
     List<Teacher> findAllTeachers();
+
+    Teacher findById(int id);
+
 }

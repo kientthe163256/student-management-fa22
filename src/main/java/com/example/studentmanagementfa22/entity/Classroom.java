@@ -16,22 +16,26 @@ import javax.persistence.*;
 public class Classroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "classroom_name")
     private String classroomName;
 
     @Column(name = "current_no_student")
-    private int currentNoStudent;
+    private Integer currentNoStudent;
 
     @Column(name = "no_student")
-    private int noStudent;
+    private Integer noStudent;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "class_type")
-    private String classType;
+    private ClassType classType;
 
     @Column(name = "teacher_id")
-    private int teacherId;
+    private Integer teacherId;
+
+    @Column(name = "subject_id")
+    private Integer subjectId;
 
     private boolean deleted;
 }

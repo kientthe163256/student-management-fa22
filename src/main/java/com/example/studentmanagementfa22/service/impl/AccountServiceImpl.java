@@ -2,6 +2,7 @@ package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Role;
+import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.AccountService;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,5 +82,16 @@ public class AccountServiceImpl implements AccountService {
         account.setRoleId(roleService.findByRoleName("ROLE_STUDENT").getId());
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         accountRepository.save(account);
+    }
+
+    @Override
+    public Account findById(int id) {
+        Optional<Account> optionalAccount = accountRepository.findById(id);
+        if (optionalAccount.isEmpty()){
+            throw new NoSuchElementException("Account not found");
+        }
+        Account account = optionalAccount.get();
+        return account;
+
     }
 }

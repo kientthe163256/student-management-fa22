@@ -1,10 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>All classroom</title>
 </head>
 <body>
-
+    <h1>List of all classrooms</h1>
+    <table border="1px">
+        <tr>
+            <th>ClassName</th>
+            <th>Current No. student</th>
+            <th>Max No. student</th>
+            <th>Class type</th>
+            <th>Teacher</th>
+            <th>Subject</th>
+            <th>Action</th>
+        </tr>
+        <tr th:each="classroom : ${classroomList}">
+            <td th:text="*{classroom.classroomName}"></td>
+            <td th:text="*{classroom.currentNoStudent}"></td>
+            <td th:text="*{classroom.noStudent}"></td>
+            <td th:text="*{classroom.classType}"></td>
+            <td th:text="*{classroom.teacherName}"></td>
+            <td th:text="*{classroom.subjectName}"></td>
+            <td>
+                <a href="#">Assign</a>
+                <a href="#">Update</a>
+                <a href="#" style="color: red">Delete</a>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
