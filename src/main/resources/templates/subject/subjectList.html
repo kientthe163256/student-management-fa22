@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List of subject</title>
+</head>
+<body>
+<table border="1px">
+    <tr>
+        <th>ID</th>
+        <th>Subject Name</th>
+        <th>Number of credits</th>
+    </tr>
+    <tr th:each="subject : ${subjectList}">
+        <td th:text="${subject.id}"></td>
+        <td th:text="${subject.subjectName}"></td>
+        <td th:text="${subject.numberOfCredit}"></td>
+        <td>
+            <a href="#">List of available classroom</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
