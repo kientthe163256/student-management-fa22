@@ -1,17 +1,16 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
-import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
-import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.Mapper;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 public class ClassroomServiceImpl implements ClassroomService {
     @Autowired
     private ClassroomRepository classroomRepository;
+
     @Autowired
     private Mapper mapper;
 
@@ -64,6 +64,14 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .map(classroom -> mapper.mapClassroom(classroom))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<Classroom> getAllAvailClassroom (int pageNumber, int subjectID) {
+        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+        Page<Classroom> classroomPage = classroomRepository.findAllAvailClassroom(pageRequest, subjectID);
+        return classroomPage;
+    }
+
 
 
 }

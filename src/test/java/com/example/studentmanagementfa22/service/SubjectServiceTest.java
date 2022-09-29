@@ -2,7 +2,6 @@ package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.StudentManagementFa22Application;
 import com.example.studentmanagementfa22.entity.Subject;
-import com.example.studentmanagementfa22.repository.SubjectRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ public class SubjectServiceTest {
     private SubjectService subjectService;
 
     @Test
-    public void getAllgetAllSubject() {
+    public void getAllSubject() {
         Page<Subject> subjectPage = subjectService.getAllSubject(1);
     }
 

@@ -16,9 +16,46 @@
         <td th:text="${subject.subjectName}"></td>
         <td th:text="${subject.numberOfCredit}"></td>
         <td>
-            <a href="#">List of available classroom</a>
+            <a th:href="@{/classroom/classroomList(subjectId=${subject.id})}">List of available classroom</a>
         </td>
     </tr>
 </table>
+<nav aria-label="Page navigation example" class="mt-6 flex justify-end">
+    <ul class="inline-flex -space-x-px">
+        <li>
+            <a th:if="${pageNumber - 1 >= 1}" th:href="@{/student/subjectList(pageNumber=${pageNumber - 1})}">Previous</a>
+            <a th:if="${pageNumber - 1 < 1}">Previous</a>
+        </li>
+        <li th:if="${pageNumber - 2 >= 1}">
+            <a th:href="@{/student/subjectList(pageNumber=${pageNumber - 2})}"
+               th:text="${pageNumber -2}">1</a>
+        </li>
+        <li th:if="${pageNumber - 1 >= 1}">
+            <a th:href="@{/student/subjectList(pageNumber=${pageNumber - 1})}"
+               th:text="${pageNumber - 1}">2</a>
+        </li>
+        <li>
+            <a href="#" aria-current="page"
+               th:text="${pageNumber}">3</a>
+        </li>
+        <li th:if="${pageNumber + 1 <= totalPages}">
+            <a
+                    th:href="@{/student/subjectList(pageNumber=${pageNumber + 1})}"
+                    th:text="${pageNumber + 1}">4</a>
+        </li>
+        <li th:if="${pageNumber + 2 <= totalPages}">
+            <a
+                    th:href="@{/student/subjectList(pageNumber=${pageNumber + 2})}"
+                    th:text="${pageNumber + 2}">5</a>
+        </li>
+        <li>
+            <a th:if="${pageNumber + 1 <= totalPages}" th:href="@{/student/subjectList(pageNumber=${pageNumber + 1})}"
+            >Next</a>
+            <a th:if="${pageNumber + 1 > totalPages}"
+            >Next</a>
+        </li>
+    </ul>
+</nav>
+<a href="/student">Back to Home Screen</a><br>
 </body>
 </html>

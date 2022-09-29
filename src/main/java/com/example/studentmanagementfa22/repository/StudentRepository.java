@@ -12,4 +12,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     Optional<Student> findStudentByAccountId(Integer id);
 
+
+
 }

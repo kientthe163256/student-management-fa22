@@ -3,7 +3,7 @@ package com.example.studentmanagementfa22.service;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
-import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -13,4 +13,6 @@ public interface ClassroomService {
     boolean classroomExisted(String classroomName);
 
     List<ClassroomDTO> getAllClassrooms();
+
+    Page<Classroom> getAllAvailClassroom (int pageNumber, int subjectId);
 }
