@@ -1,37 +1,40 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>List of subject</title>
+    <title>Classroom List</title>
 </head>
 <body>
+<h1>Available classroom</h1>
 <table border="1px">
     <tr>
-        <th>ID</th>
-        <th>Subject Name</th>
-        <th>Number of credits</th>
+        <th>Name of classroom</th>
+        <th>Current Number of Student</th>
+        <th>Max Number of student</th>
+        <th>Teacher ID</th>
     </tr>
-    <tr th:each="subject : ${subjectList}">
-        <td th:text="${subject.id}"></td>
-        <td th:text="${subject.subjectName}"></td>
-        <td th:text="${subject.numberOfCredit}"></td>
+    <tr th:each="class : ${classroomList}">
+        <td th:text="*{class.classroomName}"></td>
+        <td th:text="*{class.currentNoStudent}"></td>
+        <td th:text="*{class.maxNoStudent}"></td>
+        <td th:text="*{class.teacherId}"></td>
         <td>
-            <a th:href="@{/classroom/classroomList(subjectId=${subject.id})}">List of available classroom</a>
+            <a href="#">Edit</a>
         </td>
     </tr>
 </table>
 <nav aria-label="Page navigation example" class="mt-6 flex justify-end">
     <ul class="inline-flex -space-x-px">
         <li>
-            <a th:if="${pageNumber - 1 >= 1}" th:href="@{/student/subjectList(pageNumber=${pageNumber - 1})}">Previous</a>
+            <a th:if="${pageNumber - 1 >= 1}" th:href="@{/classroom/classroomList(pageNumber=${pageNumber - 1})}">Previous</a>
             <a th:if="${pageNumber - 1 < 1}">Previous</a>
         </li>
         <li th:if="${pageNumber - 2 >= 1}">
-            <a th:href="@{/student/subjectList(pageNumber=${pageNumber - 2})}"
+            <a th:href="@{/classroom/classroomList(pageNumber=${pageNumber - 2})}"
                th:text="${pageNumber -2}">1</a>
         </li>
         <li th:if="${pageNumber - 1 >= 1}">
-            <a th:href="@{/student/subjectList(pageNumber=${pageNumber - 1})}"
+            <a th:href="@{/classroom/classroomList(pageNumber=${pageNumber - 1})}"
                th:text="${pageNumber - 1}">2</a>
         </li>
         <li>
@@ -40,16 +43,16 @@
         </li>
         <li th:if="${pageNumber + 1 <= totalPages}">
             <a
-                    th:href="@{/student/subjectList(pageNumber=${pageNumber + 1})}"
+                    th:href="@{/classroom/classroomList(pageNumber=${pageNumber + 1})}"
                     th:text="${pageNumber + 1}">4</a>
         </li>
         <li th:if="${pageNumber + 2 <= totalPages}">
             <a
-                    th:href="@{/student/subjectList(pageNumber=${pageNumber + 2})}"
+                    th:href="@{/classroom/classroomList(pageNumber=${pageNumber + 2})}"
                     th:text="${pageNumber + 2}">5</a>
         </li>
         <li>
-            <a th:if="${pageNumber + 1 <= totalPages}" th:href="@{/student/subjectList(pageNumber=${pageNumber + 1})}"
+            <a th:if="${pageNumber + 1 <= totalPages}" th:href="@{/classroom/classroomList(pageNumber=${pageNumber + 1})}"
             >Next</a>
             <a th:if="${pageNumber + 1 > totalPages}"
             >Next</a>

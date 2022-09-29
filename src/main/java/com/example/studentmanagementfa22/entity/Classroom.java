@@ -25,7 +25,7 @@ public class Classroom {
     private int currentNoStudent;
 
     @Column(name = "no_student")
-    private int noStudent;
+    private int maxNoStudent;
 
     @Column(name = "class_type")
     private String classType;
