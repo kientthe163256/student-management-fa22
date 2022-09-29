@@ -1,20 +1,14 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.exception.UserAlreadyExistException;
-import com.example.studentmanagementfa22.repository.AccountRepository;
-import com.example.studentmanagementfa22.service.AccountService;
-import org.junit.jupiter.api.Assertions;
+import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,7 +41,7 @@ public class AccountServiceTest {
                 .build();
         try{
             accountService.registerNewAccount(account);
-        } catch (UserAlreadyExistException e) {
+        } catch (ElementAlreadyExistException e) {
             System.out.println(e.getMessage());;
         }
     }
