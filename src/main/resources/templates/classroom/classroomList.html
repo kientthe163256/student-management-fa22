@@ -19,7 +19,7 @@
         <td th:text="*{class.maxNoStudent}"></td>
         <td th:text="*{class.teacherId}"></td>
         <td>
-            <a href="#">Edit</a>
+            <a th:href="@{/classroom/registerClassroom(classId=${class.id})}">Register</a>
         </td>
     </tr>
 </table>

@@ -6,7 +6,6 @@ import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
-import com.example.studentmanagementfa22.repository.SubjectRepository;
 import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.utility.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,6 @@ public class StudentController {
         StudentDTO studentDTO = utility.mapAccount(account);
         studentDTO.setAcademicSession(student1.getAcademicSession());
         model.addAttribute("student",studentDTO);
-        model.addAttribute("dob",studentDTO.getDob());
         return "student/viewStudentInformation";
     }
     @GetMapping("/subjectList")
@@ -63,7 +61,7 @@ public class StudentController {
         return "subject/subjectList";
     }
     @PostMapping("/information")
-    public String editInformation(@Valid StudentDTO student,  Model model) {
+    public String editInformation(@Valid StudentDTO student) {
         Account account = (Account) session.getAttribute("account");
         Optional<Account> account1 = accountRepo.findById(account.getId());
         if (account1.isEmpty()) {

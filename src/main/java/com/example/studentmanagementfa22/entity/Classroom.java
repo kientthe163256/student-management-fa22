@@ -33,5 +33,8 @@ public class Classroom {
     @Column(name = "teacher_id")
     private int teacherId;
 
+    @Column(name = "subject_id")
+    private int subjectId;
+
     private boolean deleted;
 }
