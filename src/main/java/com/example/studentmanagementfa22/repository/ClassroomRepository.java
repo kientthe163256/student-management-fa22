@@ -47,8 +47,6 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
             nativeQuery = true)
     void addSessionClassroom(String className, int noStudent, ClassType classType);
 
-    @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type, subject_id) VALUES (?1, ?2, ?3, ?4)",
-            nativeQuery = true)
     @Modifying
     @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type, subject_id) VALUES (?1, ?2, ?3, ?4)",
             nativeQuery = true)
