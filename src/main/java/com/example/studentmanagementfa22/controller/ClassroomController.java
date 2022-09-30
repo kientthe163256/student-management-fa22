@@ -50,7 +50,7 @@ public class ClassroomController {
     }
 
     @GetMapping("/registerClassroom")
-    public String registerClassroom(@RequestParam int classId ) {
+    public String registerClassroom(@RequestParam int classId ,Model model) {
         Account account = (Account) session.getAttribute("account");
         Optional<Account> account1 = accountRepo.findById(account.getId());
         if (account1.isEmpty()) {
@@ -61,8 +61,10 @@ public class ClassroomController {
         if (classroomRepo.numOfSubjectClassbyStudent(classroom.getSubjectId(), student.get().getId() ) == 0 ) {
             classroomRepo.registerClassroom(student.get().getId(), classId);
             classroomRepo.updateNoStudentOfClass(classId);
+            String message = "Register successfully";
+            model.addAttribute("message", message);
         }
-        return "redirect:/student/subjectList";
+        return "student/registerClassroom";
     }
 
 }
