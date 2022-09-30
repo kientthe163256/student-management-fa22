@@ -5,6 +5,7 @@
     <title>All classroom</title>
 </head>
 <body>
+<a href="/admin">Back to Class Management</a><br><br>
     <h1>List of all classrooms</h1>
     <table border="1px">
         <tr>
@@ -30,5 +31,41 @@
             </td>
         </tr>
     </table>
+    <nav aria-label="Page navigation example" class="mt-6 flex justify-end">
+        <ul class="inline-flex -space-x-px">
+            <li>
+                <a th:if="${pageNumber - 1 >= 1}" th:href="@{/admin/classroom/all(pageNumber=${pageNumber - 1})}">Previous</a>
+                <a th:if="${pageNumber - 1 < 1}">Previous</a>
+            </li>
+            <li th:if="${pageNumber - 2 >= 1}">
+                <a th:href="@{/admin/classroom/all(pageNumber=${pageNumber - 2})}"
+                   th:text="${pageNumber -2}">1</a>
+            </li>
+            <li th:if="${pageNumber - 1 >= 1}">
+                <a th:href="@{/admin/classroom/all(pageNumber=${pageNumber - 1})}"
+                   th:text="${pageNumber - 1}">2</a>
+            </li>
+            <li>
+                <a href="#" aria-current="page"
+                   th:text="${pageNumber}">3</a>
+            </li>
+            <li th:if="${pageNumber + 1 <= totalPages}">
+                <a
+                        th:href="@{/admin/classroom/all(pageNumber=${pageNumber + 1})}"
+                        th:text="${pageNumber + 1}">4</a>
+            </li>
+            <li th:if="${pageNumber + 2 <= totalPages}">
+                <a
+                        th:href="@{/admin/classroom/all(pageNumber=${pageNumber + 2})}"
+                        th:text="${pageNumber + 2}">5</a>
+            </li>
+            <li>
+                <a th:if="${pageNumber + 1 <= totalPages}" th:href="@{/admin/classroom/all(pageNumber=${pageNumber + 1})}"
+                >Next</a>
+                <a th:if="${pageNumber + 1 > totalPages}"
+                >Next</a>
+            </li>
+        </ul>
+    </nav>
 </body>
 </html>

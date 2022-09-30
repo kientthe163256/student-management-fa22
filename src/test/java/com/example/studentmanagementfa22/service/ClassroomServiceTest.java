@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
@@ -28,6 +29,12 @@ public class ClassroomServiceTest {
     public void getAllClassroom(){
         List<ClassroomDTO> classroomDTOList = classroomService.getAllClassrooms();
         Assert.notNull(classroomDTOList);
+    }
+
+    @Test
+    public void getAllClassroomPaging(){
+        Page<ClassroomDTO> classroomDTO = classroomService.getAllClassroomsPaging(1);
+        Assert.notNull(classroomDTO);
     }
 
 }

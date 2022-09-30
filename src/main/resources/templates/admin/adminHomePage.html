@@ -5,8 +5,13 @@
     <title>Admin</title>
 </head>
 <body>
-  <h1>Admin page</h1>
-    <a href="/logout">Logout</a>
-    <a href="/admin/teacher">Manage teacher</a>
+<h1>Admin page</h1>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
+<a href="/logout">Logout</a><br><br>
+<a href="/admin/teacher">Manage teacher</a><br>
+<a href="/admin/classroom">Manage classroom</a>
+
 </body>
 </html>

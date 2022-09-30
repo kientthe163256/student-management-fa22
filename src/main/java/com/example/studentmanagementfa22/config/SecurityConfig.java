@@ -24,9 +24,10 @@ public class SecurityConfig {
                         .antMatchers("/student/**").hasRole("STUDENT")
                         .antMatchers("/teacher/**").hasRole("TEACHER")
                         .antMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-//                                .anyRequest().permitAll()
+                        .antMatchers("/register/**", "/").permitAll()
                 )
+                .csrf().disable()
+                .cors().disable()
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -35,9 +36,7 @@ public class SecurityConfig {
                         .successHandler(customSuccessHandler)
                         .permitAll()
                         .failureUrl("/login?error"))
-                .csrf().disable()
-                .cors().disable();
-
+;
         return http.build();
     }
 

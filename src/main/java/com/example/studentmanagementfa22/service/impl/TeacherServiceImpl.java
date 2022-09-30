@@ -2,10 +2,14 @@ package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
+import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.utility.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +20,9 @@ import java.util.Optional;
 public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private TeacherRepository teacherRepository;
+
+//    @Autowired
+//    private Mapper mapper;
 
     @Override
     public void addTeacherWithNewAccount(Account account) {
@@ -39,6 +46,13 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher = optionalTeacher.get();
         return teacher;
     }
+
+//    @Override
+//    public Page<TeacherDTO> findAllTeacherPaging(int pageNumber) {
+//        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+//        Page<Teacher> teacherPage = teacherRepository.findAll(pageRequest);
+//        return teacherPage.map(teacher -> mapper.mapTeacher(teacher));
+//    }
 
 
 }

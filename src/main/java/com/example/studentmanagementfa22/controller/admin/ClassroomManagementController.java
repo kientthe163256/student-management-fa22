@@ -9,13 +9,11 @@ import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -32,6 +30,11 @@ public class ClassroomManagementController {
     @Autowired
     private SubjectService subjectService;
 
+    @GetMapping("")
+    public String displayClassManagement(){
+        return "admin/classroomManagement/manageClassroom";
+    }
+
     @GetMapping("/add")
     public String displayAddClassroomForm(Model model){
         Classroom classroom = new Classroom();
@@ -47,7 +50,6 @@ public class ClassroomManagementController {
             return "admin/classroomManagement/addNewClassroom";
         }
         try{
-            System.out.println("-----------------------"+classroom.getClassType());
             classroomService.addNewClassroom(classroom);
         } catch (ElementAlreadyExistException ex){
             //add subject list to model
@@ -61,9 +63,11 @@ public class ClassroomManagementController {
     }
 
     @GetMapping("/all")
-    public String displayAllClassrooms(Model model){
-        List<ClassroomDTO> classroomDTOS = classroomService.getAllClassrooms();
-        model.addAttribute("classroomList", classroomDTOS);
+    public String displayAllClassrooms(Model model, @RequestParam(required = false, defaultValue = "1") int pageNumber){
+        Page<ClassroomDTO> classroomPage = classroomService.getAllClassroomsPaging(pageNumber);
+        model.addAttribute("classroomList", classroomPage.getContent());
+        model.addAttribute("pageNumber", pageNumber);
+        model.addAttribute("totalPages", classroomPage.getTotalPages());
         return "admin/classroomManagement/allClassroom";
     }
 }

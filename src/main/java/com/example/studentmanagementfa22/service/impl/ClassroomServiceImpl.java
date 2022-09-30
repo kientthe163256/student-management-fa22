@@ -67,6 +67,13 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    public Page<ClassroomDTO> getAllClassroomsPaging(int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+        Page<Classroom> classroomPage = classroomRepository.findAll(pageRequest);
+        return classroomPage.map(classroom -> mapper.mapClassroom(classroom));
+    }
+
+    @Override
     public Page<Classroom> getAllAvailClassroom (int pageNumber, int subjectID) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllAvailClassroom(pageRequest, subjectID);
