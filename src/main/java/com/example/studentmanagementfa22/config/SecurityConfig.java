@@ -21,12 +21,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(auth -> auth       //lambda no need .and()
-//                        .antMatchers("/student/**").hasRole("STUDENT")
-//                        .antMatchers("/teacher/**").hasRole("TEACHER")
-//                        .antMatchers("/admin/**").hasRole("ADMIN")
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+                        .antMatchers("/student/**").hasRole("STUDENT")
+                        .antMatchers("/teacher/**").hasRole("TEACHER")
+                        .antMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+//                                .anyRequest().permitAll()
                 )
+                .csrf().disable()
+                .cors().disable()
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .formLogin(form -> form
                         .loginPage("/login")
