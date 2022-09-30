@@ -34,18 +34,18 @@ public class Mapper {
 
     public ClassroomDTO mapClassroom(Classroom classroom) {
         ClassroomDTO classroomDTO = mapper.map(classroom, ClassroomDTO.class);
-        if (classroom.getTeacherId() != null){
+        if (classroom.getTeacherId() == null) {
+            classroomDTO.setTeacherName("None");
+        } else {
             Teacher teacher = teacherService.findById(classroom.getTeacherId());
             TeacherDTO teacherDTO = mapTeacher(teacher);
             classroomDTO.setTeacherName(teacherDTO.getFirstName() + ' ' + teacherDTO.getLastName());
-        } else {
-            classroomDTO.setTeacherName("None");
         }
-        if (classroom.getSubjectId() != null){
+        if (classroom.getSubjectId() == null) {
+            classroomDTO.setSubjectName("None");
+        } else {
             Subject subject = subjectService.findById(classroom.getSubjectId());
             classroomDTO.setSubjectName(subject.getSubjectName());
-        } else {
-            classroomDTO.setClassroomName("None");
         }
         return classroomDTO;
     }

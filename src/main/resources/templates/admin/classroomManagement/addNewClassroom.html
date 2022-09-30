@@ -27,9 +27,15 @@
 
     <label for="classTypeTag">Class type</label><br>
     <select th:field="*{classType}" id="classTypeTag">
-        <option value="SES">Session</option>
-        <option value="SUB">Subject</option>
+        <option value="SESSION">Session</option>
+        <option value="SUBJECT">Subject</option>
     </select><br><br>
+
+<!--    <label for="classTypeTag">Class type</label><br>-->
+<!--    <select th:field="*{classType}" id="classTypeTag">-->
+<!--        <option th:each="classType : ${T(com.example.studentmanagementfa22.entity.ClassType).values()}"-->
+<!--                th:value="${classType}" th:text="${classType}"></option>-->
+<!--    </select><br><br>-->
 
     <div id="chooseSubjectTag">
         <label for="subjectsTag">Choose subject</label><br>
@@ -47,15 +53,15 @@
     $('[id=chooseSubjectTag]').hide();
 
     $(window ).load(function() {
-        let classType = $("#classTypeTag option:selected").val();
-        if (classType == "SUB"){
+        let classType = $("#classTypeTag option:selected").text();
+        if (classType == "SUBJECT"){
             $('[id=chooseSubjectTag]').show();
         }
     });
         // Handle subject
         $("#classTypeTag").change(function(){
-            var value = $("#classTypeTag option:selected").val();
-            if (value == "SUB"){
+            var value = $("#classTypeTag option:selected").text();
+            if (value == "SUBJECT"){
                 $('[id=chooseSubjectTag]').show();
             }
         });

@@ -27,6 +27,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
 //                                .anyRequest().permitAll()
                 )
+                .csrf().disable()
+                .cors().disable()
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .formLogin(form -> form
                         .loginPage("/login")

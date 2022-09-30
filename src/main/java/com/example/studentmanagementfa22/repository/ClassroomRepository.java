@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     Classroom findByClassroomName(String classroomName);
+}
+
     Classroom findById(int classId);
     @Query(value = "SELECT * FROM student_management_fa22.classroom ca\n" +
             "WHERE ca.current_no_student < ca.no_student\n" +
@@ -48,6 +50,8 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type, subject_id) VALUES (?1, ?2, ?3, ?4)",
             nativeQuery = true)
     @Modifying
+    @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type, subject_id) VALUES (?1, ?2, ?3, ?4)",
+            nativeQuery = true)
     void addSubjectClassroom(String className, int noStudent, ClassType classType, int subjectId);
 
     @Query (value = "UPDATE classroom SET current_no_student = current_no_student + 1 where id = ?1", nativeQuery = true)

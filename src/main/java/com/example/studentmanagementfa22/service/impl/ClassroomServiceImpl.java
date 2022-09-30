@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.entity.ClassType;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
@@ -30,17 +31,17 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (classroomExisted(classroom.getClassroomName())){
             throw new ElementAlreadyExistException("There is already a class with given name!");
         }
-        if (classroom.getClassType().equals("SES")){
+        if (classroom.getClassType().equals(ClassType.SESSION)){
             classroomRepository.addSessionClassroom(
                     classroom.getClassroomName(),
                     classroom.getNoStudent(),
-                    classroom.getClassType()
+                    ClassType.SESSION.name()
             );
-        } else if (classroom.getClassType().equals("SUB")) {
+        } else if (classroom.getClassType().equals("SUBJECT")) {
             classroomRepository.addSubjectClassroom(
                     classroom.getClassroomName(),
                     classroom.getNoStudent(),
-                    classroom.getClassType(),
+                    ClassType.SUBJECT,
                     classroom.getSubjectId());
         }
     }

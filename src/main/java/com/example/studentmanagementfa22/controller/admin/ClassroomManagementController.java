@@ -47,6 +47,7 @@ public class ClassroomManagementController {
             return "admin/classroomManagement/addNewClassroom";
         }
         try{
+            System.out.println("-----------------------"+classroom.getClassType());
             classroomService.addNewClassroom(classroom);
         } catch (ElementAlreadyExistException ex){
             //add subject list to model
