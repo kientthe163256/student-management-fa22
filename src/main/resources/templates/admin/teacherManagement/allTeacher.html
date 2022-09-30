@@ -7,18 +7,13 @@
 <body>
 <table border="1px">
     <tr>
-        <th>Code</th>
-        <th>Full Name</th>
-        <th>DOB</th>
+        <th>ID</th>
+        <th>Account ID</th>
         <th>Action</th>
     </tr>
-    <tr th:each="classroom : ${classroomList}">
-        <td th:text="*{classroom.classroomName}"></td>
-        <td th:text="*{classroom.currentNoStudent}"></td>
-        <td th:text="*{classroom.noStudent}"></td>
-        <td th:text="*{classroom.classType}"></td>
-        <td th:text="*{classroom.teacherName}"></td>
-        <td th:text="*{classroom.subjectName}"></td>
+    <tr th:each="teacher : ${teacherList}">
+        <td th:text="*{teacher.id}"></td>
+        <td th:text="*{teacher.accountId}"></td>
         <td>
             <a href="#">Assign</a>
             <a href="#">Update</a>
