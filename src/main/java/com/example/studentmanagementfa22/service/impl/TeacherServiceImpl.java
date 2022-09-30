@@ -54,5 +54,12 @@ public class TeacherServiceImpl implements TeacherService {
 //        return teacherPage.map(teacher -> mapper.mapTeacher(teacher));
 //    }
 
+    @Override
+    public Page<Teacher> findAllTeacherPaging(int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+        Page<Teacher> teacherPage = teacherRepository.findAll(pageRequest);
+        return teacherPage;
+    }
+
 
 }
