@@ -53,14 +53,14 @@
     $('[id=chooseSubjectTag]').hide();
 
     $(window ).load(function() {
-        let classType = $("#classTypeTag option:selected").text();
+        let classType = $("#classTypeTag option:selected").val();
         if (classType == "SUBJECT"){
             $('[id=chooseSubjectTag]').show();
         }
     });
         // Handle subject
         $("#classTypeTag").change(function(){
-            var value = $("#classTypeTag option:selected").text();
+            var value = $("#classTypeTag option:selected").val();
             if (value == "SUBJECT"){
                 $('[id=chooseSubjectTag]').show();
             }

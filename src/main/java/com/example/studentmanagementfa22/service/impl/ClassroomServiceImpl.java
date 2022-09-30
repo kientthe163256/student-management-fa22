@@ -41,7 +41,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             classroomRepository.addSubjectClassroom(
                     classroom.getClassroomName(),
                     classroom.getNoStudent(),
-                    ClassType.SUBJECT,
+                    ClassType.SUBJECT.name(),
                     classroom.getSubjectId());
         }
     }
