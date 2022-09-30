@@ -1,8 +1,8 @@
 package com.example.studentmanagementfa22.repository;
 
-import com.example.studentmanagementfa22.entity.ClassType;
 import com.example.studentmanagementfa22.entity.Classroom;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,6 +16,7 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     Classroom findById(int classId);
     @Query(value = "SELECT * FROM student_management_fa22.classroom ca\n" +
             "WHERE ca.current_no_student < ca.no_student\n" +
+            "AND class_type = 'SUBJECT'\n" +
             "AND ca.deleted = 0\n" +
             "AND ca.subject_id = ?1", nativeQuery = true)
     Page<Classroom> findAllAvailClassroom(Pageable pageable, @Param("subject_id") int subjectId);
@@ -49,4 +50,15 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type, subject_id) VALUES (?1, ?2, ?3, ?4)",
             nativeQuery = true)
     void addSubjectClassroom(String className, int noStudent, String classType, int subjectId);
+
+    @Query (value = "UPDATE classroom SET current_no_student = current_no_student + 1 where id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
+    void updateNoStudentOfClass(@Param("id") int classId);
+    @Query(value = "SELECT c.id, c.classroom_name, c.current_no_student, c.no_student, c.deleted,c.class_type, c.teacher_id, c.subject_id\n" +
+            "FROM student_management_fa22.classroom c\n" +
+            "INNER JOIN student_management_fa22.student_classroom sc\n" +
+            "ON c.id = sc.classroom_id\n" +
+            "WHERE student_id = ?1", nativeQuery = true)
+    Page<Classroom> findAllRegisteredClass(PageRequest pageRequest,@Param("student_id") int studentId);
 }

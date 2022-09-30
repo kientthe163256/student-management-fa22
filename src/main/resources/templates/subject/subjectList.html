@@ -16,7 +16,7 @@
         <td th:text="${subject.subjectName}"></td>
         <td th:text="${subject.numberOfCredit}"></td>
         <td>
-            <a th:href="@{/classroom/classroomList(subjectId=${subject.id})}">List of available classroom</a>
+            <a th:href="@{/student/classroom/classroomList(subjectId=${subject.id})}">List of available classroom</a>
         </td>
     </tr>
 </table>
