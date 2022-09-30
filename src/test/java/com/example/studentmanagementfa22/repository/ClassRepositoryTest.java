@@ -49,13 +49,15 @@ public class ClassRepositoryTest {
 
     @Test
     public void saveSessionClassroom(){
-        classroomRepository.addSessionClassroom("TE1616", 12, ClassType.SESSION);
-        Classroom classroom = classroomRepository.findByClassroomName("TE1611");
+        classroomRepository.addSessionClassroom("TE1616", 12, ClassType.SESSION.name());
+        Classroom classroom = classroomRepository.findByClassroomName("TE1616");
         Assert.notNull(classroom);
     }
 
     @Test
     public void getAllClassroom(){
+        ClassType classType = ClassType.SESSION;
+        System.out.println(classType.name());
         List<Classroom> classroomList = classroomRepository.findAll();
         Assert.notNull(classroomList);
     }
