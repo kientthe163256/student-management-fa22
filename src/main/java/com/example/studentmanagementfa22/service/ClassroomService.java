@@ -14,5 +14,5 @@ public interface ClassroomService {
 
     List<ClassroomDTO> getAllClassrooms();
 
-    Page<Classroom> getAllAvailClassroom (int pageNumber, int subjectId);
+    Page<ClassroomDTO> getAllAvailClassroom (int pageNumber, int subjectId);
 }

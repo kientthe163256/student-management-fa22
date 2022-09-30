@@ -1,5 +1,6 @@
 package com.example.studentmanagementfa22.controller;
 
+import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.repository.AccountRepository;
@@ -18,7 +19,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/classroom")
+@RequestMapping("student/classroom")
 public class ClassroomController {
 
     @Autowired
@@ -36,7 +37,7 @@ public class ClassroomController {
     @GetMapping("/classroomList")
     public String displayClassroom(Model model, @RequestParam(required = false, defaultValue = "1") int pageNumber,
                                    @RequestParam int subjectId ) {
-        Page<Classroom> classroomPage = classroomService.getAllAvailClassroom(pageNumber, subjectId);
+        Page<ClassroomDTO> classroomPage = classroomService.getAllAvailClassroom(pageNumber, subjectId);
         model.addAttribute("classroomList", classroomPage.getContent());
         model.addAttribute("pageNumber", pageNumber);
         model.addAttribute("totalPages", classroomPage.getTotalPages());
@@ -54,6 +55,7 @@ public class ClassroomController {
         Classroom classroom =  classroomRepo.findById(classId);
         if (classroomRepo.numOfSubjectClassbyStudent(classroom.getSubjectId(), account1.get().getId()) == 0) {
             classroomRepo.registerClassroom(account1.get().getId(), classId);
+            classroomRepo.updateNoStudentOfClass(classId);
         }
         return "redirect:/student/subjectList";
     }

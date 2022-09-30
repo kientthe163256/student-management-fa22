@@ -24,11 +24,6 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Autowired
     private Mapper mapper;
 
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private TeacherService teacherService;
 
     @Override
     public void addNewClassroom(Classroom classroom) throws ElementAlreadyExistException{
@@ -66,10 +61,11 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public Page<Classroom> getAllAvailClassroom (int pageNumber, int subjectID) {
+    public Page<ClassroomDTO> getAllAvailClassroom (int pageNumber, int subjectID) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllAvailClassroom(pageRequest, subjectID);
-        return classroomPage;
+        Page<ClassroomDTO> classroomDTOPage = classroomPage.map(classroom -> mapper.mapClassroom(classroom));
+        return classroomDTOPage;
     }
 
 

@@ -12,11 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     Classroom findByClassroomName(String classroomName);
-}
-
     Classroom findById(int classId);
     @Query(value = "SELECT * FROM student_management_fa22.classroom ca\n" +
             "WHERE ca.current_no_student < ca.no_student\n" +
+            "AND class_type = 'SUBJECT'\n" +
             "AND ca.deleted = 0\n" +
             "AND ca.subject_id = ?1", nativeQuery = true)
     Page<Classroom> findAllAvailClassroom(Pageable pageable, @Param("subject_id") int subjectId);
@@ -50,4 +49,10 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
             nativeQuery = true)
     @Modifying
     void addSubjectClassroom(String className, int noStudent, ClassType classType, int subjectId);
+
+    @Query (value = "UPDATE classroom SET current_no_student = current_no_student + 1 where id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
+    void updateNoStudentOfClass(@Param("id") int classId);
+
 }

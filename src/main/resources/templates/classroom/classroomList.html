@@ -16,10 +16,10 @@
     <tr th:each="class : ${classroomList}">
         <td th:text="*{class.classroomName}"></td>
         <td th:text="*{class.currentNoStudent}"></td>
-        <td th:text="*{class.maxNoStudent}"></td>
-        <td th:text="*{class.teacherId}"></td>
+        <td th:text="*{class.noStudent}"></td>
+        <td th:text="*{class.teacherName}"></td>
         <td>
-            <a th:href="@{/classroom/registerClassroom(classId=${class.id})}">Register</a>
+            <a th:href="@{/student/classroom/registerClassroom(classId=${class.id})}">Register</a>
         </td>
     </tr>
 </table>
