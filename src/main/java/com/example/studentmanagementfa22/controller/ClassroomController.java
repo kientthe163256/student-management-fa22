@@ -3,8 +3,10 @@ package com.example.studentmanagementfa22.controller;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
+import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
+import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,6 +35,8 @@ public class ClassroomController {
 
     @Autowired
     private AccountRepository accountRepo;
+    @Autowired
+    private StudentRepository studentRepo;
 
     @GetMapping("/classroomList")
     public String displayClassroom(Model model, @RequestParam(required = false, defaultValue = "1") int pageNumber,
@@ -53,10 +57,12 @@ public class ClassroomController {
             throw new NoSuchElementException("User is not found");
         }
         Classroom classroom =  classroomRepo.findById(classId);
-        if (classroomRepo.numOfSubjectClassbyStudent(classroom.getSubjectId(), account1.get().getId()) == 0) {
-            classroomRepo.registerClassroom(account1.get().getId(), classId);
+        Optional<Student> student = studentRepo.findStudentByAccountId(account1.get().getId());
+        if (classroomRepo.numOfSubjectClassbyStudent(classroom.getSubjectId(), student.get().getId() ) == 0 ) {
+            classroomRepo.registerClassroom(student.get().getId(), classId);
             classroomRepo.updateNoStudentOfClass(classId);
         }
         return "redirect:/student/subjectList";
     }
+
 }

@@ -1,8 +1,8 @@
 package com.example.studentmanagementfa22.repository;
 
-import com.example.studentmanagementfa22.entity.ClassType;
 import com.example.studentmanagementfa22.entity.Classroom;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -55,5 +55,10 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     @Modifying
     @Transactional
     void updateNoStudentOfClass(@Param("id") int classId);
-
+    @Query(value = "SELECT c.id, c.classroom_name, c.current_no_student, c.no_student, c.deleted,c.class_type, c.teacher_id, c.subject_id\n" +
+            "FROM student_management_fa22.classroom c\n" +
+            "INNER JOIN student_management_fa22.student_classroom sc\n" +
+            "ON c.id = sc.classroom_id\n" +
+            "WHERE student_id = ?1", nativeQuery = true)
+    Page<Classroom> findAllRegisteredClass(PageRequest pageRequest,@Param("student_id") int studentId);
 }
