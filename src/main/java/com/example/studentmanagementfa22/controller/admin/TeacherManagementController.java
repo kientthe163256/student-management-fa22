@@ -9,12 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/admin/teacher")
 public class TeacherManagementController {
     @Autowired
@@ -25,12 +22,9 @@ public class TeacherManagementController {
     }
 
     @GetMapping("/all")
-    public String viewTeacherList(Model model, @RequestParam(required = false, defaultValue = "1") int pageNumber){
+    public Page<Teacher> viewTeacherList(@RequestParam(required = false, defaultValue = "1") int pageNumber){
         Page<Teacher> teacherDTOPage = teacherService.findAllTeacherPaging(pageNumber);
-        model.addAttribute("teacherList", teacherDTOPage.getContent());
-        model.addAttribute("pageNumber", pageNumber);
-        model.addAttribute("totalPages", teacherDTOPage.getTotalPages());
-        return "admin/teacherManagement/allTeacher";
+        return teacherDTOPage;
     }
 
 }

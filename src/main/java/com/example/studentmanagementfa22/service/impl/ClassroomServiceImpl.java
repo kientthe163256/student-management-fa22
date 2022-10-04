@@ -42,7 +42,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                     classroom.getNoStudent(),
                     ClassType.SESSION.name()
             );
-        } else if (classroom.getClassType().equals("SUBJECT")) {
+        } else if (classroom.getClassType().equals(ClassType.SUBJECT)) {
             classroomRepository.addSubjectClassroom(
                     classroom.getClassroomName(),
                     classroom.getNoStudent(),
