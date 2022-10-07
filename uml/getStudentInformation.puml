@@ -1,0 +1,46 @@
+@startuml
+' List all participant to guarantee the order
+Actor Student
+participant SecurityConfig
+participant CustomSuccessHandler
+participant StudentController
+database MySQL
+participant Mapper
+participant StudentRepository
+autonumber 1.0
+User -> SecurityConfig: login account
+
+activate User
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> User: redirect login
+end
+
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+
+activate StudentController
+activate CustomSuccessHandler
+
+CustomSuccessHandler -> StudentController: dispatch user account
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+StudentController -> StudentRepository: get student by account id
+StudentRepository -> MySQL: select
+activate MySQL
+
+MySQL --> StudentRepository: return response
+deactivate MySQL
+StudentRepository --> StudentController: return student
+StudentController -> Mapper: map to dto
+activate Mapper
+
+Mapper --> StudentController: return student dto
+
+autonumber 3.0
+StudentController --> User: return student dto
+
+@enduml
