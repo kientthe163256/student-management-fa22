@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -38,4 +39,13 @@ public class Classroom {
     private Integer subjectId;
 
     private boolean deleted;
+
+    @Column(name = "create_date")
+    private Date createDate;
+
+    @Column(name = "modify_date")
+    private Date modifyDate;
+
+    @Column(name = "delete_date")
+    private Date deleteDate;
 }

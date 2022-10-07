@@ -33,16 +33,16 @@ public class ClassroomManagementController {
     private SubjectService subjectService;
 
     @PostMapping("/add")
-    public ResponseEntity handleAddClassroom(@Valid Classroom classroom, BindingResult bindingResult, Model model){
+    public ResponseEntity<?> handleAddClassroom(@Valid Classroom classroom, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors()){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Check your request", HttpStatus.BAD_REQUEST);
         }
         try{
             classroomService.addNewClassroom(classroom);
         } catch (ElementAlreadyExistException ex){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Classname existed", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity(classroom, HttpStatus.CREATED);
     }
 
     @GetMapping("/all")

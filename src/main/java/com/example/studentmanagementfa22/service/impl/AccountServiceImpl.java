@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.entity.Account;
+import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
@@ -9,6 +10,8 @@ import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
 import com.example.studentmanagementfa22.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -18,10 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,6 +81,9 @@ public class AccountServiceImpl implements AccountService {
         account.setEnabled(true);
         account.setRoleId(roleService.findByRoleName("ROLE_STUDENT").getId());
         account.setPassword(passwordEncoder.encode(account.getPassword()));
+        Date today = new Date();
+        account.setCreateDate(today);
+        account.setModifyDate(today);
         accountRepository.save(account);
     }
 
@@ -93,5 +96,11 @@ public class AccountServiceImpl implements AccountService {
         Account account = optionalAccount.get();
         return account;
 
+    }
+
+    @Override
+    public Page<Account> findAllAccount(int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+        return accountRepository.findAll(pageRequest);
     }
 }
