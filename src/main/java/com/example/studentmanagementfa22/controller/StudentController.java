@@ -12,18 +12,15 @@ import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.utility.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequestMapping("/student")
 public class StudentController {
     @Autowired
@@ -46,33 +43,29 @@ public class StudentController {
     }
 
     @GetMapping("/information")
-    public String displayInformation( Model model) {
+    public ResponseEntity<StudentDTO> displayInformation() {
         Account account = (Account) session.getAttribute("account");
         Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
         Student student1 = student.get();
         Mapper utility = new Mapper();
         StudentDTO studentDTO = utility.mapAccount(account);
         studentDTO.setAcademicSession(student1.getAcademicSession());
-        model.addAttribute("student",studentDTO);
-        return "student/viewStudentInformation";
+        return ResponseEntity.ok(studentDTO);
     }
     @GetMapping("/subjectList")
-    public String displaySubject( Model model, @RequestParam(required = false, defaultValue = "1") int pageNumber) {
+    public Page<Subject> displaySubject( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
         Page<Subject> subjectPage = subjectService.getAllSubject(pageNumber);
-        model.addAttribute("subjectList", subjectPage.getContent());
-        model.addAttribute("pageNumber", pageNumber);
-        model.addAttribute("totalPages", subjectPage.getTotalPages());
-        return "subject/subjectList";
+        return subjectPage;
     }
     @PostMapping("/information")
-    public String editInformation(@Valid StudentDTO student) {
+    public ResponseEntity<?> editInformation(@Valid StudentDTO student) {
         Account account = (Account) session.getAttribute("account");
         account.setFirstName(student.getFirstName());
         account.setLastName(student.getLastName());
         account.setDob(student.getDob());
         accountRepo.save(account);
         session.setAttribute("account",account);
-        return "redirect:/student/information";
+        return new ResponseEntity<>(account, HttpStatus.OK);
     }
     @GetMapping("/subjectRegistered")
     public String displaySubjectRegistered (Model model, @RequestParam(required = false, defaultValue = "1") int pageNumber) {

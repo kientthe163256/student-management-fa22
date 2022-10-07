@@ -2,7 +2,6 @@ package com.example.studentmanagementfa22.controller;
 
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
-import com.example.studentmanagementfa22.exception.ErrorResponse;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
 import com.example.studentmanagementfa22.service.StudentService;
@@ -11,11 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 
@@ -54,7 +50,7 @@ public class AccountController {
     public ResponseEntity<?> addNewTeacher(@Valid Account account, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String date = formatter.format(account.getDob());
+          //  String date = formatter.format(account.getDob());
             return new ResponseEntity<>("Please check your request!", HttpStatus.BAD_REQUEST);
         }
         try{
