@@ -68,13 +68,10 @@ public class StudentController {
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
     @GetMapping("/subjectRegistered")
-    public String displaySubjectRegistered (Model model, @RequestParam(required = false, defaultValue = "1") int pageNumber) {
+    public Page<ClassroomDTO> displaySubjectRegistered ( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
         Account account = (Account) session.getAttribute("account");
         Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
         Page<ClassroomDTO> classroomDTOPage = classroomService.getAllRegisteredClass(pageNumber, student.get().getId());
-        model.addAttribute("classroomList", classroomDTOPage.getContent());
-        model.addAttribute("pageNumber", pageNumber);
-        model.addAttribute("totalPages", classroomDTOPage.getTotalPages());
-        return "student/subjectRegisteredList";
+        return classroomDTOPage;
     }
 }

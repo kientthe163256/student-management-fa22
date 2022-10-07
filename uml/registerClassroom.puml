@@ -1,0 +1,53 @@
+@startuml
+Actor Student
+participant SecurityConfig
+participant CustomSuccessHandler
+participant ClassroomController
+database MySQL
+participant ClassroomRepository
+participant StudentRepository
+
+autonumber 1.0
+Student -> SecurityConfig: login account
+
+activate Student
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Student: redirect login
+end
+
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+
+activate ClassroomController
+activate CustomSuccessHandler
+
+CustomSuccessHandler -> ClassroomController: dispatch user account
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+ClassroomController -> ClassroomRepository: find classroom by class id
+ClassroomRepository -> MySQL: Select
+MySQL --> ClassroomRepository: return response
+ClassroomRepository --> ClassroomController: return classroom
+autonumber 3.0
+
+ClassroomController -> StudentRepository: find student by account id
+StudentRepository -> MySQL: Select
+MySQL --> StudentRepository: return response
+StudentRepository --> ClassroomController: return student
+
+autonumber 4.0
+alt Student have not registered this subject
+    ClassroomController -> ClassroomRepository: register classroom
+    ClassroomRepository ->MySQL: Update
+    ClassroomRepository --> ClassroomController: return success message
+autonumber 4.1
+else Student have registered this subject
+    ClassroomController ->ClassroomController: return error message
+end
+
+
+@enduml
