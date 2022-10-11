@@ -1,9 +1,8 @@
 package com.example.studentmanagementfa22.service.impl;
 
+import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Role;
-import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.AccountService;
@@ -102,5 +101,13 @@ public class AccountServiceImpl implements AccountService {
     public Page<Account> findAllAccount(int pageNumber) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         return accountRepository.findAll(pageRequest);
+    }
+
+    @Override
+    public void editInformation(Account account,StudentDTO student) {
+        account.setFirstName(student.getFirstName());
+        account.setLastName(student.getLastName());
+        account.setDob(student.getDob());
+        accountRepository.save(account);
     }
 }
