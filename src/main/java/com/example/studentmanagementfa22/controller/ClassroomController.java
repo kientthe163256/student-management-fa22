@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
@@ -44,7 +42,7 @@ public class ClassroomController {
         return classroomPage;
     }
 
-    @GetMapping("/registerClassroom")
+    @PostMapping("/registerClassroom")
     public ResponseEntity<?> registerClassroom(@RequestParam int classId ) {
         Account account = (Account) session.getAttribute("account");
         Optional<Account> account1 = accountRepo.findById(account.getId());
