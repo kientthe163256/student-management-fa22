@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -26,8 +28,11 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void addTeacherWithNewAccount(Account account) {
+        Date today = new Date();
         Teacher teacher = Teacher.builder()
                 .accountId(account.getId())
+                .createDate(today)
+                .modifyDate(today)
                 .build();
         teacherRepository.save(teacher);
     }

@@ -5,6 +5,7 @@ import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -44,6 +45,12 @@ public class AccountServiceTest {
         } catch (ElementAlreadyExistException e) {
             System.out.println(e.getMessage());;
         }
+    }
+
+    @Test
+    public void findAll(){
+        Page<Account> accountPage = accountService.findAllAccount(1);
+        assertThat(accountPage).isNotNull();
     }
 
 }

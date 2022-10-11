@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -31,4 +32,13 @@ public class Student {
     private List<Classroom> classrooms;
 
     private boolean deleted;
+
+    @Column(name = "create_date")
+    private Date createDate;
+
+    @Column(name = "modify_date")
+    private Date modifyDate;
+
+    @Column(name = "delete_date")
+    private Date deleteDate;
 }

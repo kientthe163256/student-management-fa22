@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .antMatchers("/teacher/**").hasRole("TEACHER")
                         .antMatchers("/admin/**").hasRole("ADMIN")
                         .antMatchers("/register/**", "/").permitAll()
+//                                .antMatchers("/**").permitAll()
                 )
                 .csrf().disable()
                 .cors().disable()
