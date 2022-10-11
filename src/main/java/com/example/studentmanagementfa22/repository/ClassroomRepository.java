@@ -18,26 +18,26 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
             "WHERE ca.current_no_student < ca.no_student\n" +
             "AND class_type = 'SUBJECT'\n" +
             "AND ca.deleted = 0\n" +
-            "AND ca.subject_id = ?1", nativeQuery = true)
+            "AND ca.subject_id = :subject_id", nativeQuery = true)
     Page<Classroom> findAllAvailClassroom(Pageable pageable, @Param("subject_id") int subjectId);
 
     @Query(value = "INSERT INTO `student_management_fa22`.`student_classroom`\n" +
             "(`student_id`,\n" +
             "`classroom_id`)\n" +
             "VALUES\n" +
-            "(?1,\n" +
-            "?2)", nativeQuery = true)
+            "(:student_id,\n" +
+            ":classsroom_id)", nativeQuery = true)
     @Modifying
     @Transactional
-    void registerClassroom(int studentId, int classroomId);
+    void registerClassroom(@Param("student_id") int studentId, @Param("classsroom_id") int classroomId);
 
     @Query(value = "SELECT COUNT(student_id) FROM student_management_fa22.student_classroom sc\n" +
             "INNER JOIN student_management_fa22.classroom c\n" +
             "ON c.id = sc.classroom_id\n" +
             "INNER JOIN student_management_fa22.subject sub\n" +
             "ON c.subject_id = sub.id\n" +
-            "WHERE sub.id = ?1\n" +
-            "AND sc.student_id =?2", nativeQuery = true)
+            "WHERE sub.id = :subject_id\n" +
+            "AND sc.student_id = :student_id", nativeQuery = true)
     Integer numOfSubjectClassbyStudent (@Param("subject_id") int subjectId, @Param("student_id") int studentId);
 
     @Modifying
@@ -59,6 +59,6 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
             "FROM student_management_fa22.classroom c\n" +
             "INNER JOIN student_management_fa22.student_classroom sc\n" +
             "ON c.id = sc.classroom_id\n" +
-            "WHERE student_id = ?1", nativeQuery = true)
+            "WHERE student_id = :student_id", nativeQuery = true)
     Page<Classroom> findAllRegisteredClass(PageRequest pageRequest,@Param("student_id") int studentId);
 }

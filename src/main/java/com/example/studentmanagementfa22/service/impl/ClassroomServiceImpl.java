@@ -3,8 +3,10 @@ package com.example.studentmanagementfa22.service.impl;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.ClassType;
 import com.example.studentmanagementfa22.entity.Classroom;
+import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
+import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.TeacherService;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +25,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Autowired
     private ClassroomRepository classroomRepository;
 
+    @Autowired
+    private StudentRepository studentRepository;
     @Autowired
     private Mapper mapper;
 
@@ -83,10 +88,29 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    public void registerClassroom(int classId, int accountId) throws Exception {
+        Classroom classroom =  classroomRepository.findById(classId);
+        Optional<Student> student = studentRepository.findStudentByAccountId(accountId);
+        if (student.isEmpty()) {
+            throw new Exception("User is not found");
+        }
+        if (classroomRepository.numOfSubjectClassbyStudent(classroom.getSubjectId(), student.get().getId() ) == 0 ) {
+            classroomRepository.registerClassroom(student.get().getId(), classId);
+            classroomRepository.updateNoStudentOfClass(classId);
+        }
+        else {
+            throw new Exception ("You have already registered for this subject");
+        }
+
+    }
+
+    @Override
     public Page<ClassroomDTO> getAllClassroomsPaging(int pageNumber) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAll(pageRequest);
         return classroomPage.map(classroom -> mapper.mapClassroom(classroom));
     }
+
+
 
 }
