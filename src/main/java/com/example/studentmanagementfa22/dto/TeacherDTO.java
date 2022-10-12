@@ -1,5 +1,6 @@
 package com.example.studentmanagementfa22.dto;
 
+import com.example.studentmanagementfa22.entity.Account;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +13,6 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class TeacherDTO {
-    private String username;
-
-    private String firstName;
-
-    private String lastName;
-
-    private Date dob;
+    private Integer id;
+    private AccountDTO account;
 }

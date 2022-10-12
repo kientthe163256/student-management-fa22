@@ -6,8 +6,11 @@ import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.utility.IGenericMapper;
 import com.example.studentmanagementfa22.utility.Mapper;
+import com.example.studentmanagementfa22.utility.TeacherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -23,8 +26,8 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private TeacherRepository teacherRepository;
 
-//    @Autowired
-//    private Mapper mapper;
+    @Autowired
+    private IGenericMapper<Teacher, TeacherDTO> mapper;
 
     @Override
     public void addTeacherWithNewAccount(Account account) {
@@ -52,19 +55,21 @@ public class TeacherServiceImpl implements TeacherService {
         return teacher;
     }
 
-//    @Override
-//    public Page<TeacherDTO> findAllTeacherPaging(int pageNumber) {
-//        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
-//        Page<Teacher> teacherPage = teacherRepository.findAll(pageRequest);
-//        return teacherPage.map(teacher -> mapper.mapTeacher(teacher));
-//    }
-
     @Override
-    public Page<Teacher> findAllTeacherPaging(int pageNumber) {
+    public Page<TeacherDTO> findAllTeacherPaging(int pageNumber) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         Page<Teacher> teacherPage = teacherRepository.findAll(pageRequest);
-        return teacherPage;
+        return teacherPage.map(teacher -> (TeacherDTO) mapper.toDTO(teacher));
     }
 
-
+    @Override
+    public TeacherDTO getTeacherDTOById(int teacherId) {
+        Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);
+        if (optionalTeacher.isPresent()){
+            Teacher teacher = optionalTeacher.get();
+            TeacherDTO teacherDTO = mapper.toDTO(teacher);
+            return teacherDTO;
+        }
+        return null;
+    }
 }

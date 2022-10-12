@@ -14,6 +14,7 @@ public interface TeacherService {
 
     Teacher findById(int id);
 
-//    Page<TeacherDTO> findAllTeacherPaging(int pageNumber);
-    Page<Teacher> findAllTeacherPaging(int pageNumber);
+    Page<TeacherDTO> findAllTeacherPaging(int pageNumber);
+
+    TeacherDTO getTeacherDTOById(int teacherId);
 }

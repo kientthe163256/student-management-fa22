@@ -1,10 +1,9 @@
 package com.example.studentmanagementfa22.dto;
 
 import com.example.studentmanagementfa22.entity.ClassType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.studentmanagementfa22.entity.Subject;
+import com.example.studentmanagementfa22.entity.Teacher;
+import lombok.*;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,4 +32,8 @@ public class ClassroomDTO {
     private String subjectName;
 
     private Integer subjectId;
+
+    private Teacher teacher;
+
+    private Subject subject;
 }

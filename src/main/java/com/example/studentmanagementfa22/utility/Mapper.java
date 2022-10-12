@@ -39,7 +39,7 @@ public class Mapper {
         } else {
             Teacher teacher = teacherService.findById(classroom.getTeacherId());
             TeacherDTO teacherDTO = mapTeacher(teacher);
-            classroomDTO.setTeacherName(teacherDTO.getFirstName() + ' ' + teacherDTO.getLastName());
+            classroomDTO.setTeacherName(teacherDTO.getAccount().getFirstName() + ' ' + teacherDTO.getAccount().getLastName());
         }
         if (classroom.getSubjectId() == null) {
             classroomDTO.setSubjectName("None");

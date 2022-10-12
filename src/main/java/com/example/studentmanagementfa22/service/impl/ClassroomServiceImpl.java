@@ -8,7 +8,9 @@ import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.utility.ClassroomMapper;
 import com.example.studentmanagementfa22.utility.Mapper;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +32,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private ClassroomMapper classroomMapper;
 
     @Override
     public void addNewClassroom(Classroom classroom) throws ElementAlreadyExistException{
@@ -86,7 +91,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public Page<ClassroomDTO> getAllClassroomsPaging(int pageNumber) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAll(pageRequest);
-        return classroomPage.map(classroom -> mapper.mapClassroom(classroom));
+        return classroomPage.map(classroom -> classroomMapper.toDTO(classroom));
     }
 
 }

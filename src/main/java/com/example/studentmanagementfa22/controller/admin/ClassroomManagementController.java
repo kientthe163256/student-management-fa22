@@ -32,8 +32,8 @@ public class ClassroomManagementController {
     @Autowired
     private SubjectService subjectService;
 
-    @PostMapping("/add")
-    public ResponseEntity<?> handleAddClassroom(@Valid Classroom classroom, BindingResult bindingResult, Model model){
+    @PostMapping()
+    public ResponseEntity<?> addNewClassroom(@Valid Classroom classroom, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors()){
             return new ResponseEntity("Check your request", HttpStatus.BAD_REQUEST);
         }
@@ -45,12 +45,13 @@ public class ClassroomManagementController {
         return new ResponseEntity(classroom, HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
-    public Page<ClassroomDTO> displayAllClassrooms(@RequestParam(required = false, defaultValue = "1") int pageNumber){
-//        try{
-//            int page = Integer.parseInt(pageNumber);
-//        }
+    @GetMapping()
+    public ResponseEntity<?> displayAllClassrooms(@RequestParam(required = false, defaultValue = "1") int pageNumber){
+        if (pageNumber <= 0) {
+            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
+        }
         Page<ClassroomDTO> classroomPage = classroomService.getAllClassroomsPaging(pageNumber);
-        return classroomPage;
+        List<ClassroomDTO> classroomDTOList = classroomPage.getContent();
+        return ResponseEntity.ok(classroomDTOList);
     }
 }
