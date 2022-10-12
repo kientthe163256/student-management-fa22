@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
+import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import org.springframework.data.domain.Page;
@@ -22,4 +23,6 @@ public interface AccountService extends UserDetailsService {
     Page<Account> findAllAccount(int pageNumber);
 
     AccountDTO getAccountDTOById(int accountId);
+
+    void editInformation(Account account, StudentDTO student);
 }

@@ -1,6 +1,6 @@
 @startuml
 ' List all participant to guarantee the order
-Actor Student
+Actor User
 participant SecurityConfig
 participant CustomSuccessHandler
 participant StudentController

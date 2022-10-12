@@ -19,4 +19,6 @@ public interface ClassroomService {
     Page<ClassroomDTO> getAllClassroomsPaging(int pageNumber);
 
     Page<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId);
+
+    void registerClassroom(int classId, int accountId) throws Exception;
 }

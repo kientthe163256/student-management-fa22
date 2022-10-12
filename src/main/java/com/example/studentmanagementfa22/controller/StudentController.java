@@ -5,8 +5,8 @@ import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.entity.Subject;
-import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
+import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.utility.Mapper;
@@ -14,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -27,7 +29,7 @@ public class StudentController {
     private StudentRepository studentRepo;
 
     @Autowired
-    private AccountRepository accountRepo;
+    private AccountService accountService;
 
     @Autowired
     private SubjectService subjectService;
@@ -57,14 +59,18 @@ public class StudentController {
         Page<Subject> subjectPage = subjectService.getAllSubject(pageNumber);
         return subjectPage;
     }
-    @PostMapping("/information")
-    public ResponseEntity<?> editInformation(@Valid StudentDTO student) {
+    @PutMapping("/information")
+    public ResponseEntity<?> editInformation(@Valid StudentDTO student, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()){
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            StringBuilder errorMessages = new StringBuilder();
+            for (FieldError error : errors ) {
+                errorMessages.append(error.getDefaultMessage()).append("\n");
+            }
+            return new ResponseEntity(errorMessages.toString(), HttpStatus.BAD_REQUEST);
+        }
         Account account = (Account) session.getAttribute("account");
-        account.setFirstName(student.getFirstName());
-        account.setLastName(student.getLastName());
-        account.setDob(student.getDob());
-        accountRepo.save(account);
-        session.setAttribute("account",account);
+        accountService.editInformation(account, student);
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
     @GetMapping("/subjectRegistered")

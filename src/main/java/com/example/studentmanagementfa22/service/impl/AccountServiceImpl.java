@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
+import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Role;
@@ -10,7 +11,6 @@ import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
 import com.example.studentmanagementfa22.service.StudentService;
-import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -113,5 +113,13 @@ public class AccountServiceImpl implements AccountService {
     public AccountDTO getAccountDTOById(int accountId) {
         Account account = findById(accountId);
         return mapper.toDTO(account);
+    }
+
+    @Override
+    public void editInformation(Account account,StudentDTO student) {
+        account.setFirstName(student.getFirstName());
+        account.setLastName(student.getLastName());
+        account.setDob(student.getDob());
+        accountRepository.save(account);
     }
 }
