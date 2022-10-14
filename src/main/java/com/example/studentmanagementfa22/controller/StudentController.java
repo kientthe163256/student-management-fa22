@@ -48,6 +48,9 @@ public class StudentController {
     public ResponseEntity<StudentDTO> displayInformation() {
         Account account = (Account) session.getAttribute("account");
         Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
+        if (student.isEmpty()) {
+            return new ResponseEntity("user not found", HttpStatus.BAD_REQUEST);
+        }
         Student student1 = student.get();
         Mapper utility = new Mapper();
         StudentDTO studentDTO = utility.mapAccount(account);
@@ -74,10 +77,20 @@ public class StudentController {
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
     @GetMapping("/subjectRegistered")
-    public Page<ClassroomDTO> displaySubjectRegistered ( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
+    public ResponseEntity<?> displaySubjectRegistered ( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
+        if (pageNumber <= 0) {
+            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
+        }
         Account account = (Account) session.getAttribute("account");
         Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
+        if (student.isEmpty()) {
+            return new ResponseEntity("user not found", HttpStatus.BAD_REQUEST);
+        }
         Page<ClassroomDTO> classroomDTOPage = classroomService.getAllRegisteredClass(pageNumber, student.get().getId());
-        return classroomDTOPage;
+        if (classroomDTOPage.getTotalPages() < pageNumber) {
+            return new ResponseEntity<>("The last page is "+classroomDTOPage.getTotalPages(), HttpStatus.BAD_REQUEST);
+        }
+        List<ClassroomDTO> classroomDTOList = classroomDTOPage.getContent();
+        return ResponseEntity.ok(classroomDTOList);
     }
 }

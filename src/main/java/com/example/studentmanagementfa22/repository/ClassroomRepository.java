@@ -14,11 +14,11 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     Classroom findByClassroomName(String classroomName);
 
     Classroom findById(int classId);
-    @Query(value = "SELECT * FROM student_management_fa22.classroom ca\n" +
-            "WHERE ca.current_no_student < ca.no_student\n" +
+    @Query(value = "SELECT * FROM student_management_fa22.classroom \n" +
+            "WHERE current_no_student < no_student\n" +
             "AND class_type = 'SUBJECT'\n" +
-            "AND ca.deleted = 0\n" +
-            "AND ca.subject_id = :subject_id", nativeQuery = true)
+            "AND deleted = 0\n" +
+            "AND subject_id = :subject_id", nativeQuery = true)
     Page<Classroom> findAllAvailClassroom(Pageable pageable, @Param("subject_id") int subjectId);
 
     @Query(value = "INSERT INTO `student_management_fa22`.`student_classroom`\n" +
@@ -55,10 +55,10 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     @Modifying
     @Transactional
     void updateNoStudentOfClass(@Param("id") int classId);
-    @Query(value = "SELECT c.id, c.classroom_name, c.current_no_student, c.no_student, c.deleted,c.class_type, c.teacher_id, c.subject_id\n" +
-            "FROM student_management_fa22.classroom c\n" +
-            "INNER JOIN student_management_fa22.student_classroom sc\n" +
-            "ON c.id = sc.classroom_id\n" +
+    @Query(value = "SELECT id, classroom_name, current_no_student, no_student, deleted,class_type, teacher_id, subject_id, create_date, modify_date, delete_date\n" +
+            "FROM student_management_fa22.classroom \n" +
+            "INNER JOIN student_management_fa22.student_classroom \n" +
+            "ON classroom.id = student_classroom.classroom_id\n" +
             "WHERE student_id = :student_id", nativeQuery = true)
-    Page<Classroom> findAllRegisteredClass(PageRequest pageRequest,@Param("student_id") int studentId);
+    Page<Classroom> findAllRegisteredClass(Pageable pageable,@Param("student_id") int studentId);
 }

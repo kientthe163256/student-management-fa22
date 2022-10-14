@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 @RequestMapping("student/classroom")
@@ -21,9 +22,17 @@ public class ClassroomController {
     private HttpSession session;
 
     @GetMapping("/classroomList")
-    public Page<ClassroomDTO> displayClassroom( @RequestParam(required = false, defaultValue = "1") int pageNumber,
+    public ResponseEntity<?> displayClassroom( @RequestParam(required = false, defaultValue = "1") int pageNumber,
                                                @RequestParam int subjectId ) {
-        return classroomService.getAllAvailClassroom(pageNumber, subjectId);
+        if (pageNumber <= 0) {
+            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
+        }
+        Page<ClassroomDTO> classroomPage = classroomService.getAllAvailClassroom(pageNumber, subjectId);
+        if (classroomPage.getTotalPages() < pageNumber) {
+            return new ResponseEntity<>("The last page is "+classroomPage.getTotalPages(), HttpStatus.BAD_REQUEST);
+        }
+        List<ClassroomDTO> classroomDTOList = classroomPage.getContent();
+        return ResponseEntity.ok(classroomDTOList);
     }
 
     @PostMapping("/registerClassroom")

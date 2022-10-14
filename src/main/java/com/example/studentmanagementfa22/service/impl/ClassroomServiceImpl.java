@@ -1,9 +1,11 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.ClassType;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Student;
+import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
@@ -11,12 +13,15 @@ import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.ClassroomMapper;
+import com.example.studentmanagementfa22.utility.IGenericMapper;
 import com.example.studentmanagementfa22.utility.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +44,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     private TeacherService teacherService;
 
     @Autowired
-    private ClassroomMapper classroomMapper;
+    private IGenericMapper<Classroom, ClassroomDTO> classroomMapper;
 
     @Override
     public void addNewClassroom(Classroom classroom) throws ElementAlreadyExistException{
@@ -93,6 +98,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    @Transactional (isolation = Isolation.SERIALIZABLE)
     public void registerClassroom(int classId, int accountId) throws Exception {
         Classroom classroom =  classroomRepository.findById(classId);
         Optional<Student> student = studentRepository.findStudentByAccountId(accountId);
