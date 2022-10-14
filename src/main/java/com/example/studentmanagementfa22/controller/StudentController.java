@@ -58,9 +58,10 @@ public class StudentController {
         return ResponseEntity.ok(studentDTO);
     }
     @GetMapping("/subjectList")
-    public Page<Subject> displaySubject( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
+    public ResponseEntity<?> displaySubject( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
         Page<Subject> subjectPage = subjectService.getAllSubject(pageNumber);
-        return subjectPage;
+        List<Subject> subjectList = subjectPage.getContent();
+        return ResponseEntity.ok(subjectList);
     }
     @PutMapping("/information")
     public ResponseEntity<?> editInformation(@Valid StudentDTO student, BindingResult bindingResult) {
@@ -78,9 +79,6 @@ public class StudentController {
     }
     @GetMapping("/subjectRegistered")
     public ResponseEntity<?> displaySubjectRegistered ( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
-        if (pageNumber <= 0) {
-            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
-        }
         Account account = (Account) session.getAttribute("account");
         Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
         if (student.isEmpty()) {
@@ -89,6 +87,9 @@ public class StudentController {
         Page<ClassroomDTO> classroomDTOPage = classroomService.getAllRegisteredClass(pageNumber, student.get().getId());
         if (classroomDTOPage.getTotalPages() < pageNumber) {
             return new ResponseEntity<>("The last page is "+classroomDTOPage.getTotalPages(), HttpStatus.BAD_REQUEST);
+        }
+        if (pageNumber <= 0) {
+            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
         }
         List<ClassroomDTO> classroomDTOList = classroomDTOPage.getContent();
         return ResponseEntity.ok(classroomDTOList);

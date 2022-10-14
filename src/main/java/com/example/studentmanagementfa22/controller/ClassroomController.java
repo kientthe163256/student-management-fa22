@@ -24,12 +24,12 @@ public class ClassroomController {
     @GetMapping("/classroomList")
     public ResponseEntity<?> displayClassroom( @RequestParam(required = false, defaultValue = "1") int pageNumber,
                                                @RequestParam int subjectId ) {
-        if (pageNumber <= 0) {
-            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
-        }
         Page<ClassroomDTO> classroomPage = classroomService.getAllAvailClassroom(pageNumber, subjectId);
         if (classroomPage.getTotalPages() < pageNumber) {
             return new ResponseEntity<>("The last page is "+classroomPage.getTotalPages(), HttpStatus.BAD_REQUEST);
+        }
+        if (pageNumber <= 0) {
+            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
         }
         List<ClassroomDTO> classroomDTOList = classroomPage.getContent();
         return ResponseEntity.ok(classroomDTOList);

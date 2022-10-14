@@ -4,6 +4,7 @@ import com.example.studentmanagementfa22.StudentManagementFa22Application;
 import com.example.studentmanagementfa22.entity.Subject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,8 @@ public class SubjectServiceTest {
     @Test
     public void getAllSubject() {
         Page<Subject> subjectPage = subjectService.getAllSubject(1);
+        Assert.notNull(subjectPage);
     }
+
 
 }

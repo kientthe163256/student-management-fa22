@@ -1,21 +1,16 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
-import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.ClassType;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Student;
-import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.TeacherService;
-import com.example.studentmanagementfa22.utility.ClassroomMapper;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
-import com.example.studentmanagementfa22.utility.Mapper;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,14 +29,6 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Autowired
     private StudentRepository studentRepository;
-    @Autowired
-    private Mapper mapper;
-
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private TeacherService teacherService;
 
     @Autowired
     private IGenericMapper<Classroom, ClassroomDTO> classroomMapper;
@@ -77,7 +64,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         List<Classroom> classrooms = classroomRepository.findAll();
         return classrooms
                 .stream()
-                .map(classroom -> mapper.mapClassroom(classroom))
+                .map(classroom -> classroomMapper.toDTO(classroom))
                 .collect(Collectors.toList());
     }
 
@@ -85,16 +72,14 @@ public class ClassroomServiceImpl implements ClassroomService {
     public Page<ClassroomDTO> getAllAvailClassroom (int pageNumber, int subjectID) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllAvailClassroom(pageRequest, subjectID);
-        Page<ClassroomDTO> classroomDTOPage = classroomPage.map(classroom -> mapper.mapClassroom(classroom));
-        return classroomDTOPage;
+        return classroomPage.map(classroom -> classroomMapper.toDTO(classroom));
     }
 
     @Override
     public Page<ClassroomDTO> getAllRegisteredClass (int pageNumber, int studentId) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllRegisteredClass(pageRequest, studentId);
-        Page<ClassroomDTO> classroomDTOPage = classroomPage.map(classroom -> mapper.mapClassroom(classroom));
-        return classroomDTOPage;
+        return classroomPage.map(classroom -> classroomMapper.toDTO(classroom));
     }
 
     @Override

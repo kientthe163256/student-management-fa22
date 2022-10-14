@@ -38,10 +38,10 @@ ClassroomController -> StudentRepository: find student by account id
 StudentRepository -> MySQL: Select
 MySQL --> StudentRepository: return response
 StudentRepository --> ClassroomController: return student
-
+ ClassroomController -> ClassroomRepository: register classroom
 autonumber 4.0
 alt Student have not registered this subject
-    ClassroomController -> ClassroomRepository: register classroom
+
     ClassroomRepository ->MySQL: Update
     ClassroomRepository --> ClassroomController: return success message
 autonumber 4.1

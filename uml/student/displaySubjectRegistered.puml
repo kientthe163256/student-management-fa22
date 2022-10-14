@@ -1,0 +1,55 @@
+@startuml
+Actor Student
+participant SecurityConfig
+participant CustomSuccessHandler
+participant StudentController
+participant StudentRepository
+participant ClassroomService
+participant ClassroomRepository
+participant IGenericMapper
+database MySQL
+
+autonumber 1.0
+Student -> SecurityConfig: login account
+
+activate Student
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Student: redirect login
+end
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+
+activate StudentController
+activate CustomSuccessHandler
+
+CustomSuccessHandler -> StudentController: dispatch user account
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+StudentController -> StudentRepository: get student by account id
+activate StudentRepository
+StudentRepository --> StudentController: return student
+deactivate StudentRepository
+break student does not exist
+StudentController --> StudentController: return error message
+end
+
+StudentController -> ClassroomService: get list of registered classroom
+break invalid pagenumber
+StudentController --> StudentController: return error message
+end
+ClassroomService -> ClassroomRepository: get page of registered classroom
+ClassroomRepository -> MySQL: SELECT
+MySQL --> ClassroomRepository: return response
+ClassroomRepository --> ClassroomService: return registered classroom
+ClassroomService -> IGenericMapper: map to DTO
+IGenericMapper --> ClassroomService: return classroomDTO
+
+autonumber 3.0
+ClassroomService --> StudentController: return classroomDTO
+StudentController --> Student: return list of classroomDTO
+
+@enduml
