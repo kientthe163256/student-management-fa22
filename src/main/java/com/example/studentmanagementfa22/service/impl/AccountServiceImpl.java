@@ -123,11 +123,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateAccount(AccountDTO editAccount, Account account) {
+    public Account updateAccount(AccountDTO editAccount, Account account) {
         account.setFirstName(editAccount.getFirstName());
         account.setLastName(editAccount.getLastName());
         account.setDob(editAccount.getDob());
         accountRepository.save(account);
+        return account;
     }
 
 

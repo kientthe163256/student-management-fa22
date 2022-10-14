@@ -1,10 +1,7 @@
 package com.example.studentmanagementfa22.utility;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
-import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
-import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.service.AccountService;
 import org.mapstruct.Mapper;

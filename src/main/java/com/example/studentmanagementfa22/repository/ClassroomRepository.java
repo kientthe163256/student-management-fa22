@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.repository;
 
 import com.example.studentmanagementfa22.entity.Classroom;
+import com.example.studentmanagementfa22.entity.Teacher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +39,7 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
             "ON c.subject_id = sub.id\n" +
             "WHERE sub.id = :subject_id\n" +
             "AND sc.student_id = :student_id", nativeQuery = true)
-    Integer numOfSubjectClassbyStudent (@Param("subject_id") int subjectId, @Param("student_id") int studentId);
+    Integer numOfSubjectClassByStudent (@Param("subject_id") int subjectId, @Param("student_id") int studentId);
 
     @Modifying
     @Transactional
@@ -61,4 +62,8 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
             "ON classroom.id = student_classroom.classroom_id\n" +
             "WHERE student_id = :student_id", nativeQuery = true)
     Page<Classroom> findAllRegisteredClass(Pageable pageable,@Param("student_id") int studentId);
+
+    @Override
+    @Query(value = "SELECT * from classroom where deleted = 0", nativeQuery = true)
+    Page<Classroom> findAll(Pageable pageable);
 }

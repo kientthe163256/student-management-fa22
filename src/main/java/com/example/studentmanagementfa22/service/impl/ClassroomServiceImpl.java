@@ -90,7 +90,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (student.isEmpty()) {
             throw new Exception("User is not found");
         }
-        if (classroomRepository.numOfSubjectClassbyStudent(classroom.getSubjectId(), student.get().getId() ) == 0 ) {
+        if (classroomRepository.numOfSubjectClassByStudent(classroom.getSubjectId(), student.get().getId() ) == 0 ) {
             classroomRepository.registerClassroom(student.get().getId(), classId);
             classroomRepository.updateNoStudentOfClass(classId);
         }

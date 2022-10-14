@@ -1,9 +1,6 @@
 @startuml
 
 Actor Admin
-participant SecurityConfig
-participant CustomSuccessHandler
-participant HttpSession
 participant TeacherManagementController
 participant TeacherService
 participant TeacherRepository
@@ -12,31 +9,8 @@ participant AccountService
 database MySQL
 
 autonumber 1.0
-Admin -> SecurityConfig: login account
-
+Admin -> TeacherManagementController: get teacher by id
 activate Admin
-activate SecurityConfig
-
-autonumber 1.1
-SecurityConfig -> SecurityConfig: validate account
-
-alt valid username and password
-    SecurityConfig --> CustomSuccessHandler: return Authentication object
-else wrong username or password
-    SecurityConfig --> Admin: redirect login
-end
-deactivate SecurityConfig
-
-
-
-
-activate CustomSuccessHandler
-
-CustomSuccessHandler -> HttpSession: set account
-deactivate CustomSuccessHandler
-
-autonumber 2.0
-Admin -> TeacherManagementController: request get teacher by id
 activate TeacherManagementController
 TeacherManagementController -> TeacherService: get teacher dto by id
 
@@ -53,8 +27,8 @@ deactivate MySQL
 TeacherRepository --> TeacherService: return teacher
 deactivate TeacherRepository
 
-autonumber 3.0
-TeacherService -> IGenericMapper: map to dto
+autonumber 2.0
+TeacherService -> IGenericMapper: map to teacher dto
 
 activate IGenericMapper
 IGenericMapper -> AccountService: get account dto by id
@@ -64,7 +38,6 @@ deactivate AccountService
 IGenericMapper --> TeacherService: return teacher dto
 deactivate IGenericMapper
 
-autonumber 4.0
 TeacherService --> TeacherManagementController: return teacher dto
 deactivate TeacherService
 TeacherManagementController --> Admin: return teacher dto

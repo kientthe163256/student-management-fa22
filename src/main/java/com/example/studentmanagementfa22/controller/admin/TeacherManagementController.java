@@ -4,6 +4,7 @@ import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,14 +27,22 @@ public class TeacherManagementController {
     @Autowired
     private TeacherService teacherService;
 
+    @Autowired
+    private AccountService accountService;
+
     @GetMapping()
-    public ResponseEntity<?> viewTeacherList(@RequestParam(required = false, defaultValue = "1") int pageNumber) {
-        if (pageNumber <= 0) {
-            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> viewTeacherList(
+            @RequestParam(required = false, defaultValue = "1") int pageNumber,
+            @RequestParam(required = false, defaultValue = "5") int pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortCriteria,
+            @RequestParam(required = false, defaultValue = "ASC") String direction){
+       try{
+            Page<TeacherDTO> teacherDTOPage = teacherService.findAllTeacherPaging(pageNumber, pageSize, sortCriteria, direction);
+            List<TeacherDTO> teacherDTOList = teacherDTOPage.getContent();
+            return ResponseEntity.ok(teacherDTOList);
+        } catch (IllegalArgumentException illegalArgument){
+            return ResponseEntity.badRequest().body(illegalArgument.getMessage());
         }
-        Page<TeacherDTO> teacherDTOPage = teacherService.findAllTeacherPaging(pageNumber);
-        List<TeacherDTO> teacherDTOList = teacherDTOPage.getContent();
-        return ResponseEntity.ok(teacherDTOList);
     }
 
     @Operation(summary = "Find teacher by ID", description = "Returns teacher dto")
@@ -50,5 +59,12 @@ public class TeacherManagementController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTeacher(@PathVariable Integer id){
+        Teacher teacher = teacherService.findById(id);
+        teacherService.deleteTeacher(id);
+        accountService.disableAccount(teacher.getAccountId());
+        return ResponseEntity.ok("Teacher deleted successfully");
+    }
 
 }

@@ -8,6 +8,7 @@ database MySQL
 
 autonumber 1.0
 Admin -> AccountController: edit account information
+activate Admin
 activate AccountController
 AccountController -> AccountService: get account with given id
 

@@ -5,6 +5,7 @@ import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Teacher;
 import org.springframework.data.domain.Page;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface TeacherService {
@@ -14,7 +15,9 @@ public interface TeacherService {
 
     Teacher findById(int id);
 
-    Page<TeacherDTO> findAllTeacherPaging(int pageNumber);
+    Page<TeacherDTO> findAllTeacherPaging(int pageNumber, int pageSize, String sortCriteria, String direction);
 
     TeacherDTO getTeacherDTOById(int teacherId);
+
+    void deleteTeacher(Integer teacherId);
 }

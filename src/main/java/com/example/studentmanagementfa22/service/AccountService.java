@@ -26,7 +26,7 @@ public interface AccountService extends UserDetailsService {
 
     void editInformation(Account account, StudentDTO student);
 
-    void updateAccount(AccountDTO editAccount, Account account);
+    Account updateAccount(AccountDTO editAccount, Account account);
 
     void disableAccount(Integer accountId);
 }

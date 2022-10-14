@@ -1,0 +1,51 @@
+@startuml
+Actor Admin
+participant TeacherManagementController
+participant TeacherService
+participant TeacherRepository
+participant AccountService
+participant AccountRepository
+database MySQL
+
+autonumber 1.0
+Admin -> TeacherManagementController: delete teacher
+activate Admin
+
+activate TeacherManagementController
+TeacherManagementController -> TeacherService: get teacher with given id
+
+activate TeacherService
+TeacherService --> TeacherManagementController: return teacher or throw Exception
+
+autonumber 2.0
+TeacherManagementController -> TeacherService: delete teacher
+TeacherService -> TeacherRepository: delete teacher
+deactivate TeacherService
+
+activate TeacherRepository
+TeacherRepository -> MySQL: delete teacher
+deactivate TeacherRepository
+activate MySQL
+MySQL -> MySQL: update fields: deleted, delete_date
+deactivate MySQL
+
+autonumber 3.0
+TeacherManagementController -> AccountService: disable account
+
+activate AccountService
+AccountService -> AccountRepository: disable account
+deactivate AccountService
+
+activate AccountRepository
+AccountRepository -> MySQL: disable account
+deactivate AccountRepository
+
+activate MySQL
+MySQL -> MySQL: update fields: enabled, delete_date
+deactivate MySQL
+
+TeacherManagementController --> Admin: return successful message
+deactivate TeacherManagementController
+deactivate Admin
+
+@enduml

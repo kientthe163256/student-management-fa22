@@ -17,10 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,9 +41,18 @@ public class AccountServiceTest {
 
     @Test
     public void whenUpdateValidAccount_thenSuccess() {
-        Account mockCurrentAccount = Account.builder()
+        String dateString = "2001-09-11";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date editedDate;
+        try {
+            editedDate = simpleDateFormat.parse(dateString);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        Account mockAccount = Account.builder()
                 .username("HE163256")
-                .password(passwordEncoder.encode("12345"))
+                .password("12345")
                 .enabled(true)
                 .firstName("Trung")
                 .lastName("Kien")
@@ -50,41 +62,32 @@ public class AccountServiceTest {
         AccountDTO editAccountDTO = AccountDTO.builder()
                 .firstName("Trung2")
                 .lastName("KienEdited")
-                .dob(new Date(10))
+                .dob(editedDate)
                 .build();
-        Account editAccount = Account.builder()
-                .firstName("Trung2")
-                .lastName("KienEdited")
-                .dob(new Date(10))
-                .build();
-//        when(mapper.toEntity(editAccountDTO)).thenReturn(editAccount);
-        when(accountRepository.save(editAccount)).then(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                mockCurrentAccount.setFirstName(editAccount.getFirstName());
-//                mockCurrentAccount.setLastName(editAccount.getLastName());
-//                mockCurrentAccount.setDob(editAccount.getDob());
+
+        doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) {
+                mockAccount.setFirstName(editAccountDTO.getFirstName());
+                mockAccount.setLastName(editAccountDTO.getLastName());
+                mockAccount.setDob(editAccountDTO.getDob());
                 return null;
             }
-        });
+        }).when(accountRepository).save(mockAccount);
 
         Account expectedAccount = Account.builder()
                 .username("HE163256")
-                .password(passwordEncoder.encode("12345"))
+                .password("12345")
                 .enabled(true)
                 .firstName("Trung2")
                 .lastName("KienEdited")
                 .roleId(3)
-                .dob(new Date(10))
+                .dob(editedDate)
                 .build();
 
-        accountService.updateAccount(editAccountDTO, mockCurrentAccount);
-        assertEquals(expectedAccount, editAccount);
+        accountService.updateAccount(editAccountDTO, mockAccount);
+        assertEquals(expectedAccount, mockAccount);
     }
 
-    private void setDisable(Account account){
-        account.setEnabled(false);
-    }
 
     @Test
     public void disableAccount(){
@@ -98,7 +101,15 @@ public class AccountServiceTest {
                 .roleId(3)
                 .dob(new Date())
                 .build();
-//        when(accountRepository.disableAccount(1)).thenAnswer(setDisable(account));
+        doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) {
+                account.setEnabled(false);
+                return null;
+            }
+        }).when(accountRepository).disableAccount(1);
+
+        accountService.disableAccount(1);
+        assertEquals(account.isEnabled(), false);
     }
 
     @Test

@@ -1,0 +1,32 @@
+@startuml
+
+Actor Admin
+participant SecurityConfig
+participant CustomSuccessHandler
+participant HttpSession
+
+
+autonumber 1.0
+
+Admin -> SecurityConfig: login account
+activate Admin
+
+activate SecurityConfig
+
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+
+alt valid username and password
+    SecurityConfig --> CustomSuccessHandler: return Authentication object
+    activate CustomSuccessHandler
+    CustomSuccessHandler -> HttpSession: set account
+    deactivate CustomSuccessHandler
+else wrong username or password
+    SecurityConfig --> Admin: redirect login
+    deactivate SecurityConfig
+end
+
+deactivate Admin
+
+
+@enduml

@@ -1,0 +1,85 @@
+@startuml
+' List all participant to guarantee the order
+actor User
+participant AuthorizationLibrary
+participant UserParametersController
+participant UserParametersService
+participant NotificationTemplateService
+participant CacheProvider
+participant UserRepositoryService
+participant AuditLogLibrary
+participant LoggingLibrary
+database PostgreSQL
+' Describe the sequence diagram with object types
+group GlobalExceptionHandler
+    autonumber 1.0
+    User -> AuthorizationLibrary: Set user parameters
+    note left
+     Any exceptions that are thrown will
+     be handled by GlobalExceptionHandler
+     which transforms exceptions
+     to a JSON object for the user.
+    end note
+    activate User
+    activate AuthorizationLibrary
+    autonumber 1.1
+    AuthorizationLibrary -> AuthorizationLibrary: validate token
+    break token is invalid
+        AuthorizationLibrary --> User: throw NS_AUTH_REQUIRED
+    end
+    AuthorizationLibrary -> UserParametersController: dispatch set user parameters
+    deactivate AuthorizationLibrary
+    activate UserParametersController
+    UserParametersController -> LoggingLibrary: log controller request
+    break Not valid DTO
+        UserParametersController --> User: throw exception
+    end
+    activate LoggingLibrary
+    return void
+    autonumber 2.0
+    UserParametersController -> UserParametersMapper: map to entity
+    activate UserParametersMapper
+    UserParametersMapper --> UserParametersController: user parameter entity
+    autonumber 3.0
+    UserParametersController -> UserParametersService: set user parameters
+    activate UserParametersService
+    autonumber 4.0
+    UserParametersService -> CacheProvider: Set user parameters by user id in cache
+    CacheProvider -> UserParametersService: return void
+    CacheProvider -> UserParametersRepository: Find user parameters by user id
+    activate UserParametersRepository
+    UserParametersRepository -> PostgreSQL: select
+    activate PostgreSQL
+    PostgreSQL --> UserParametersRepository: return response
+    UserParametersRepository --> UserParametersService: return UserParameters
+    autonumber 4.1
+    alt UserParameters does not exist
+        UserParametersService -> UserParametersRepository: save
+        UserParametersRepository -> PostgreSQL: create
+        PostgreSQL --> UserParametersRepository: return response
+        UserParametersRepository --> UserParametersService: return UserParameters
+    autonumber 4.2
+    else UserParameters does exist
+        UserParametersService -> UserParametersRepository: save
+        UserParametersRepository -> PostgreSQL: update
+        PostgreSQL --> UserParametersRepository: return response
+        UserParametersRepository --> UserParametersService: return UserParameters
+    end
+    deactivate PostgreSQL
+    deactivate UserParametersRepository
+    autonumber 5.0
+    UserParametersService --> UserParametersController: return user parameters
+    deactivate UserParametersService
+    UserParametersController -> UserParametersMapper: map to dto
+    UserParametersMapper --> UserParametersController: user parameter dto
+    deactivate UserParametersMapper
+    UserParametersController -> LoggingLibrary: write response log
+    activate LoggingLibrary
+    LoggingLibrary --> UserParametersController: return void
+    deactivate LoggingLibrary
+    autonumber 6.0
+    UserParametersController --> User: set user parameters
+    deactivate UserParametersController
+    deactivate User
+end
+@enduml
