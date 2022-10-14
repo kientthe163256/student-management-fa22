@@ -3,14 +3,13 @@ package com.example.studentmanagementfa22.service.impl;
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Role;
-import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
 import com.example.studentmanagementfa22.service.StudentService;
+import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -95,7 +94,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account findById(int id) {
         Optional<Account> optionalAccount = accountRepository.findById(id);
-        if (optionalAccount.isEmpty()){
+        if (optionalAccount.isEmpty()) {
             throw new NoSuchElementException("Account not found");
         }
         Account account = optionalAccount.get();
@@ -105,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Page<Account> findAllAccount(int pageNumber) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
         return accountRepository.findAll(pageRequest);
     }
 
@@ -116,10 +115,24 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void editInformation(Account account,StudentDTO student) {
+    public void editInformation(Account account, StudentDTO student) {
         account.setFirstName(student.getFirstName());
         account.setLastName(student.getLastName());
         account.setDob(student.getDob());
         accountRepository.save(account);
+    }
+
+    @Override
+    public void updateAccount(AccountDTO editAccount, Account account) {
+        account.setFirstName(editAccount.getFirstName());
+        account.setLastName(editAccount.getLastName());
+        account.setDob(editAccount.getDob());
+        accountRepository.save(account);
+    }
+
+
+    @Override
+    public void disableAccount(Integer accountId) {
+        accountRepository.disableAccount(accountId);
     }
 }

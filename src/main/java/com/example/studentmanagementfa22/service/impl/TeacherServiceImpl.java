@@ -2,20 +2,15 @@ package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
-import com.example.studentmanagementfa22.utility.Mapper;
-import com.example.studentmanagementfa22.utility.TeacherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -59,7 +54,7 @@ public class TeacherServiceImpl implements TeacherService {
     public Page<TeacherDTO> findAllTeacherPaging(int pageNumber) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         Page<Teacher> teacherPage = teacherRepository.findAll(pageRequest);
-        return teacherPage.map(teacher -> (TeacherDTO) mapper.toDTO(teacher));
+        return teacherPage.map(teacher -> mapper.toDTO(teacher));
     }
 
     @Override

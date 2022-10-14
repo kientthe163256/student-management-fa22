@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.session.SessionManagementFilter;
 
 @EnableWebSecurity
 public class SecurityConfig {
@@ -25,10 +26,9 @@ public class SecurityConfig {
                         .antMatchers("/teacher/**").hasRole("TEACHER")
                         .antMatchers("/admin/**").hasRole("ADMIN")
                         .antMatchers("/register/**", "/").permitAll()
-//                                .antMatchers("/**").permitAll()
                 )
                 .csrf().disable()
-                .cors().disable()
+                .addFilterBefore(corsFilter(), SessionManagementFilter.class)
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -39,6 +39,11 @@ public class SecurityConfig {
                         .failureUrl("/login?error"))
 ;
         return http.build();
+    }
+
+    @Bean
+    public CorsFilter corsFilter(){
+        return new CorsFilter();
     }
 
     @Bean

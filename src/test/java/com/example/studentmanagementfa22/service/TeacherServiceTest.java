@@ -30,7 +30,7 @@ public class TeacherServiceTest {
     private TeacherServiceImpl teacherService;
 
     @Test
-    public void getTeacherByValidId_ThenTeacherIsFound() {
+    public void whenGetByValidId_thenTeacherIsFound() {
         // 1. create mock data
         AccountDTO mockAccountDTO = AccountDTO.builder()
                 .username("HE16356")
@@ -49,11 +49,9 @@ public class TeacherServiceTest {
                 .build();
         Optional<Teacher> mockOptionalTeacher = Optional.of(mockTeacher);
 
-        // 2. define behavior of Repository
+        // 2. define behavior of Repository, Mapper
         when(teacherRepository.findById(1)).thenReturn(mockOptionalTeacher);
-
         when(teacherMapper.toDTO(mockTeacher)).thenReturn(mockTeacherDTO);
-
 
         // 3. call service method
         TeacherDTO teacherDTO = teacherService.getTeacherDTOById(1);
@@ -62,4 +60,9 @@ public class TeacherServiceTest {
         assertEquals(teacherDTO, mockTeacherDTO);
     }
 
+    @Test
+    public void whenGetByNonExistId_thenReturnNull(){
+        TeacherDTO teacherDTO = teacherService.getTeacherDTOById(1000);
+        assertNull(teacherDTO);
+    }
 }

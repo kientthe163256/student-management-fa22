@@ -34,7 +34,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         session.setAttribute("account", account);
         if (!account.isEnabled()) {
             redirectStrategy.sendRedirect(request, response, "/login?deactivated");
-//            throw new BadCredentialsException("Your account is deactivated. Contact admin for more information.");
         } else {
             Role role = roleService.findRoleById(account.getRoleId());
             if (role.getRoleName().equals("ROLE_ADMIN")) {

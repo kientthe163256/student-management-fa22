@@ -1,0 +1,53 @@
+@startuml
+Actor Admin
+participant CustomExceptionHandler
+participant AccountController
+participant AccountService
+participant AccountRepository
+database MySQL
+
+autonumber 1.0
+Admin -> AccountController: edit account information
+activate AccountController
+AccountController -> AccountService: get account with given id
+
+activate AccountService
+AccountService -> AccountRepository: find by id
+
+
+activate AccountRepository
+AccountRepository -> MySQL: select
+
+activate MySQL
+MySQL --> AccountRepository: return response
+deactivate MySQL
+
+AccountRepository --> AccountService: return response
+deactivate AccountRepository
+
+autonumber 2.0
+alt Account does not exist
+    AccountService --> CustomExceptionHandler: throw NoSuchElementException
+    CustomExceptionHandler --> Admin: display error response
+autonumber 3.0
+else Account exists
+    AccountService --> AccountController: return account
+    AccountController -> AccountService: update account
+    AccountService -> AccountRepository: save
+    deactivate AccountService
+
+    activate AccountRepository
+    AccountRepository -> MySQL: update
+    activate MySQL
+    MySQL -> AccountRepository: return response
+    deactivate MySQL
+    deactivate AccountRepository
+
+    AccountController --> Admin: successful message
+    deactivate AccountController
+    deactivate Admin
+end
+
+
+
+@enduml

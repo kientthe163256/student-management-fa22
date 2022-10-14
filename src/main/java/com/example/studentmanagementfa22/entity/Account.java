@@ -30,7 +30,7 @@ public class Account {
 
     @NotBlank(message = "Password cannot be blank")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^\\da-zA-Z]).{8,}$"
-            , message = "Password must be at least 8, contains 1 capital, 1 special letter!")
+            , message = "Password must be at least 8 characters, contains at least 1 number, 1 capital, 1 special letter!")
     private String password;
 
     private boolean enabled;
@@ -47,7 +47,7 @@ public class Account {
     private String lastName;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull
+    @NotNull(message = "Dob can not be empty")
     private Date dob;
 
     @Column(name = "create_date")
