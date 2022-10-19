@@ -3,6 +3,7 @@ package com.example.studentmanagementfa22.service;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
+import com.example.studentmanagementfa22.repository.service.ClassroomService;
 import com.example.studentmanagementfa22.utility.ClassroomMapper;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -6,10 +6,10 @@ import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.repository.StudentRepository;
-import com.example.studentmanagementfa22.service.AccountService;
-import com.example.studentmanagementfa22.service.ClassroomService;
-import com.example.studentmanagementfa22.service.SubjectService;
-import com.example.studentmanagementfa22.utility.Mapper;
+import com.example.studentmanagementfa22.repository.service.AccountService;
+import com.example.studentmanagementfa22.repository.service.ClassroomService;
+import com.example.studentmanagementfa22.repository.service.SubjectService;
+import com.example.studentmanagementfa22.utility.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
@@ -39,6 +40,9 @@ public class StudentController {
     @Autowired
     private ClassroomService classroomService;
 
+    @Autowired
+    private StudentMapper studentMapper;
+
     @GetMapping("")
     public String getHomePage(){
         return "student/studentHomePage";
@@ -52,8 +56,7 @@ public class StudentController {
             return new ResponseEntity("user not found", HttpStatus.BAD_REQUEST);
         }
         Student student1 = student.get();
-        Mapper utility = new Mapper();
-        StudentDTO studentDTO = utility.mapAccount(account);
+        StudentDTO studentDTO = studentMapper.mapToDTO(student1);
         studentDTO.setAcademicSession(student1.getAcademicSession());
         return ResponseEntity.ok(studentDTO);
     }

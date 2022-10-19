@@ -14,6 +14,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountDTO {
+    private Integer id;
+
     private String username;
 
     @NotBlank(message = "Firstname cannot be blank")

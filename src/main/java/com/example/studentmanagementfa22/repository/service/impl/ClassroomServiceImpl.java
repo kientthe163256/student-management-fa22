@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.service.impl;
+package com.example.studentmanagementfa22.repository.service.impl;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.ClassType;
@@ -7,10 +7,12 @@ import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
-import com.example.studentmanagementfa22.service.AccountService;
-import com.example.studentmanagementfa22.service.ClassroomService;
-import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.repository.service.ClassroomService;
+import com.example.studentmanagementfa22.repository.service.SubjectService;
+import com.example.studentmanagementfa22.repository.service.TeacherService;
+import com.example.studentmanagementfa22.utility.ClassroomMapper;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
+import com.example.studentmanagementfa22.utility.SubjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,12 +35,22 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Autowired
     private IGenericMapper<Classroom, ClassroomDTO> classroomMapper;
 
+    @Autowired
+    private SubjectService subjectService;
+
+    @Autowired
+    private TeacherService teacherService;
+
+    @Autowired
+    private SubjectMapper subjectMapper;
+
+
     @Override
-    public void addNewClassroom(Classroom classroom) throws ElementAlreadyExistException{
-        if (classroomExisted(classroom.getClassroomName())){
+    public void addNewClassroom(Classroom classroom) throws ElementAlreadyExistException {
+        if (classroomExisted(classroom.getClassroomName())) {
             throw new ElementAlreadyExistException("There is already a class with given name!");
         }
-        if (classroom.getClassType().equals(ClassType.SESSION)){
+        if (classroom.getClassType().equals(ClassType.SESSION)) {
             classroomRepository.addSessionClassroom(
                     classroom.getClassroomName(),
                     classroom.getNoStudent(),
@@ -64,49 +76,59 @@ public class ClassroomServiceImpl implements ClassroomService {
         List<Classroom> classrooms = classroomRepository.findAll();
         return classrooms
                 .stream()
-                .map(classroom -> classroomMapper.toDTO(classroom))
+                .map(classroom -> mapToClassroomDTO(classroom))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Page<ClassroomDTO> getAllAvailClassroom (int pageNumber, int subjectID) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+    public Page<ClassroomDTO> getAllAvailClassroom(int pageNumber, int subjectID) {
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllAvailClassroom(pageRequest, subjectID);
-        return classroomPage.map(classroom -> classroomMapper.toDTO(classroom));
+        return classroomPage.map(classroom -> mapToClassroomDTO(classroom));
     }
 
     @Override
-    public Page<ClassroomDTO> getAllRegisteredClass (int pageNumber, int studentId) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+    public Page<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId) {
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllRegisteredClass(pageRequest, studentId);
-        return classroomPage.map(classroom -> classroomMapper.toDTO(classroom));
+        return classroomPage.map(classroom -> mapToClassroomDTO(classroom));
     }
 
     @Override
-    @Transactional (isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void registerClassroom(int classId, int accountId) throws Exception {
-        Classroom classroom =  classroomRepository.findById(classId);
+        Classroom classroom = classroomRepository.findById(classId);
         Optional<Student> student = studentRepository.findStudentByAccountId(accountId);
         if (student.isEmpty()) {
             throw new Exception("User is not found");
         }
-        if (classroomRepository.numOfSubjectClassByStudent(classroom.getSubjectId(), student.get().getId() ) == 0 ) {
+        if (classroomRepository.numOfSubjectClassByStudent(classroom.getSubjectId(), student.get().getId()) == 0) {
             classroomRepository.registerClassroom(student.get().getId(), classId);
             classroomRepository.updateNoStudentOfClass(classId);
-        }
-        else {
-            throw new Exception ("You have already registered for this subject");
+        } else {
+            throw new Exception("You have already registered for this subject");
         }
 
     }
 
     @Override
-    public Page<ClassroomDTO> getAllClassroomsPaging(int pageNumber) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
-        Page<Classroom> classroomPage = classroomRepository.findAll(pageRequest);
-        return classroomPage.map(classroom -> classroomMapper.toDTO(classroom));
+    public ClassroomDTO mapToClassroomDTO(Classroom classroom) {
+        ClassroomDTO classroomDTO = classroomMapper.mapToDTO(classroom);
+        if (classroom.getSubjectId() != null) {
+            classroomDTO.setSubject(subjectMapper.mapToDTO(subjectService.findById(classroom.getSubjectId())));
+        }
+        if (classroom.getTeacherId() != null) {
+            classroomDTO.setTeacher(teacherService.getTeacherDTOById(classroom.getTeacherId()));
+        }
+        return classroomDTO;
     }
 
+    @Override
+    public Page<ClassroomDTO> getAllClassroomsPaging(int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
+        Page<Classroom> classroomPage = classroomRepository.findAll(pageRequest);
+        return classroomPage.map(classroom -> mapToClassroomDTO(classroom));
+    }
 
 
 }

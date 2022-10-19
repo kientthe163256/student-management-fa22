@@ -43,7 +43,7 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type) VALUES (?1, ?2, ?3)",
+    @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type, create_date, modify_date) VALUES (?1, ?2, ?3, current_date, current_date)",
             nativeQuery = true)
     void addSessionClassroom(String className, int noStudent, String classType);
 
@@ -57,12 +57,11 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     @Transactional
     void updateNoStudentOfClass(@Param("id") int classId);
     @Query(value = "SELECT id, classroom_name, current_no_student, no_student, deleted,class_type, teacher_id, subject_id, create_date, modify_date, delete_date\n" +
-            "FROM student_management_fa22.classroom \n" +
-            "INNER JOIN student_management_fa22.student_classroom \n" +
-            "ON classroom.id = student_classroom.classroom_id\n" +
+            "FROM student_management_fa22.classroom cla\n" +
+            "INNER JOIN student_management_fa22.student_classroom stuclass\n" +
+            "ON cla.id = stuclass.classroom_id\n" +
             "WHERE student_id = :student_id", nativeQuery = true)
     Page<Classroom> findAllRegisteredClass(Pageable pageable,@Param("student_id") int studentId);
-
     @Override
     @Query(value = "SELECT * from classroom where deleted = 0", nativeQuery = true)
     Page<Classroom> findAll(Pageable pageable);

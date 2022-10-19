@@ -4,7 +4,7 @@ import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
-import com.example.studentmanagementfa22.service.impl.AccountServiceImpl;
+import com.example.studentmanagementfa22.repository.service.impl.AccountServiceImpl;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,6 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountServiceTest {
@@ -40,7 +39,7 @@ public class AccountServiceTest {
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Test
-    public void whenUpdateValidAccount_thenSuccess() {
+    public void whenUpdateValidAccountThenSuccess() {
         String dateString = "2001-09-11";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date editedDate;

@@ -25,15 +25,7 @@ public class ClassroomDTO {
     @Enumerated(value = EnumType.STRING)
     private ClassType classType;
 
-    private String teacherName;
+    private TeacherDTO teacher;
 
-    private Integer teacherId;
-
-    private String subjectName;
-
-    private Integer subjectId;
-
-    private Teacher teacher;
-
-    private Subject subject;
+    private SubjectDTO subject;
 }

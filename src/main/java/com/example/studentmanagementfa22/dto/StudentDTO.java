@@ -16,6 +16,8 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class StudentDTO {
+    private Integer id;
+
     private String username;
 
     private String password;
