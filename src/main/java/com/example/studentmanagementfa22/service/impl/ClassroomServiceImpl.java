@@ -14,6 +14,7 @@ import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,14 +71,15 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public Page<ClassroomDTO> getAllAvailClassroom (int pageNumber, int subjectID) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5,Sort.by("classroom_name").ascending());
         Page<Classroom> classroomPage = classroomRepository.findAllAvailClassroom(pageRequest, subjectID);
         return classroomPage.map(classroom -> classroomMapper.toDTO(classroom));
     }
 
     @Override
     public Page<ClassroomDTO> getAllRegisteredClass (int pageNumber, int studentId) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+//        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+      PageRequest pageRequest = PageRequest.of(pageNumber-1, 5, Sort.by("classroom_name").descending());
         Page<Classroom> classroomPage = classroomRepository.findAllRegisteredClass(pageRequest, studentId);
         return classroomPage.map(classroom -> classroomMapper.toDTO(classroom));
     }

@@ -40,6 +40,4 @@ public class StudentDTO {
     private int academicSession;
 
     private int accountId;
-
-    private int classId;
 }
