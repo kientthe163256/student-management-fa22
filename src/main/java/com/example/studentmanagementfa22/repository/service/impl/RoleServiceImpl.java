@@ -1,8 +1,8 @@
-package com.example.studentmanagementfa22.service.impl;
+package com.example.studentmanagementfa22.repository.service.impl;
 
 import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.repository.RoleRepository;
-import com.example.studentmanagementfa22.service.RoleService;
+import com.example.studentmanagementfa22.repository.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

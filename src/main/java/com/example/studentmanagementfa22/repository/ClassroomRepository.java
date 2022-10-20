@@ -9,9 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-@Repository
 
 public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     Classroom findByClassroomName(String classroomName);
@@ -45,7 +43,7 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type) VALUES (?1, ?2, ?3)",
+    @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type, create_date, modify_date) VALUES (?1, ?2, ?3, current_date, current_date)",
             nativeQuery = true)
     void addSessionClassroom(String className, int noStudent, String classType);
 
@@ -58,13 +56,12 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     @Modifying
     @Transactional
     void updateNoStudentOfClass(@Param("id") int classId);
-    @Query(value = "SELECT c.id, c.classroom_name, c.current_no_student, c.no_student, c.deleted,c.class_type, c.teacher_id, c.subject_id, c.create_date,c.modify_date,c.delete_date\n" +
-            "FROM student_management_fa22.classroom c\n" +
-            "INNER JOIN student_management_fa22.student_classroom sc\n" +
-            "ON c.id = sc.classroom_id\n" +
+    @Query(value = "SELECT id, classroom_name, current_no_student, no_student, deleted,class_type, teacher_id, subject_id, create_date, modify_date, delete_date\n" +
+            "FROM student_management_fa22.classroom cla\n" +
+            "INNER JOIN student_management_fa22.student_classroom stuclass\n" +
+            "ON cla.id = stuclass.classroom_id\n" +
             "WHERE student_id = :student_id", nativeQuery = true)
     Page<Classroom> findAllRegisteredClass(Pageable pageable,@Param("student_id") int studentId);
-
     @Override
     @Query(value = "SELECT * from classroom where deleted = 0", nativeQuery = true)
     Page<Classroom> findAll(Pageable pageable);

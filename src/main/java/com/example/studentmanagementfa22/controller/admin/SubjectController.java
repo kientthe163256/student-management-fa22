@@ -1,8 +1,7 @@
 package com.example.studentmanagementfa22.controller.admin;
 
-import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Subject;
-import com.example.studentmanagementfa22.service.SubjectService;
+import com.example.studentmanagementfa22.repository.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;

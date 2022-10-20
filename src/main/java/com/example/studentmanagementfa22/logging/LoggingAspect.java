@@ -1,6 +1,5 @@
 package com.example.studentmanagementfa22.logging;
 
-import com.example.studentmanagementfa22.config.CustomSuccessHandler;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -8,7 +7,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -19,18 +17,28 @@ public class LoggingAspect {
             = LoggerFactory.getLogger(LoggingAspect.class);
 
     @After("execution(* com.example.studentmanagementfa22.service.*.add*(..))")
-    public void before(JoinPoint joinPoint){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        logger.info(authentication.getName() + " added");
+    public void afterAdd(JoinPoint joinPoint){
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        logger.info(currentUser + " added st");
+    }
+
+    @After("execution(* com.example.studentmanagementfa22.service.*.delete*(..))")
+    public void afterDelete(JoinPoint joinPoint){
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        logger.info(currentUser + " deleted something");
     }
 
     @Around("execution(* com.example.studentmanagementfa22.service.*.update*(..))")
     public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         Object objectProceed = joinPoint.proceed();
-
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        logger.info(authentication.getName() + " edited " + objectProceed);
+        logger.info(currentUser + " updated " + objectProceed);
         return objectProceed;
+    }
+
+    @After("execution(* com.example.studentmanagementfa22.config.CustomSuccessHandler.*(..))")
+    public void afterLogin(){
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        logger.info(currentUser + " logged in");
     }
 }

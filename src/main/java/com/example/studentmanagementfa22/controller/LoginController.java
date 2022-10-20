@@ -16,7 +16,7 @@ public class LoginController {
     @ApiOperation("Login")
     @PostMapping("/login")
     public @ResponseBody String login(@RequestParam String username, @RequestParam String password, HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "*");
+//        response.setHeader("Access-Control-Allow-Origin", "*");
         return "Login success";
     }
 }

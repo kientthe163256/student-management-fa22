@@ -4,7 +4,7 @@ import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
-import com.example.studentmanagementfa22.service.impl.TeacherServiceImpl;
+import com.example.studentmanagementfa22.repository.service.impl.TeacherServiceImpl;
 import com.example.studentmanagementfa22.utility.TeacherMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +30,7 @@ public class TeacherServiceTest {
     private TeacherServiceImpl teacherService;
 
     @Test
-    public void whenGetByValidId_thenTeacherIsFound() {
+    public void whenGetByValidIdThenTeacherIsFound() {
         // 1. create mock data
         AccountDTO mockAccountDTO = AccountDTO.builder()
                 .username("HE16356")
@@ -51,17 +51,17 @@ public class TeacherServiceTest {
 
         // 2. define behavior of Repository, Mapper
         when(teacherRepository.findById(1)).thenReturn(mockOptionalTeacher);
-        when(teacherMapper.toDTO(mockTeacher)).thenReturn(mockTeacherDTO);
+        when(teacherMapper.mapToDTO(mockTeacher)).thenReturn(mockTeacherDTO);
 
         // 3. call service method
         TeacherDTO teacherDTO = teacherService.getTeacherDTOById(1);
 
         // 4. assert the result
-        assertEquals(teacherDTO, mockTeacherDTO);
+        assertEquals(teacherDTO, mockTeacherDTO);//equal some fields
     }
 
     @Test
-    public void whenGetByNonExistId_thenReturnNull(){
+    public void whenGetByNonExistIdThenReturnNull(){
         TeacherDTO teacherDTO = teacherService.getTeacherDTOById(1000);
         assertNull(teacherDTO);
     }

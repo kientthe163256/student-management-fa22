@@ -3,17 +3,14 @@ package com.example.studentmanagementfa22.service;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
-import com.example.studentmanagementfa22.service.impl.ClassroomServiceImpl;
+import com.example.studentmanagementfa22.repository.service.ClassroomService;
 import com.example.studentmanagementfa22.utility.ClassroomMapper;
-
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.internal.util.Assert;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +30,7 @@ public class ClassroomServiceTest {
     private ClassroomMapper classroomMapper;
 
     @InjectMocks
-    private ClassroomServiceImpl classroomService;
+    private ClassroomService classroomService;
 
 
     @Test

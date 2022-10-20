@@ -2,11 +2,10 @@ package com.example.studentmanagementfa22.controller;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
-import com.example.studentmanagementfa22.service.AccountService;
-import com.example.studentmanagementfa22.service.RoleService;
-import com.example.studentmanagementfa22.service.StudentService;
-import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.repository.service.AccountService;
+import com.example.studentmanagementfa22.repository.service.RoleService;
+import com.example.studentmanagementfa22.repository.service.StudentService;
+import com.example.studentmanagementfa22.repository.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 public class AccountController {
