@@ -7,11 +7,7 @@ import org.junit.runner.RunWith;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.transaction.Transactional;
 import java.util.List;
 
 @SpringBootTest
@@ -61,11 +57,6 @@ public class ClassRepositoryTest {
         Assert.notNull(classroomList);
     }
 
-    @org.junit.jupiter.api.Test
-    public void getAllClassroom2(){
-        PageRequest pageRequest = PageRequest.of(1, 2);
-        Page<Classroom> classroomList = classroomRepository.findAllRegisteredClass2(pageRequest, 1);
-        Assert.notNull(classroomList);
-    }
+
 
 }

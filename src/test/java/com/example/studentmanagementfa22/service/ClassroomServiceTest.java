@@ -26,8 +26,6 @@ public class ClassroomServiceTest {
     @Mock
     private ClassroomRepository classroomRepository;
 
-    @Mock
-    private ClassroomMapper classroomMapper;
 
     @InjectMocks
     private ClassroomService classroomService;
@@ -67,7 +65,6 @@ public class ClassroomServiceTest {
         ClassroomDTO mockClassroomDTO = ClassroomDTO.builder()
                 .id(5)
                 .classroomName("mock class")
-                .subjectId(1)
                 .build();
         List<Classroom> classroomList = new ArrayList<>();
         classroomList.add(mockClassroom);
@@ -75,7 +72,6 @@ public class ClassroomServiceTest {
         PageRequest pageRequest = PageRequest.of(1, 5);
         // 2. define behavior of Repository, Mapper
         when(classroomRepository.findAllAvailClassroom(pageRequest, 1)).thenReturn(mockPageClassroom);
-        when(classroomMapper.toDTO(mockClassroom)).thenReturn(mockClassroomDTO);
         // 3.call service method
         Page<ClassroomDTO> classroomDTOPage = classroomService.getAllAvailClassroom(1,1);
         //4 assert result

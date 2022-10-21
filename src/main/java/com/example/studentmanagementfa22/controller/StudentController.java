@@ -3,11 +3,13 @@ package com.example.studentmanagementfa22.controller;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
+import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.service.AccountService;
 import com.example.studentmanagementfa22.repository.service.ClassroomService;
+import com.example.studentmanagementfa22.repository.service.MarkService;
 import com.example.studentmanagementfa22.repository.service.SubjectService;
 import com.example.studentmanagementfa22.utility.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,9 @@ public class StudentController {
 
     @Autowired
     private ClassroomService classroomService;
+
+    @Autowired
+    private MarkService markService;
 
     @Autowired
     private StudentMapper studentMapper;
@@ -96,5 +101,11 @@ public class StudentController {
         }
         List<ClassroomDTO> classroomDTOList = classroomDTOPage.getContent();
         return ResponseEntity.ok(classroomDTOList);
+    }
+    @GetMapping("/mark/{subjectId}")
+    public ResponseEntity<?> displayMarkbySubject(@PathVariable Integer subjectId  ) {
+        Account account = (Account) session.getAttribute("account");
+        List<Mark> markList = markService.getMarksBySubject(account, subjectId);
+        return ResponseEntity.ok(markList);
     }
 }
