@@ -1,0 +1,43 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+Actor Student
+participant SecurityConfig
+participant CustomSuccessHandler
+participant StudentController
+participant MarkService
+participant MarkRepository
+participant StudentRepository
+database MySQL
+
+autonumber 1.0
+Student -> SecurityConfig: login account
+
+activate Student
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Student: redirect login
+end
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+activate StudentController
+activate CustomSuccessHandler
+CustomSuccessHandler -> StudentController: dispatch user account
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+StudentController -> MarkService: get list of mark by subject
+activate MarkService
+MarkService -> StudentRepository: get Student by account ID
+StudentRepository --> MarkService: return student
+MarkService -> MySQL: SELECT by student_id, subject_id
+activate MySQL
+MySQL --> MarkService: return response
+deactivate MySQL
+MarkService --> StudentController: return list of Mark
+deactivate MarkService
+StudentController --> Student: return list of Mark
+deactivate StudentController
+@enduml

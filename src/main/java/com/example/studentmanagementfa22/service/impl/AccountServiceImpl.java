@@ -21,7 +21,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -126,6 +125,9 @@ public class AccountServiceImpl implements AccountService {
         account.setFirstName(student.getFirstName());
         account.setLastName(student.getLastName());
         account.setDob(student.getDob());
+        long millis=System.currentTimeMillis();
+        java.sql.Date date = new java.sql.Date(millis);
+        account.setModifyDate(date);
         accountRepository.save(account);
     }
 

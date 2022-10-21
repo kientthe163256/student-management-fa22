@@ -31,10 +31,14 @@ activate ClassroomService
 ClassroomService -> ClassroomRepository: find all available classroom
 activate ClassroomRepository
 ClassroomRepository -> MySQL: SELECT
+activate MySQL
 MySQL --> ClassroomRepository: return response
+deactivate MySQL
 ClassroomRepository --> ClassroomService: return page of classroom
 ClassroomService -> IGenericMapper: map to DTO
+activate IGenericMapper
 IGenericMapper --> ClassroomService: return classroomDTO
+deactivate IGenericMapper
 ClassroomService --> ClassroomController: return classroomDTO
 
 autonumber 3.0
