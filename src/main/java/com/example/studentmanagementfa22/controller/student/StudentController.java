@@ -9,7 +9,7 @@ import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.ClassroomService;
-import com.example.studentmanagementfa22.repository.service.MarkService;
+import com.example.studentmanagementfa22.service.MarkService;
 import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.utility.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;

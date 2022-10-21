@@ -1,0 +1,55 @@
+@startuml
+Actor Teacher
+participant SecurityConfig
+participant CustomSuccessHandler
+participant ClassroomManageController
+participant MarkService
+participant MarkRepository
+database MySQL
+
+autonumber 1.0
+Teacher -> SecurityConfig: login account
+
+activate Teacher
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Teacher: redirect login
+end
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+activate CustomSuccessHandler
+CustomSuccessHandler -> ClassroomManageController: dispatch user account
+activate ClassroomManageController
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+ClassroomManageController -> MarkService: edit Mark of Student
+activate MarkService
+
+MarkService -> MarkRepository: find mark by ID and Student
+activate MarkRepository
+break Invalid Mark Object
+MarkService --> ClassroomManageController: return error message
+end
+
+MarkRepository -> MySQL: SELECT
+activate MySQL
+MySQL --> MarkRepository: return response
+deactivate MySQL
+MarkRepository --> MarkService: return Mark
+MarkService -> MarkRepository: Edit Mark
+MarkRepository -> MySQL: UPDATE
+activate MySQL
+MySQL --> MarkRepository: return response
+deactivate MySQL
+MarkRepository --> MarkService: return mark
+deactivate MarkRepository
+MarkService --> ClassroomManageController: return Mark
+deactivate MarkService
+ClassroomManageController --> Teacher: mark
+deactivate ClassroomManageController
+deactivate Teacher
+
+@enduml

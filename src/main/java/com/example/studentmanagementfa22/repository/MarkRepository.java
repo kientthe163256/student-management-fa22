@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MarkRepository extends JpaRepository<Mark, Integer> {
@@ -14,4 +15,6 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
             "Where student_id = :student_id\n" +
             "AND subject_id = :subject_id", nativeQuery = true)
     List<Mark> getMarkbySubject(@Param("student_id") int  studentId, @Param("subject_id")  int subjectId);
+
+    Optional<Mark> findMarkByStudentIdAndId(int studentId, int markId);
 }
