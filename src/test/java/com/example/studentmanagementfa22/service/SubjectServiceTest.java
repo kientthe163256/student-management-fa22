@@ -2,7 +2,6 @@ package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.StudentManagementFa22Application;
 import com.example.studentmanagementfa22.entity.Subject;
-import com.example.studentmanagementfa22.repository.service.SubjectService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.modelmapper.internal.util.Assert;

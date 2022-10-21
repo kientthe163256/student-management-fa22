@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.repository.service;
+package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
@@ -15,7 +15,7 @@ public interface TeacherService {
 
     Teacher findById(int id);
 
-    Page<TeacherDTO> findAllTeacherPaging(int pageNumber, int pageSize, String sortCriteria, String direction);
+    List<TeacherDTO> findAllTeacherPaging(int pageNumber, int pageSize, String sortCriteria, String direction);
 
     TeacherDTO getTeacherDTOById(int teacherId);
 

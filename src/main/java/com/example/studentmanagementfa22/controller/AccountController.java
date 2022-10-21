@@ -2,12 +2,12 @@ package com.example.studentmanagementfa22.controller;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.repository.service.AccountService;
-import com.example.studentmanagementfa22.repository.service.RoleService;
-import com.example.studentmanagementfa22.repository.service.StudentService;
-import com.example.studentmanagementfa22.repository.service.TeacherService;
+import com.example.studentmanagementfa22.service.AccountService;
+import com.example.studentmanagementfa22.service.RoleService;
+import com.example.studentmanagementfa22.service.StudentService;
+import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.utility.AccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,40 +31,24 @@ public class AccountController {
     @Autowired
     private TeacherService teacherService;
 
+    @Autowired
+    private AccountMapper accountMapper;
+
 
     @PostMapping("/register/student")
-    public ResponseEntity<?> registerStudent(@Valid Account account, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            StringBuilder message = new StringBuilder();
-            for (ObjectError error : bindingResult.getAllErrors()) {
-                message.append(error.getDefaultMessage()).append("\n");
-            }
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> registerStudent(@Valid @RequestBody Account account) {
         accountService.registerNewAccount(account);
         studentService.addStudentWithNewAccount(account);
 
-        return new ResponseEntity(account, HttpStatus.CREATED);
+        return new ResponseEntity("Account created successfully", HttpStatus.CREATED);
     }
 
     @PostMapping("/admin/teacher")
-    public ResponseEntity<?> addNewTeacher(@Valid Account account, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            StringBuilder message = new StringBuilder();
-            for (ObjectError error : bindingResult.getAllErrors()) {
-                if (error.getCode().equals("typeMismatch")) {
-                    message.append("Date format must be yyyy-MM-dd (2022-05-26)");
-                    continue;
-                }
-                message.append(error.getDefaultMessage()).append("\n");
-            }
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity<?> addNewTeacher(@Valid @RequestBody Account account) {
         accountService.registerNewAccount(account);
         teacherService.addTeacherWithNewAccount(account);
 
-        return new ResponseEntity<>(account, HttpStatus.OK);
+        return new ResponseEntity<>("Teacher added successfully", HttpStatus.CREATED);
     }
 
     @GetMapping("/admin/account")
@@ -72,9 +56,14 @@ public class AccountController {
         if (pageNumber <= 0) {
             return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
         }
-        Page<Account> accountPage = accountService.findAllAccount(pageNumber);
-        List<Account> accountList = accountPage.getContent();
+        List<AccountDTO> accountList = accountService.getAccountDTOList(pageNumber);
         return ResponseEntity.ok(accountList);
+    }
+
+    @GetMapping("/admin/account/{id}")
+    public ResponseEntity<?> getAccountById(@PathVariable Integer id) {
+        AccountDTO accountDTO = accountService.getAccountDTOById(id);
+        return ResponseEntity.ok(accountDTO);
     }
 
     @PutMapping("/admin/account/{id}")
@@ -94,7 +83,14 @@ public class AccountController {
         Account account = accountService.findById(id);
         accountService.updateAccount(accountDTO, account);
 
+        Account editedAccount = accountService.findById(accountDTO.getId());
+        AccountDTO editedAccountDTO = accountMapper.mapToDTO(editedAccount);
+        return new ResponseEntity<>(editedAccountDTO, HttpStatus.OK);
+    }
 
-        return ResponseEntity.ok("Edit successfully");
+    @DeleteMapping("/admin/account/{id}")
+    public ResponseEntity<?> disableAccount(@PathVariable Integer id){
+        accountService.disableAccount(id);
+        return ResponseEntity.ok("Account disabled successfully");
     }
 }

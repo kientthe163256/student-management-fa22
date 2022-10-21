@@ -1,13 +1,11 @@
 package com.example.studentmanagementfa22.controller.admin;
 
-import com.example.studentmanagementfa22.entity.Subject;
-import com.example.studentmanagementfa22.repository.service.SubjectService;
+import com.example.studentmanagementfa22.dto.SubjectDTO;
+import com.example.studentmanagementfa22.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin/subject")
@@ -15,9 +13,17 @@ public class SubjectController {
     @Autowired
     private SubjectService subjectService;
 
-    @GetMapping("/all")
-    public Page<Subject> displayAllClassrooms(@RequestParam(required = false, defaultValue = "1") int pageNumber){
-        Page<Subject> subjectPage = subjectService.getAllSubject(pageNumber);
-        return subjectPage;
+    @GetMapping()
+    public List<SubjectDTO> displaySubjectList(@RequestParam(required = false, defaultValue = "1") int pageNumber){
+        List<SubjectDTO> subjectDTOList = subjectService.getSubjectDTOList(pageNumber);
+        return subjectDTOList;
     }
+
+    @GetMapping("/{id}")
+    public SubjectDTO getSubjectById(@PathVariable Integer id) {
+        SubjectDTO subjectDTO = subjectService.getSubjectDTOByID(id);
+        return subjectDTO;
+    }
+
+
 }

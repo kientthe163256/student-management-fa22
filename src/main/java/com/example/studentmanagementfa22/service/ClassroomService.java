@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.repository.service;
+package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Classroom;

@@ -1,27 +1,20 @@
-package com.example.studentmanagementfa22.repository.service.impl;
+package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
-import com.example.studentmanagementfa22.repository.service.AccountService;
-import com.example.studentmanagementfa22.repository.service.TeacherService;
+import com.example.studentmanagementfa22.service.AccountService;
+import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.function.Function;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
@@ -61,16 +54,49 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Page<TeacherDTO> findAllTeacherPaging(int pageNumber, int pageSize, String sortCriteria, String direction) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, pageSize, Sort.by(Sort.Direction.fromString(direction), sortCriteria));
+    public List<TeacherDTO> findAllTeacherPaging(int pageNumber, int pageSize, String sortCriteria, String direction) {
+        PageRequest pageRequest = PageRequest.of(pageNumber-1, pageSize);
         Page<Teacher> teacherPage = teacherRepository.findAll(pageRequest);
-        return teacherPage.map(teacher -> {
+        // map to dto
+        Page<TeacherDTO> teacherDTOPage = teacherPage.map(teacher -> {
             TeacherDTO teacherDTO = mapper.mapToDTO(teacher);
             teacherDTO.setAccount(accountService.getAccountDTOById(teacher.getAccountId()));
             return teacherDTO;
         });
+        // sort the list with criteria
+        List<String> criteriaList = Arrays.asList("firstName", "lastName", "id", "dob", "username");
+        if (!criteriaList.contains(sortCriteria)) {
+            throw new IllegalArgumentException("Sort criteria must be firstName, lastName, id, dob or username!");
+        }
+        List<TeacherDTO> teacherDTOList = teacherDTOPage.getContent();
+        switch (sortCriteria){
+            case "firstName":
+                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getAccount().getFirstName())).collect(Collectors.toList());
+                break;
+            case "lastName":
+                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getAccount().getLastName())).collect(Collectors.toList());
+                break;
+            case "dob":
+                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getAccount().getDob())).collect(Collectors.toList());
+                break;
+            case "username":
+                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getAccount().getUsername())).collect(Collectors.toList());
+                break;
+            case "id":
+                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getId())).collect(Collectors.toList());
+                break;
+        }
+        //sort with direction
+        try{
+            Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+            if (sortDirection.equals(Sort.Direction.DESC)){
+                Collections.reverse(teacherDTOList);
+            }
+        } catch (IllegalArgumentException illegalArgumentException){
+            throw new IllegalArgumentException(illegalArgumentException.getMessage());
+        }
+        return teacherDTOList;
     }
-
     @Override
     public TeacherDTO getTeacherDTOById(int teacherId) {
         Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);

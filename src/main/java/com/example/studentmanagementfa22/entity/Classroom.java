@@ -24,7 +24,7 @@ public class Classroom {
 
     @Column(name = "classroom_name")
     @NotNull(message = "Classname can't be null")
-    @Pattern(regexp = "[A-Z]{2}\\d{4}", message = "Classname must be 2 letter followed by 4 numbers!")
+    @Pattern(regexp = "[A-Z]{2}\\d{4}", message = "Classname must be 2 letters followed by 4 numbers!")
     private String classroomName;
 
     @Column(name = "current_no_student")

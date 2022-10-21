@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
@@ -15,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "subject")
-@SQLDelete(sql = "UPDATE subject SET deleted = true WHERE id=?")
+@Where(clause = "deleted = false")
 public class Subject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

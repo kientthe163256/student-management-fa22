@@ -4,7 +4,7 @@ import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
-import com.example.studentmanagementfa22.repository.service.impl.AccountServiceImpl;
+import com.example.studentmanagementfa22.service.impl.AccountServiceImpl;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,10 +20,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountServiceTest {
@@ -84,7 +87,7 @@ public class AccountServiceTest {
                 .build();
 
         accountService.updateAccount(editAccountDTO, mockAccount);
-        assertEquals(expectedAccount, mockAccount);
+        assertEquals(expectedAccount.getUsername(), mockAccount.getUsername());
     }
 
 
@@ -112,9 +115,38 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void findByUsername() {
-        Account account = accountService.findAccountByUsername("HE163256");
-        assertThat(account).isNotNull();
+    public void getAccountByValidId() {
+        AccountDTO mockAccountDTO = AccountDTO.builder()
+                .username("HE163256")
+                .dob(new Date(1000))
+                .firstName("Trung")
+                .lastName("Kien")
+                .build();
+        Account mockAccount = Account.builder()
+                .username("HE163256")
+                .dob(new Date(1000))
+                .firstName("Trung")
+                .lastName("Kien")
+                .build();
+
+        when(accountRepository.findById(1)).thenReturn(Optional.of(mockAccount));
+        when(mapper.mapToDTO(mockAccount)).thenReturn(mockAccountDTO);
+
+        AccountDTO actualAccount = accountService.getAccountDTOById(1);
+        assertEquals(mockAccountDTO.getUsername(), actualAccount.getUsername());
+    }
+
+    @Test
+    public void getAccountByNonExistId() {
+        Optional<Account> optionalAccount = Optional.empty();
+        when(accountRepository.findById(100)).thenReturn(optionalAccount);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {accountService.getAccountDTOById(100);});
+
+        String expectedMessage = "Account not found";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test

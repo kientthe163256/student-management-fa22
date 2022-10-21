@@ -1,0 +1,38 @@
+@startuml
+Actor Admin
+participant AccountController
+participant AccountService
+participant AccountRepository
+database MySQL
+
+autonumber 1.0
+Admin -> AccountController: disable account
+activate Admin
+activate AccountController
+AccountController -> AccountService: disable account
+
+
+activate AccountService
+AccountService -> AccountRepository: disable acccount
+deactivate AccountService
+
+activate AccountRepository
+AccountRepository -> MySQL: update
+
+activate MySQL
+MySQL --> AccountRepository: return response
+deactivate AccountRepository
+deactivate MySQL
+
+
+
+
+
+AccountController --> Admin: successful message
+deactivate AccountController
+deactivate Admin
+
+
+
+
+@enduml

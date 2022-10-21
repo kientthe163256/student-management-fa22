@@ -1,13 +1,18 @@
-package com.example.studentmanagementfa22.repository.service.impl;
+package com.example.studentmanagementfa22.service.impl;
 
+import com.example.studentmanagementfa22.dto.SubjectDTO;
 import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.repository.SubjectRepository;
-import com.example.studentmanagementfa22.repository.service.SubjectService;
+import com.example.studentmanagementfa22.service.SubjectService;
+import com.example.studentmanagementfa22.utility.SubjectMapper;
+import org.hibernate.Filter;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -17,6 +22,12 @@ import java.util.Optional;
 public class SubjectServiceImpl implements SubjectService {
     @Autowired
     private SubjectRepository subjectRepository;
+
+    @Autowired
+    private SubjectMapper mapper;
+
+    @Autowired
+    private EntityManager entityManager;
     @Override
     public Page<Subject> getAllSubject(int pageNumber){
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
@@ -25,17 +36,31 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<SubjectDTO> getSubjectDTOList(int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
+        Page<Subject> subjectPage = subjectRepository.findAll(pageRequest);
+        List<SubjectDTO> subjectDTOList = subjectPage.stream().map(subject -> mapper.mapToDTO(subject)).toList();
+        return subjectDTOList;
+    }
+
+    @Override
     public List<Subject> getSubjectList() {
         return subjectRepository.findAll();
     }
 
     @Override
-    public Subject findById(int id) {
+    public Subject getById(int id) {
         Optional<Subject> optionalSubject = subjectRepository.findById(id);
         if (optionalSubject.isEmpty()){
             throw new NoSuchElementException("Subject not found");
         }
         Subject subject = optionalSubject.get();
         return subject;
+    }
+
+    @Override
+    public SubjectDTO getSubjectDTOByID(Integer id) {
+        Subject subject = getById(id);
+        return mapper.mapToDTO(subject);
     }
 }

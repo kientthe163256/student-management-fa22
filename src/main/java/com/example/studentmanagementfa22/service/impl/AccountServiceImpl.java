@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.repository.service.impl;
+package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
@@ -6,9 +6,9 @@ import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
-import com.example.studentmanagementfa22.repository.service.RoleService;
-import com.example.studentmanagementfa22.repository.service.AccountService;
-import com.example.studentmanagementfa22.repository.service.StudentService;
+import com.example.studentmanagementfa22.service.RoleService;
+import com.example.studentmanagementfa22.service.AccountService;
+import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -109,6 +109,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public List<AccountDTO> getAccountDTOList(int pageNumber) {
+        Page<Account> accountPage = findAllAccount(pageNumber);
+        List<AccountDTO> accountDTOList = accountPage.map(account -> mapper.mapToDTO(account)).stream().toList();
+        return accountDTOList;
+    }
+
+    @Override
     public AccountDTO getAccountDTOById(int accountId) {
         Account account = findById(accountId);
         return mapper.mapToDTO(account);
@@ -127,6 +134,7 @@ public class AccountServiceImpl implements AccountService {
         account.setFirstName(editAccount.getFirstName());
         account.setLastName(editAccount.getLastName());
         account.setDob(editAccount.getDob());
+        account.setModifyDate(new Date());
         accountRepository.save(account);
         return account;
     }

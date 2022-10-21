@@ -38,7 +38,7 @@ public class MapperTest {
                 .roleId(3)
                 .dob(new Date())
                 .build();
-        AccountDTO accountDTO = accountMapper.toDTO(account);
+        AccountDTO accountDTO = accountMapper.mapToDTO(account);
         assertNotNull(accountDTO);
     }
 
@@ -50,7 +50,7 @@ public class MapperTest {
                 .noStudent(1)
                 .teacherId(1)
                 .build();
-        ClassroomDTO classroomDTO = classroomMapper.toDTO(classroom);
+        ClassroomDTO classroomDTO = classroomMapper.mapToDTO(classroom);
         assertNotNull(classroomDTO);
     }
 

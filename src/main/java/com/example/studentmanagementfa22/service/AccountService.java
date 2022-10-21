@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.repository.service;
+package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.List;
 
 
 public interface AccountService extends UserDetailsService {
@@ -21,6 +23,8 @@ public interface AccountService extends UserDetailsService {
     Account findById(int id);
 
     Page<Account> findAllAccount(int pageNumber);
+
+    List<AccountDTO> getAccountDTOList(int pageNumber);
 
     AccountDTO getAccountDTOById(int accountId);
 

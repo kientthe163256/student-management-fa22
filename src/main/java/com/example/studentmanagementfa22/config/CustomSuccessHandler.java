@@ -2,8 +2,8 @@ package com.example.studentmanagementfa22.config;
 
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Role;
-import com.example.studentmanagementfa22.repository.service.AccountService;
-import com.example.studentmanagementfa22.repository.service.RoleService;
+import com.example.studentmanagementfa22.service.AccountService;
+import com.example.studentmanagementfa22.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;

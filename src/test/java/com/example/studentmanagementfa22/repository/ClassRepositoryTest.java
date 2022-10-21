@@ -61,11 +61,4 @@ public class ClassRepositoryTest {
         Assert.notNull(classroomList);
     }
 
-    @org.junit.jupiter.api.Test
-    public void getAllClassroom2(){
-        PageRequest pageRequest = PageRequest.of(1, 2);
-        Page<Classroom> classroomList = classroomRepository.findAllRegisteredClass2(pageRequest, 1);
-        Assert.notNull(classroomList);
-    }
-
 }

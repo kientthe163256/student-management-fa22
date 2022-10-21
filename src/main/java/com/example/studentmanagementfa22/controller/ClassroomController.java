@@ -2,7 +2,7 @@ package com.example.studentmanagementfa22.controller;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.repository.service.ClassroomService;
+import com.example.studentmanagementfa22.service.ClassroomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

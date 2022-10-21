@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.repository.service.impl;
+package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.ClassType;
@@ -7,10 +7,9 @@ import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
-import com.example.studentmanagementfa22.repository.service.ClassroomService;
-import com.example.studentmanagementfa22.repository.service.SubjectService;
-import com.example.studentmanagementfa22.repository.service.TeacherService;
-import com.example.studentmanagementfa22.utility.ClassroomMapper;
+import com.example.studentmanagementfa22.service.ClassroomService;
+import com.example.studentmanagementfa22.service.SubjectService;
+import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import com.example.studentmanagementfa22.utility.SubjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +114,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public ClassroomDTO mapToClassroomDTO(Classroom classroom) {
         ClassroomDTO classroomDTO = classroomMapper.mapToDTO(classroom);
         if (classroom.getSubjectId() != null) {
-            classroomDTO.setSubject(subjectMapper.mapToDTO(subjectService.findById(classroom.getSubjectId())));
+            classroomDTO.setSubject(subjectMapper.mapToDTO(subjectService.getById(classroom.getSubjectId())));
         }
         if (classroom.getTeacherId() != null) {
             classroomDTO.setTeacher(teacherService.getTeacherDTOById(classroom.getTeacherId()));

@@ -1,9 +1,9 @@
-package com.example.studentmanagementfa22.repository.service.impl;
+package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.repository.StudentRepository;
-import com.example.studentmanagementfa22.repository.service.StudentService;
+import com.example.studentmanagementfa22.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,0 +1,55 @@
+@startuml
+Actor Admin
+participant CustomExceptionHandler
+participant AccountController
+participant AccountService
+participant AccountRepository
+participant AccountMapper
+database MySQL
+
+autonumber 1.0
+Admin -> AccountController: get account by id
+activate Admin
+activate AccountController
+AccountController -> AccountService: get account dto by id
+
+activate AccountService
+AccountService -> AccountService: find account by id
+AccountService -> AccountRepository: find by id
+
+
+activate AccountRepository
+AccountRepository -> MySQL: select
+
+activate MySQL
+MySQL --> AccountRepository: return response
+deactivate MySQL
+
+
+autonumber 2.0
+alt Account does not exist
+    AccountRepository --> AccountService: return empty optional account
+    AccountService --> CustomExceptionHandler: throw NoSuchElementException
+    activate CustomExceptionHandler
+    CustomExceptionHandler --> Admin: display error response
+    deactivate CustomExceptionHandler
+autonumber 3.0
+else Account exists
+    AccountRepository --> AccountService: return optional account
+    deactivate AccountRepository
+    AccountService -> AccountMapper: map to dto
+    activate AccountMapper
+    AccountMapper --> AccountService: return account dto
+    deactivate AccountMapper
+    AccountService --> AccountController: return account dto
+    deactivate AccountService
+
+
+    AccountController --> Admin: return account dto
+    deactivate AccountController
+    deactivate Admin
+end
+
+
+
+@enduml

@@ -4,7 +4,7 @@ import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
-import com.example.studentmanagementfa22.repository.service.impl.TeacherServiceImpl;
+import com.example.studentmanagementfa22.service.impl.TeacherServiceImpl;
 import com.example.studentmanagementfa22.utility.TeacherMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
