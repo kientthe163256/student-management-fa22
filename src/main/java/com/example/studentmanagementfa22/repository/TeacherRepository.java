@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 
 @Repository
@@ -22,4 +23,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     @Override
     @Query(value = "SELECT * from teacher where deleted = 0", nativeQuery = true)
     Page<Teacher> findAll(Pageable pageable);
+
+    Optional<Teacher> findTeacherByAccountId(int accountID);
 }

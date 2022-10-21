@@ -9,10 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 @Repository
 public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     Classroom findByClassroomName(String classroomName);
 
+
+    List<Classroom> findClassroomsByTeacherId(Integer teacherId);
     Classroom findById(int classId);
     @Query(value = "SELECT * FROM student_management_fa22.classroom \n" +
             "WHERE current_no_student < no_student\n" +

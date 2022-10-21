@@ -4,14 +4,11 @@ import com.example.studentmanagementfa22.entity.ClassType;
 import com.example.studentmanagementfa22.entity.Classroom;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.Assert;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @SpringBootTest

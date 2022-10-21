@@ -1,12 +1,11 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
-import com.example.studentmanagementfa22.entity.ClassType;
-import com.example.studentmanagementfa22.entity.Classroom;
-import com.example.studentmanagementfa22.entity.Student;
+import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
+import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.service.TeacherService;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,6 +39,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Autowired
     private SubjectMapper subjectMapper;
@@ -73,6 +76,19 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public List<ClassroomDTO> getAllClassrooms() {
         List<Classroom> classrooms = classroomRepository.findAll();
+        return classrooms
+                .stream()
+                .map(classroom -> mapToClassroomDTO(classroom))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClassroomDTO> getAllTeachingClassrooms(int accountID) {
+        Optional<Teacher> teacher = teacherRepository.findTeacherByAccountId(accountID);
+        if (teacher.isEmpty()){
+            throw new NoSuchElementException("teacher not found");
+        }
+        List<Classroom> classrooms = classroomRepository.findClassroomsByTeacherId(teacher.get().getId());
         return classrooms
                 .stream()
                 .map(classroom -> mapToClassroomDTO(classroom))

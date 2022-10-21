@@ -1,24 +1,31 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
+import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
-import com.example.studentmanagementfa22.repository.service.ClassroomService;
-import com.example.studentmanagementfa22.utility.ClassroomMapper;
-import org.junit.Test;
+import com.example.studentmanagementfa22.repository.TeacherRepository;
+import com.example.studentmanagementfa22.service.impl.ClassroomServiceImpl;
+import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.internal.util.Assert;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.util.Assert;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class ClassroomServiceTest {
@@ -26,9 +33,12 @@ public class ClassroomServiceTest {
     @Mock
     private ClassroomRepository classroomRepository;
 
-
+    @Mock
+    private TeacherRepository teacherRepository;
+    @Mock
+    private IGenericMapper<Classroom, ClassroomDTO> classroomMapper;
     @InjectMocks
-    private ClassroomService classroomService;
+    private ClassroomServiceImpl classroomService;
 
 
     @Test
@@ -77,5 +87,41 @@ public class ClassroomServiceTest {
         //4 assert result
         assertNotNull(classroomDTOPage);
     }
+    @Test
+    public void getTeachingClassrooms() {
+        Account mockAccount = Account.builder()
+                .username("TC000000")
+                .id(8)
+                .firstName("Mock")
+                .lastName("TeacherAcc")
+                .build();
+        Teacher mockTeacher = Teacher.builder()
+                .id(3)
+                .accountId(8)
+                .build();
+        Optional<Teacher> mockOptionalTeacher= Optional.of(mockTeacher);
+        Classroom classroom1 = Classroom.builder().classroomName("SE1617").currentNoStudent(16).build();
+        List<Classroom> mockClassroomList = new ArrayList<>();
+        mockClassroomList.add(classroom1);
+
+        ClassroomDTO classroomDTO1 = ClassroomDTO.builder().classroomName("SE1617").currentNoStudent(16).build();
+        List<ClassroomDTO> mockClassroomDTOList = new ArrayList<>();
+        mockClassroomDTOList.add(classroomDTO1);
+
+        // define behavior of Repository
+        when(teacherRepository.findTeacherByAccountId(mockAccount.getId())).thenReturn(mockOptionalTeacher);
+        when(classroomRepository.findClassroomsByTeacherId(mockTeacher.getId())).thenReturn(mockClassroomList);
+        when(classroomMapper.mapToDTO(classroom1)).thenReturn(classroomDTO1);
+        // call service method
+        List<ClassroomDTO> classroomDTOList = classroomService.getAllTeachingClassrooms(8);
+
+        //assert the result
+
+        assertEquals(classroomDTOList.size(), mockClassroomDTOList.size());
+        assertEquals(classroomDTOList.get(0).getClassroomName(), mockClassroomDTOList.get(0).getClassroomName());
+        assertEquals(classroomDTOList.get(0).getCurrentNoStudent(), mockClassroomDTOList.get(0).getCurrentNoStudent());
+    }
+
+
 
 }

@@ -1,0 +1,56 @@
+@startuml
+Actor Teacher
+participant SecurityConfig
+participant CustomSuccessHandler
+participant ClassroomManageController
+participant ClassroomService
+participant TeacherRepository
+participant ClassroomRepository
+participant IGenericMapper
+database MySQL
+
+autonumber 1.0
+Teacher -> SecurityConfig: login account
+
+activate Teacher
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Teacher: redirect login
+end
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+activate CustomSuccessHandler
+CustomSuccessHandler -> ClassroomManageController: dispatch user account
+activate ClassroomManageController
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+ClassroomManageController -> ClassroomService: get list of classrooms by teacher
+activate ClassroomService
+ClassroomService -> TeacherRepository: get teacher by account ID
+activate TeacherRepository
+TeacherRepository -> MySQL: Select by account ID
+activate MySQL
+MySQL --> TeacherRepository: return response
+deactivate MySQL
+TeacherRepository --> ClassroomService: return teacher
+deactivate TeacherRepository
+ClassroomService -> ClassroomRepository: get list of classrooms by teacher
+activate ClassroomRepository
+ClassroomRepository -> MySQL: Select by teacher ID
+activate MySQL
+MySQL --> ClassroomRepository: return response
+deactivate MySQL
+ClassroomRepository --> ClassroomService: return list of classrooms
+ClassroomService -> IGenericMapper: mapToDTO
+activate IGenericMapper
+IGenericMapper --> ClassroomService: return list of classroomDTOs
+deactivate IGenericMapper
+ClassroomService --> ClassroomManageController: return list of classroomDTOs
+deactivate ClassroomService
+ClassroomManageController--> Teacher: return list of classroomDTOs
+deactivate ClassroomManageController
+deactivate Teacher
+@enduml

@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.controller;
+package com.example.studentmanagementfa22.controller.student;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
@@ -7,19 +7,16 @@ import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.repository.StudentRepository;
-import com.example.studentmanagementfa22.repository.service.AccountService;
-import com.example.studentmanagementfa22.repository.service.ClassroomService;
+import com.example.studentmanagementfa22.service.AccountService;
+import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.repository.service.MarkService;
-import com.example.studentmanagementfa22.repository.service.SubjectService;
+import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.utility.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
@@ -61,8 +58,10 @@ public class StudentController {
             return new ResponseEntity("user not found", HttpStatus.BAD_REQUEST);
         }
         Student student1 = student.get();
-        StudentDTO studentDTO = studentMapper.mapToDTO(student1);
+        StudentDTO studentDTO = studentMapper.mapToDTO(account);
         studentDTO.setAcademicSession(student1.getAcademicSession());
+        studentDTO.setId(student1.getId());
+        studentDTO.setAccountId(account.getId());
         return ResponseEntity.ok(studentDTO);
     }
     @GetMapping("/subjectList")
@@ -72,15 +71,7 @@ public class StudentController {
         return ResponseEntity.ok(subjectList);
     }
     @PutMapping("/information")
-    public ResponseEntity<?> editInformation(@Valid StudentDTO student, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            StringBuilder errorMessages = new StringBuilder();
-            for (FieldError error : errors ) {
-                errorMessages.append(error.getDefaultMessage()).append("\n");
-            }
-            return new ResponseEntity(errorMessages.toString(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> editInformation(@Valid @RequestBody StudentDTO student) {
         Account account = (Account) session.getAttribute("account");
         accountService.editInformation(account, student);
         return new ResponseEntity<>(account, HttpStatus.OK);
