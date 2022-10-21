@@ -5,6 +5,7 @@ import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.InvalidInputException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.RoleService;
 import com.example.studentmanagementfa22.service.AccountService;
@@ -13,6 +14,7 @@ import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -46,8 +48,10 @@ public class AccountServiceImpl implements AccountService {
         if (optionalAccount == null) {
             throw new UsernameNotFoundException("Username is not found!");
         }
-
         Account validAccount = optionalAccount;
+        if (!validAccount.isEnabled()){
+            throw new DisabledException("Your account is disabled");
+        }
         UserDetails userDetails = new User(validAccount.getUsername(),
                 validAccount.getPassword(),
                 mapRoleToAuthorities(validAccount.getRoleId()));
@@ -91,7 +95,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account findById(int id) {
+    public Account getById(int id) {
         Optional<Account> optionalAccount = accountRepository.findById(id);
         if (optionalAccount.isEmpty()) {
             throw new NoSuchElementException("Account not found");
@@ -116,7 +120,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDTO getAccountDTOById(int accountId) {
-        Account account = findById(accountId);
+        Account account = getById(accountId);
         return mapper.mapToDTO(account);
     }
 
@@ -144,6 +148,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void disableAccount(Integer accountId) {
+        Account account = getById(accountId);
+        if (!account.isEnabled()){
+            throw new InvalidInputException("Account is already disabled");
+        }
         accountRepository.disableAccount(accountId);
     }
 }

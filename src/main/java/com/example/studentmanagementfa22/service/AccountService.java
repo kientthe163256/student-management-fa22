@@ -20,7 +20,7 @@ public interface AccountService extends UserDetailsService {
 
     void registerNewAccount(Account account) throws ElementAlreadyExistException;
 
-    Account findById(int id);
+    Account getById(int id);
 
     Page<Account> findAllAccount(int pageNumber);
 

@@ -20,5 +20,5 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     @Modifying
     @Transactional
     @Query(value = "UPDATE account set enabled = 0, delete_date = curdate() where id = :accountId", nativeQuery = true)
-    void disableAccount(@Param("accountId") Integer accountId);
+    Integer disableAccount(@Param("accountId") Integer accountId);
 }

@@ -1,5 +1,7 @@
 package com.example.studentmanagementfa22.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +26,6 @@ public class AccountDTO {
     @NotBlank(message = "Lastname cannot be blank")
     private String lastName;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", lenient = OptBoolean.FALSE)
     private Date dob;
 }

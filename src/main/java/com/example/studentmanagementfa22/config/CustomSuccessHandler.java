@@ -7,6 +7,7 @@ import com.example.studentmanagementfa22.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -31,11 +32,12 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String username = authentication.getName();
         Account account = accountService.findAccountByUsername(username);
-        HttpSession session = request.getSession();
-        session.setAttribute("account", account);
         if (!account.isEnabled()) {
             redirectStrategy.sendRedirect(request, response, "/login?deactivated");
         } else {
+            HttpSession session = request.getSession();
+            session.setAttribute("account", account);
+
             Role role = roleService.findRoleById(account.getRoleId());
             if (role.getRoleName().equals("ROLE_ADMIN")) {
                 redirectStrategy.sendRedirect(request, response, "/admin");

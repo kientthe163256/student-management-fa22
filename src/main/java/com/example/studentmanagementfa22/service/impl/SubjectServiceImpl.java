@@ -1,7 +1,10 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.SubjectDTO;
+import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Subject;
+import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.InvalidInputException;
 import com.example.studentmanagementfa22.repository.SubjectRepository;
 import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.utility.SubjectMapper;
@@ -13,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -59,8 +63,36 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public Subject getByName(String subjectName) {
+        Subject subject = subjectRepository.findBySubjectName(subjectName);
+        return subject;
+    }
+
+    @Override
     public SubjectDTO getSubjectDTOByID(Integer id) {
         Subject subject = getById(id);
         return mapper.mapToDTO(subject);
+    }
+
+    @Override
+    public void addNewSubject(SubjectDTO subjectDTO) {
+        Subject existedSubject = subjectRepository.findBySubjectName(subjectDTO.getSubjectName());
+        if (existedSubject != null){
+            throw new ElementAlreadyExistException("There is already a subject with given name");
+        }
+        Subject subject = mapper.mapToEntity(subjectDTO);
+        Date today = new Date();
+        subject.setCreateDate(today);
+        subject.setModifyDate(today);
+        subjectRepository.save(subject);
+    }
+
+    @Override
+    public void deleteSubject(Integer subjectId) {
+        Subject subject = getById(subjectId);
+        if (subject.isDeleted()){
+            throw new InvalidInputException("Subject already deleted");
+        }
+        subjectRepository.deleteSubject(subjectId);
     }
 }

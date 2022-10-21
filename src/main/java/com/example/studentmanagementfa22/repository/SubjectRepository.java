@@ -32,4 +32,5 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     @Query(value = "UPDATE subject set deleted = 1, delete_date = curdate() where id = :subjectId", nativeQuery = true)
     void deleteSubject(@Param("subjectId") Integer subjectId);
 
+    Subject findBySubjectName(String subjectName);
 }

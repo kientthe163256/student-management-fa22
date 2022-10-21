@@ -5,10 +5,7 @@ import com.example.studentmanagementfa22.entity.Classroom;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public abstract class ClassroomMapper implements IGenericMapper<Classroom, ClassroomDTO> {
+public interface ClassroomMapper extends IGenericMapper<Classroom, ClassroomDTO> {
 
-
-    @Override
-    public abstract ClassroomDTO mapToDTO(Classroom source);
 
 }

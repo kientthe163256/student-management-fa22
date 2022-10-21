@@ -2,6 +2,7 @@ package com.example.studentmanagementfa22.service;
 import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.repository.MarkRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
+
 import com.example.studentmanagementfa22.service.impl.MarkServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

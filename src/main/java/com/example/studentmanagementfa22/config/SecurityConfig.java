@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.SessionManagementFilter;
 
@@ -25,6 +26,10 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(auth -> auth       //lambda no need .and()
@@ -35,14 +40,14 @@ public class SecurityConfig {
                 )
                 .csrf().disable()
                 .addFilterBefore(corsFilter(), SessionManagementFilter.class)
-                .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
+                .exceptionHandling().and()
                 .formLogin(form -> form
                         .loginPage("/login")
                         .usernameParameter("username")
                         .passwordParameter("password")
                         .successHandler(customSuccessHandler)
                         .permitAll()
-                        .failureUrl("/login?error"))
+                        )
                 .logout()
                     .logoutSuccessHandler(logoutSuccessHandler())
                     .permitAll()

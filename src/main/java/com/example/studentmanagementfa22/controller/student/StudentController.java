@@ -45,9 +45,9 @@ public class StudentController {
     @Autowired
     private StudentMapper studentMapper;
 
-    @GetMapping("")
-    public String getHomePage(){
-        return "student/studentHomePage";
+    @GetMapping()
+    public ResponseEntity<String> getHomePage(){
+        return ResponseEntity.ok("Login successfully");
     }
 
     @GetMapping("/information")

@@ -10,8 +10,6 @@ import com.example.studentmanagementfa22.utility.AccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -67,23 +65,11 @@ public class AccountController {
     }
 
     @PutMapping("/admin/account/{id}")
-    public ResponseEntity<?> updateAccountById(@PathVariable Integer id, @Valid AccountDTO accountDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            StringBuilder message = new StringBuilder();
-            for (ObjectError error : bindingResult.getAllErrors()) {
-                if (error.getCode().equals("typeMismatch")) {
-                    message.append("Date format must be yyyy-MM-dd (2022-05-26)");
-                    continue;
-                }
-                message.append(error.getDefaultMessage()).append("\n");
-            }
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-        }
-
-        Account account = accountService.findById(id);
+    public ResponseEntity<?> updateAccountById(@PathVariable Integer id, @Valid @RequestBody AccountDTO accountDTO) {
+        Account account = accountService.getById(id);
         accountService.updateAccount(accountDTO, account);
 
-        Account editedAccount = accountService.findById(accountDTO.getId());
+        Account editedAccount = accountService.getById(account.getId());
         AccountDTO editedAccountDTO = accountMapper.mapToDTO(editedAccount);
         return new ResponseEntity<>(editedAccountDTO, HttpStatus.OK);
     }

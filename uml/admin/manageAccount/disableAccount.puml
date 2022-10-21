@@ -1,5 +1,6 @@
 @startuml
 Actor Admin
+participant CustomExceptionHandler
 participant AccountController
 participant AccountService
 participant AccountRepository
@@ -13,26 +14,35 @@ AccountController -> AccountService: disable account
 
 
 activate AccountService
-AccountService -> AccountRepository: disable acccount
-deactivate AccountService
+AccountService -> AccountService: get by id
+autonumber 2.0
+alt Account does not exist
+    AccountService --> CustomExceptionHandler: throw NoSuchElementException
+    activate CustomExceptionHandler
+    CustomExceptionHandler --> Admin: display error response
+autonumber 3.0
+else Account already disabled
+    AccountService --> CustomExceptionHandler: throw InvalidInputException
+    CustomExceptionHandler --> Admin: display error response
+    deactivate CustomExceptionHandler
+else Account exists and enabled
+    AccountService -> AccountRepository: disable account
 
-activate AccountRepository
-AccountRepository -> MySQL: update
+    activate AccountRepository
+    AccountRepository -> MySQL: update
 
-activate MySQL
-MySQL --> AccountRepository: return response
-deactivate AccountRepository
-deactivate MySQL
+    activate MySQL
+    MySQL --> AccountRepository: return response
+    deactivate MySQL
+    AccountRepository --> AccountService: return void
+    deactivate AccountRepository
 
+    AccountService --> AccountController: return void
+    deactivate AccountService
 
-
-
-
-AccountController --> Admin: successful message
-deactivate AccountController
-deactivate Admin
-
-
-
+    AccountController --> Admin: successful message
+    deactivate AccountController
+    deactivate Admin
+end
 
 @enduml

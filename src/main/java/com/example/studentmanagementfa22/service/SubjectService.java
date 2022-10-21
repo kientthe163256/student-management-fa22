@@ -16,5 +16,11 @@ public interface SubjectService {
 
     Subject getById(int id);
 
+    Subject getByName(String subjectName);
+
     SubjectDTO getSubjectDTOByID(Integer id);
+
+    void addNewSubject(SubjectDTO subjectDTO);
+
+    void deleteSubject(Integer subjectId);
 }
