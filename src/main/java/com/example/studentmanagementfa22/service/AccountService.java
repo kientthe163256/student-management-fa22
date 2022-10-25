@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 
@@ -31,6 +32,6 @@ public interface AccountService extends UserDetailsService {
     void editInformation(Account account, StudentDTO student);
 
     Account updateAccount(AccountDTO editAccount, Account account);
-
+    @Transactional
     void disableAccount(Integer accountId);
 }
