@@ -53,7 +53,7 @@ public class TeacherManagementController {
     public ResponseEntity<String> deleteTeacher(@PathVariable Integer id) {
         Teacher teacher = teacherService.findById(id);
         teacherService.deleteTeacher(id);
-        accountService.disableAccount(teacher.getAccountId());
+//        accountService.disableAccount(teacher.getAccountId());
         return ResponseEntity.ok("Teacher deleted successfully");
     }
 

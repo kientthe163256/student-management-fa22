@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TeacherDTO{
+public class TeacherDTO {
     private Integer id;
+
     private AccountDTO account;
 
 }

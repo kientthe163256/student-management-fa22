@@ -20,4 +20,6 @@ public interface TeacherService {
     TeacherDTO getTeacherDTOById(int teacherId);
 
     void deleteTeacher(Integer teacherId);
+
+    List<TeacherDTO> findTeacherWithCriteria(int pageNumber, int pageSize, String sort);
 }

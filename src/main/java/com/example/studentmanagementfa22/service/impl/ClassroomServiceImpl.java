@@ -139,6 +139,22 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    public Integer assignClassroom(Integer teacherId, Integer classId) {
+        Teacher teacher = teacherService.findById(teacherId);
+        Classroom classroom = getById(classId);
+        return classroomRepository.assignClassroom(teacherId, classId);
+    }
+
+    @Override
+    public Classroom getById(Integer classId) {
+        Optional<Classroom> optionalClassroom = classroomRepository.findById(classId);
+        if (optionalClassroom.isEmpty()){
+            throw new NoSuchElementException("Class not found");
+        }
+        return optionalClassroom.get();
+    }
+
+    @Override
     public Page<ClassroomDTO> getAllClassroomsPaging(int pageNumber) {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAll(pageRequest);

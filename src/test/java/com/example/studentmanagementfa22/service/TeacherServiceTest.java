@@ -45,7 +45,7 @@ public class TeacherServiceTest {
                 .build();
 
         Teacher mockTeacher = Teacher.builder()
-                .accountId(1)
+//                .accountId(1)
                 .build();
         Optional<Teacher> mockOptionalTeacher = Optional.of(mockTeacher);
 

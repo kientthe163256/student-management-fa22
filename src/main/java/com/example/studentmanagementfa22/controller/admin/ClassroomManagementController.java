@@ -41,4 +41,10 @@ public class ClassroomManagementController {
         List<ClassroomDTO> classroomDTOList = classroomPage.getContent();
         return ResponseEntity.ok(classroomDTOList);
     }
+
+    @PostMapping("/assign")
+    public ResponseEntity<?> assignClassroom(@RequestParam Integer teacherId, @RequestParam Integer classId){
+        classroomService.assignClassroom(teacherId, classId);
+        return ResponseEntity.ok("Assign successfully!");
+    }
 }

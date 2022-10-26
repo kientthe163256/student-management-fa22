@@ -25,4 +25,8 @@ public interface ClassroomService {
     void registerClassroom(int classId, int accountId) throws Exception;
 
     ClassroomDTO mapToClassroomDTO(Classroom classroom);
+
+    Integer assignClassroom(Integer teacherId, Integer classId);
+
+    Classroom getById(Integer classId);
 }
