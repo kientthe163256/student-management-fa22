@@ -17,4 +17,6 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
     List<Mark> getMarkbySubject(@Param("student_id") int  studentId, @Param("subject_id")  int subjectId);
 
     Optional<Mark> findMarkByStudentIdAndId(int studentId, int markId);
+
+    Optional<Mark> findMarkById( int markId);
 }
