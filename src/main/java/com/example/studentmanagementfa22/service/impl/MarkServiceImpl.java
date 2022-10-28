@@ -9,9 +9,12 @@ import com.example.studentmanagementfa22.service.MarkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class MarkServiceImpl implements MarkService {
@@ -31,16 +34,14 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public Mark editStudentMark(int studentID, Mark editMark) {
-        Optional<Mark> optionalMark = markRepository.findMarkByStudentIdAndId(studentID, editMark.getId());
+    public Mark editStudentMark(int markID, Mark editMark) {
+        Optional<Mark> optionalMark = markRepository.findMarkById(markID);
         if (optionalMark.isEmpty()) {
             throw new NoSuchElementException("Mark not found");
         }
         Mark mark = optionalMark.get();
         mark.setGrade(editMark.getGrade());
-        long millis=System.currentTimeMillis();
-        java.sql.Date date = new java.sql.Date(millis);
-        mark.setModifyDate(date);
+        mark.setModifyDate(new Date());
         markRepository.save(mark);
         return mark;
     }
