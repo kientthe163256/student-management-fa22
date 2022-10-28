@@ -3,9 +3,7 @@ package com.example.studentmanagementfa22.service;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Teacher;
-import org.springframework.data.domain.Page;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 public interface TeacherService {
@@ -13,13 +11,11 @@ public interface TeacherService {
 
     List<Teacher> findAllTeachers();
 
-    Teacher findById(int id);
-
-    List<TeacherDTO> findAllTeacherPaging(int pageNumber, int pageSize, String sortCriteria, String direction);
+    Teacher getById(int id);
 
     TeacherDTO getTeacherDTOById(int teacherId);
 
     void deleteTeacher(Integer teacherId);
 
-    List<TeacherDTO> findTeacherWithCriteria(int pageNumber, int pageSize, String sort);
+    List<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort);
 }

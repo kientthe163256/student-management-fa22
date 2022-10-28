@@ -2,7 +2,7 @@ package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.impl.AccountServiceImpl;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
-import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,7 +22,6 @@ import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
@@ -103,11 +101,9 @@ public class AccountServiceTest {
                 .roleId(3)
                 .dob(new Date())
                 .build();
-        doAnswer(new Answer<Void>() {
-            public Void answer(InvocationOnMock invocation) {
-                account.setEnabled(false);
-                return null;
-            }
+        doAnswer((Answer<Void>) invocation -> {
+            account.setEnabled(false);
+            return null;
         }).when(accountRepository).disableAccount(1);
 
         accountService.disableAccount(1);
@@ -168,10 +164,6 @@ public class AccountServiceTest {
         }
     }
 
-    @Test
-    public void findAll() {
-        Page<Account> accountPage = accountService.findAllAccount(1);
-        assertThat(accountPage).isNotNull();
-    }
+
 
 }

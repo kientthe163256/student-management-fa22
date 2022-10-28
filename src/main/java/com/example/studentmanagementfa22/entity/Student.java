@@ -31,6 +31,7 @@ public class Student {
     private int accountId;
 
     @Transient
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Classroom> classrooms;
 
     private boolean deleted;

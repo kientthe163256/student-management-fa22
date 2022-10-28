@@ -1,7 +1,9 @@
 package com.example.studentmanagementfa22.exception;
 
+import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.customExceptions.InvalidInputException;
+import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.DisabledException;
@@ -10,10 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
@@ -55,14 +54,20 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleMethodArgumentNotValid(ConstraintViolationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getConstraintViolations().forEach((error) -> {
+            String fieldName = error.getPropertyPath().toString();
+            String errorMessage = error.getMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NumberFormatException.class)
-    public ResponseEntity<String> handleNumberFormat(NumberFormatException ex) {
-        return new ResponseEntity<>("Please input a valid number", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidInputException.class)
@@ -71,7 +76,7 @@ public class CustomExceptionHandler {
     }
     @ExceptionHandler(InvalidFormatException.class)
     public ResponseEntity<String> handleInvalidFormat(InvalidFormatException ex) {
-        return new ResponseEntity<>(ex.getOriginalMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Invalid format for type " + ex.getTargetType().getSimpleName() + " with given value " + ex.getValue(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DisabledException.class)
@@ -79,4 +84,8 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(ActionNotAllowedException.class)
+    public ResponseEntity<String> handleNotAllowed(ActionNotAllowedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
 }

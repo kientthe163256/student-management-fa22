@@ -3,7 +3,7 @@ package com.example.studentmanagementfa22.service;
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -23,6 +23,7 @@ import javax.persistence.criteria.*;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,64 +57,34 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Teacher findById(int id) {
+    public Teacher getById(int id) {
         Optional<Teacher> optionalTeacher = teacherRepository.findById(id);
         if (optionalTeacher.isEmpty()) {
-            throw new NoSuchElementException("Teacher not found");
+            throw new NoSuchElementException("Can not find teacher with id = " + id);
         }
         Teacher teacher = optionalTeacher.get();
         return teacher;
     }
 
+    private static final List<String> CRITERIA =  Arrays.asList("firstName", "lastName", "id", "dob", "username");
     @Override
-    public List<TeacherDTO> findAllTeacherPaging(int pageNumber, int pageSize, String sortCriteria, String direction) {
-        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
-        Page<Teacher> teacherPage = teacherRepository.findAll(pageRequest);
-        // map to dto
-        Page<TeacherDTO> teacherDTOPage = teacherPage.map(teacher -> {
-            TeacherDTO teacherDTO = mapper.mapToDTO(teacher);
-//            teacherDTO.setAccount(accountService.getAccountDTOById(teacher.getAccountId()));
-            return teacherDTO;
-        });
-
-        List<TeacherDTO> teacherDTOList;
-        switch (sortCriteria) {
-            case "firstName":
-                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getAccount().getFirstName())).collect(Collectors.toList());
-                break;
-            case "lastName":
-                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getAccount().getLastName())).collect(Collectors.toList());
-                break;
-            case "dob":
-                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getAccount().getDob())).collect(Collectors.toList());
-                break;
-            case "username":
-                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getAccount().getUsername())).collect(Collectors.toList());
-                break;
-            case "id":
-                teacherDTOList = teacherDTOPage.stream().sorted(Comparator.comparing(o -> o.getId())).collect(Collectors.toList());
-                break;
-            default:
-                throw new IllegalArgumentException("Sort criteria must be firstName, lastName, id, dob or username!");
+    public List<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort) {
+        //handle invalid format
+        if (!Pattern.matches("[A-Za-z]+,[A-Za-z]+", sort)){
+            throw new IllegalArgumentException("Sort must be in format 'criteria,direction'. Ex: firstName,ASC");
         }
-        //sort with direction
-        try {
-            Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-            if (sortDirection.equals(Sort.Direction.DESC)) {
-                Collections.reverse(teacherDTOList);
-            }
-        } catch (IllegalArgumentException illegalArgumentException) {
-            throw new IllegalArgumentException(illegalArgumentException.getMessage());
+        //handle invalid sort criteria
+        String criteria = sort.split(",")[0].trim();
+        if (!CRITERIA.contains(criteria)){
+            throw new IllegalArgumentException("Sort criteria must be firstName, lastName, id, dob or username!");
         }
-        return teacherDTOList;
-    }
-
-    @Override
-    public List<TeacherDTO> findTeacherWithCriteria(int pageNumber, int pageSize, String sort) {
-        String criteria = sort.split(",")[0];
-        String direction = sort.split(",")[1].toUpperCase();
-        Sort sortObject = criteria.equals("id")?Sort.by("id"):Sort.by("account."+criteria);
-        sortObject = direction.equals("ASC")?sortObject.ascending():sortObject.descending();
+        //split raw input and initialize Direction (throw InvalidFormatException)
+        String rawDirection = sort.split(",")[1].trim().toUpperCase();
+        Sort.Direction direction = Sort.Direction.fromString(rawDirection);
+        //if criteria is account's field, add 'account.'
+        Sort sortObject = criteria.equals("id")
+                ? Sort.by(direction, criteria)
+                : Sort.by(direction, "account."+criteria);
 
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
         Page<Teacher> teacherPage = teacherRepository.findAll(pageRequest);

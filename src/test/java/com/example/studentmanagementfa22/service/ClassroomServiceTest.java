@@ -4,60 +4,47 @@ import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.ClassroomServiceImpl;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.util.Assert;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ClassroomServiceTest {
-
     @Mock
     private ClassroomRepository classroomRepository;
 
     @Mock
     private TeacherRepository teacherRepository;
+
+    @Mock
+    private TeacherService teacherService;
+
     @Mock
     private IGenericMapper<Classroom, ClassroomDTO> classroomMapper;
+
     @InjectMocks
     private ClassroomServiceImpl classroomService;
 
-
-    @Test
-    public void checkExistedClassroom(){
-        boolean classExisted = classroomService.classroomExisted("SE1605");
-        Assert.isTrue(classExisted);
-    }
-
-    @Test
-    public void getAllClassroom(){
-        List<ClassroomDTO> classroomDTOList = classroomService.getAllClassrooms();
-        Assert.notNull(classroomDTOList);
-    }
-
-    @Test
-    public void getAllClassroomPaging(){
-        Page<ClassroomDTO> classroomDTO = classroomService.getAllClassroomsPaging(1);
-        Assert.notNull(classroomDTO);
-    }
     @Test
     public void getAllRegisteredClass() {
         Page<ClassroomDTO> classroomDTO = classroomService.getAllRegisteredClass(2, 1);
@@ -78,15 +65,16 @@ public class ClassroomServiceTest {
                 .build();
         List<Classroom> classroomList = new ArrayList<>();
         classroomList.add(mockClassroom);
-        Page<Classroom> mockPageClassroom = new PageImpl<>(classroomList) ;
+        Page<Classroom> mockPageClassroom = new PageImpl<>(classroomList);
         PageRequest pageRequest = PageRequest.of(1, 5);
         // 2. define behavior of Repository, Mapper
         when(classroomRepository.findAllAvailClassroom(pageRequest, 1)).thenReturn(mockPageClassroom);
         // 3.call service method
-        Page<ClassroomDTO> classroomDTOPage = classroomService.getAllAvailClassroom(1,1);
+        Page<ClassroomDTO> classroomDTOPage = classroomService.getAllAvailClassroom(1, 1);
         //4 assert result
         assertNotNull(classroomDTOPage);
     }
+
     @Test
     public void getTeachingClassrooms() {
         Account mockAccount = Account.builder()
@@ -99,7 +87,7 @@ public class ClassroomServiceTest {
                 .id(3)
 //                .accountId(8)
                 .build();
-        Optional<Teacher> mockOptionalTeacher= Optional.of(mockTeacher);
+        Optional<Teacher> mockOptionalTeacher = Optional.of(mockTeacher);
         Classroom classroom1 = Classroom.builder().classroomName("SE1617").currentNoStudent(16).build();
         List<Classroom> mockClassroomList = new ArrayList<>();
         mockClassroomList.add(classroom1);
@@ -122,6 +110,112 @@ public class ClassroomServiceTest {
         assertEquals(classroomDTOList.get(0).getCurrentNoStudent(), mockClassroomDTOList.get(0).getCurrentNoStudent());
     }
 
+    @Test
+    public void assignClassroomWithNotExistTeacher() {
+        when(teacherService.getById(100)).thenThrow(new NoSuchElementException("Teacher not found"));
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            classroomService.assignClassroom(100, 1);
+        });
 
+        String expectedMessage = "Teacher not found";
+        String actualMessage = exception.getMessage();
 
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void assignClassroomWithNotExistClassId() {
+        Integer classId = 100;
+        Integer teacherId = 1;
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            classroomService.assignClassroom(teacherId, classId);
+        });
+
+        String expectedMessage = "Class not found";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+        verify(classroomRepository, times(1)).assignClassroom(teacherId, classId);
+    }
+
+    @Test
+    public void assignClassroomSuccessfully() {
+        Integer classId = 5;
+        Integer teacherId = 3;
+        Classroom mockClassroom = Classroom.builder()
+                .id(classId)
+                .classroomName("mock class")
+                .subjectId(1)
+                .build();
+        Optional<Classroom> optionalClassroom = Optional.of(mockClassroom);
+        Teacher mockTeacher = Teacher.builder()
+                .id(teacherId)
+                .build();
+
+        when(teacherService.getById(teacherId)).thenReturn(mockTeacher);
+        doReturn(optionalClassroom).when(classroomRepository).findById(classId);
+        doAnswer((Answer<Integer>) invocation -> {
+            mockClassroom.setTeacherId(teacherId);
+            return 1;
+        }).when(classroomRepository).assignClassroom(teacherId, classId);
+
+        Integer noRecordAffected = classroomService.assignClassroom(teacherId, classId);
+        assertEquals(noRecordAffected, 1);
+        assertEquals(mockClassroom.getTeacherId(), teacherId);
+
+        verify(classroomRepository, times(1)).assignClassroom(teacherId, classId);
+        verify(classroomRepository, times(1)).findById(classId);
+    }
+
+    @Test
+    public void updateClassroom() {
+        Integer classId = 5;
+        Classroom mockClassroom = Classroom.builder()
+                .id(classId)
+                .classroomName("mock class")
+                .subjectId(1)
+                .build();
+        String newClassName = "Edited";
+        ClassroomDTO editedClassroomDTO = ClassroomDTO.builder()
+                .id(classId)
+                .classroomName(newClassName)
+                .build();
+
+        doReturn(Optional.of(mockClassroom)).when(classroomRepository).findById(classId);
+
+        doAnswer((Answer<Void>) invocation -> {
+            mockClassroom.setClassroomName(newClassName);
+            return null;
+        }).when(classroomRepository).save(mockClassroom);
+
+        doAnswer((Answer<ClassroomDTO>) invocation -> {
+            ClassroomDTO classroomDTO = ClassroomDTO.builder()
+                    .id(mockClassroom.getId())
+                    .classroomName(mockClassroom.getClassroomName())
+                    .build();
+            return classroomDTO;
+        }).when(classroomMapper).mapToDTO(mockClassroom);
+
+        ClassroomDTO actualClass = classroomService.updateClassroom(newClassName, classId);
+        assertEquals(actualClass.getClassroomName(), editedClassroomDTO.getClassroomName());
+
+        verify(classroomRepository).save(mockClassroom);
+    }
+
+    @Test
+    public void deleteClassroomHavingStudent(){
+        Integer classId = 5;
+        Classroom mockClassroom = Classroom.builder()
+                .id(classId)
+                .classroomName("mock class")
+                .currentNoStudent(2)
+                .build();
+
+        when(classroomRepository.findById(classId)).thenReturn(Optional.of(mockClassroom));
+        Exception exception = assertThrows(ActionNotAllowedException.class, () -> {
+            classroomService.deleteClassroom(classId);
+        });
+
+        verify(classroomRepository).findById(classId);
+    }
 }

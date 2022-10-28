@@ -2,7 +2,8 @@ package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.*;
-import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
+import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
@@ -48,6 +49,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
 
     @Override
+    @Transactional
     public void addNewClassroom(Classroom classroom) throws ElementAlreadyExistException {
         if (classroomExisted(classroom.getClassroomName())) {
             throw new ElementAlreadyExistException("There is already a class with given name!");
@@ -112,7 +114,11 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void registerClassroom(int classId, int accountId) throws Exception {
-        Classroom classroom = classroomRepository.findById(classId);
+        Optional<Classroom> optionalClassroom = classroomRepository.findById(classId);
+        if (optionalClassroom.isEmpty()) {
+            throw new NoSuchElementException("Class not found");
+        }
+        Classroom classroom = optionalClassroom.get();
         Optional<Student> student = studentRepository.findStudentByAccountId(accountId);
         if (student.isEmpty()) {
             throw new Exception("User is not found");
@@ -140,7 +146,8 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public Integer assignClassroom(Integer teacherId, Integer classId) {
-        Teacher teacher = teacherService.findById(teacherId);
+        //try to find teacher and classroom if not exist throw NoSuchElement
+        Teacher teacher = teacherService.getById(teacherId);
         Classroom classroom = getById(classId);
         return classroomRepository.assignClassroom(teacherId, classId);
     }
@@ -149,9 +156,33 @@ public class ClassroomServiceImpl implements ClassroomService {
     public Classroom getById(Integer classId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classId);
         if (optionalClassroom.isEmpty()){
-            throw new NoSuchElementException("Class not found");
+            throw new NoSuchElementException("Can not find classroom with id = " + classId);
         }
         return optionalClassroom.get();
+    }
+
+    @Override
+    public List<Classroom> getBySubjectId(Integer subjectId) {
+        List<Classroom> classrooms = classroomRepository.findBySubjectId(subjectId);
+        return classrooms;
+    }
+
+    @Override
+    public ClassroomDTO updateClassroom(String newClassName, Integer classId) {
+        Classroom currentClassroom = getById(classId);
+        currentClassroom.setClassroomName(newClassName);
+        Classroom savedClassroom = classroomRepository.save(currentClassroom);
+        return classroomMapper.mapToDTO(savedClassroom);
+    }
+
+    @Override
+    @Transactional
+    public void deleteClassroom(Integer classId) {
+        Classroom classroom = getById(classId);
+        if (classroom.getCurrentNoStudent() > 0){
+            throw new ActionNotAllowedException("Can not delete because there is still student in classroom");
+        }
+        classroomRepository.deleteClassroom(classId);
     }
 
     @Override

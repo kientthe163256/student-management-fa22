@@ -3,16 +3,11 @@ package com.example.studentmanagementfa22.repository;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.service.TeacherService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -39,7 +34,7 @@ public class TeacherRepositoryTest {
 //        List<Teacher> teacherList = teacherService.findTeacherWithCriteria(1, 10, "id", "desc");
 //        assertNotNull(teacherList);
 
-        List<TeacherDTO> objects = teacherService.findTeacherWithCriteria(1, 10, "  lastName , desc");
+        List<TeacherDTO> objects = teacherService.getAllTeacherPaging(1, 10, " , ");
         assertNotNull(objects);
     }
 

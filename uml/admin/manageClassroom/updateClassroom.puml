@@ -1,0 +1,42 @@
+@startuml
+Actor Admin
+participant CustomExceptionHandler
+participant ClassroomManagementController
+participant ClassroomService
+participant ClassroomRepository
+database MySQL
+
+autonumber 1.0
+Admin -> ClassroomManagementController: update classroom
+activate Admin
+activate ClassroomManagementController
+ClassroomManagementController -> ClassroomService: update classroom
+
+activate ClassroomService
+autonumber 2.0
+alt Classroom does not exist
+    ClassroomService --> CustomExceptionHandler: throw NoSuchElementException
+    activate CustomExceptionHandler
+    CustomExceptionHandler --> Admin: display error response
+    deactivate CustomExceptionHandler
+autonumber 3.0
+else Classroom exists
+    ClassroomService -> ClassroomRepository: save
+
+    activate ClassroomRepository
+    ClassroomRepository -> MySQL: update
+    activate MySQL
+    MySQL --> ClassroomRepository: return response
+    deactivate MySQL
+    ClassroomRepository --> ClassroomService: return saved classroom
+    deactivate ClassroomRepository
+    ClassroomService --> ClassroomManagementController: saved classroom dto
+    deactivate ClassroomService
+
+    ClassroomManagementController --> Admin: saved classroom dto
+    deactivate ClassroomManagementController
+    deactivate Admin
+end
+
+
+@enduml

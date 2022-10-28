@@ -18,7 +18,8 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
 
 
     List<Classroom> findClassroomsByTeacherId(Integer teacherId);
-    Classroom findById(int classId);
+
+
     @Query(value = "SELECT * FROM student_management_fa22.classroom \n" +
             "WHERE current_no_student < no_student\n" +
             "AND class_type = 'SUBJECT'\n" +
@@ -46,7 +47,6 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     Integer numOfSubjectClassByStudent (@Param("subject_id") int subjectId, @Param("student_id") int studentId);
 
     @Modifying
-    @Transactional
     @Query(value = "INSERT INTO classroom (classroom_name, no_student, class_type, create_date, modify_date) VALUES (?1, ?2, ?3, current_date, current_date)",
             nativeQuery = true)
     void addSessionClassroom(String className, int noStudent, String classType);
@@ -74,4 +74,9 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     @Query(value = "UPDATE classroom set teacher_id = :teacherId where id = :classId", nativeQuery = true)
     Integer assignClassroom(@Param("teacherId") Integer teacherId, @Param("classId") Integer classId);
 
+    List<Classroom> findBySubjectId(Integer subjectId);
+
+    @Modifying
+    @Query(value = "UPDATE classroom set deleted = 1, delete_date = curdate() where id = :classId", nativeQuery = true)
+    Integer deleteClassroom(@Param("classId") Integer classId);
 }

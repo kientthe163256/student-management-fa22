@@ -1,0 +1,42 @@
+@startuml
+Actor Admin
+participant CustomExceptionHandler
+participant SubjectController
+participant SubjectService
+participant SubjectRepository
+database MySQL
+
+autonumber 1.0
+Admin -> SubjectController: update subject
+activate Admin
+activate SubjectController
+SubjectController -> SubjectService: update subject
+
+activate SubjectService
+autonumber 2.0
+alt Subject does not exist
+    SubjectService --> CustomExceptionHandler: throw NoSuchElementException
+    activate CustomExceptionHandler
+    CustomExceptionHandler --> Admin: display error response
+    deactivate CustomExceptionHandler
+autonumber 3.0
+else Subject exists
+    SubjectService -> SubjectRepository: save
+
+    activate SubjectRepository
+    SubjectRepository -> MySQL: update
+    activate MySQL
+    MySQL --> SubjectRepository: return response
+    deactivate MySQL
+    SubjectRepository --> SubjectService: return saved subject
+    deactivate SubjectRepository
+    SubjectService --> SubjectController: return saved subject dto
+    deactivate SubjectService
+
+    SubjectController --> Admin: return saved subject dto
+    deactivate SubjectController
+    deactivate Admin
+end
+
+
+@enduml

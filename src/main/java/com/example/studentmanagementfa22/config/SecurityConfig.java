@@ -40,7 +40,7 @@ public class SecurityConfig {
                 )
                 .csrf().disable()
                 .addFilterBefore(corsFilter(), SessionManagementFilter.class)
-                .exceptionHandling().and()
+                .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .formLogin(form -> form
                         .loginPage("/login")
                         .usernameParameter("username")

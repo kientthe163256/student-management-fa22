@@ -2,7 +2,7 @@ package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Classroom;
-import com.example.studentmanagementfa22.exception.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -29,4 +29,10 @@ public interface ClassroomService {
     Integer assignClassroom(Integer teacherId, Integer classId);
 
     Classroom getById(Integer classId);
+
+    List<Classroom> getBySubjectId(Integer subjectId);
+
+    ClassroomDTO updateClassroom(String newClassName, Integer classId);
+
+    void deleteClassroom(Integer classId);
 }
