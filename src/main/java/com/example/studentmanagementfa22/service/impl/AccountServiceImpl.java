@@ -98,7 +98,7 @@ public class AccountServiceImpl implements AccountService {
     public Account getById(int id) {
         Optional<Account> optionalAccount = accountRepository.findById(id);
         if (optionalAccount.isEmpty()) {
-            throw new NoSuchElementException("Account not found");
+            throw new NoSuchElementException("Can not find account with id = " + id);
         }
         Account account = optionalAccount.get();
         return account;
@@ -134,13 +134,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account updateAccount(AccountDTO editAccount, Account account) {
+    public AccountDTO updateAccount(AccountDTO editAccount) {
+        Account account = getById(editAccount.getId());
         account.setFirstName(editAccount.getFirstName());
         account.setLastName(editAccount.getLastName());
         account.setDob(editAccount.getDob());
         account.setModifyDate(new Date());
-        accountRepository.save(account);
-        return account;
+        Account savedAccount = accountRepository.save(account);
+
+        return mapper.mapToDTO(savedAccount);
     }
 
 

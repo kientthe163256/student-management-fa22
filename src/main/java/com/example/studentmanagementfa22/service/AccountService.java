@@ -31,7 +31,7 @@ public interface AccountService extends UserDetailsService {
 
     void editInformation(Account account, StudentDTO student);
 
-    Account updateAccount(AccountDTO editAccount, Account account);
+    AccountDTO updateAccount(AccountDTO editAccount);
     @Transactional
     void disableAccount(Integer accountId);
 }

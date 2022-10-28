@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RequestMapping("/admin/accounts")
+@RestController
 public class AccountManagementController {
     @Autowired
     private AccountService accountService;
@@ -68,14 +69,10 @@ public class AccountManagementController {
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = AccountDTO.class)))
     @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "String"))
     @ApiResponse(responseCode = "404", description = "Account is not found", content = @Content(mediaType = "String"))
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateAccountById(@PathVariable Integer id, @Valid @RequestBody AccountDTO accountDTO) {
-        Account account = accountService.getById(id);
-        accountService.updateAccount(accountDTO, account);
-
-        Account editedAccount = accountService.getById(account.getId());
-        AccountDTO editedAccountDTO = accountMapper.mapToDTO(editedAccount);
-        return new ResponseEntity<>(editedAccountDTO, HttpStatus.OK);
+    @PutMapping()
+    public ResponseEntity<?> updateAccountById(@Valid @RequestBody AccountDTO accountDTO) {
+        AccountDTO editedAccount = accountService.updateAccount(accountDTO);
+        return new ResponseEntity<>(editedAccount, HttpStatus.OK);
     }
 
     @Operation(summary = "Disable account", description = "Disable account")
