@@ -1,13 +1,23 @@
 package com.example.studentmanagementfa22.service.impl;
 
+import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Student;
+import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
+import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.StudentService;
+import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
 
-import java.util.Date;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -15,16 +25,63 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private IGenericMapper<Account, StudentDTO> mapper;
+
     @Override
     public void addStudentWithNewAccount(Account account) {
         Date today = new Date();
         //Add a new student with registered account
         Student student = Student.builder()
                 .academicSession(Integer.parseInt(account.getUsername().substring(2,4)))
-                .accountId(account.getId())
+                .account(account)
                 .createDate(today)
                 .modifyDate(today)
                 .build();
         studentRepository.save(student);
+    }
+    private static final List<String> CRITERIA =  Arrays.asList("first_name", "last_name", "id", "dob", "username");
+    @Override
+    public List<StudentDTO> getStudentsByClassroomandTeacher(Integer classID, Integer accountID, int pageNumber, int pageSize, String sort) {
+        Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountID);
+        if (optionalTeacher.isEmpty()) {
+            throw  new NoSuchElementException("Teacher not found");
+        }
+        //handle invalid format
+        if (!Pattern.matches(".+,[A-Za-z]+", sort)){
+            throw new IllegalArgumentException("Sort must be in format 'criteria,direction'. Ex: first_name,ASC");
+        }
+        //handle invalid sort criteria
+        String criteria = sort.split(",")[0].trim();
+        if (!CRITERIA.contains(criteria)){
+            throw new IllegalArgumentException("Sort criteria must be first_name, last_name, id, dob or username!");
+        }
+        String rawdirection = sort.split(",")[1].trim().toUpperCase();
+        Sort.Direction direction = Sort.Direction.fromString(rawdirection);
+        //if criteria is account's field, add 'account.'
+        Sort sortObject = criteria.equals("id")
+                ? Sort.by(direction, criteria)
+                : Sort.by(direction, ""+criteria);
+
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
+        Page<Account> accounts = accountRepository.findStudentAccountByClassroomandTeacher(classID, optionalTeacher.get().getId(), pageRequest);
+        List<StudentDTO> studentDTOList = accounts.stream().map(account -> {
+            StudentDTO studentDTO = mapper.mapToDTO(account);
+            Optional<Student> optionalStudent = studentRepository.findStudentByAccountId(account.getId());
+            if (optionalStudent.isEmpty()) {
+                throw new NoSuchElementException("Student not found");
+            }
+            studentDTO.setAcademicSession(optionalStudent.get().getAcademicSession());
+            studentDTO.setId(optionalStudent.get().getId());
+           return  studentDTO;
+        }).collect(Collectors.toList());
+
+        return studentDTOList;
     }
 }

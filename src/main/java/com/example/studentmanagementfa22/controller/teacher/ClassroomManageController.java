@@ -1,8 +1,11 @@
 package com.example.studentmanagementfa22.controller.teacher;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.service.ClassroomService;
+import com.example.studentmanagementfa22.service.StudentService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +13,9 @@ import com.example.studentmanagementfa22.service.MarkService;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+
 @RestController
-@RequestMapping("/teacher")
+@RequestMapping("/teacher/classrooms")
 public class ClassroomManageController {
 
 
@@ -19,21 +23,62 @@ public class ClassroomManageController {
     private ClassroomService classroomService;
 
     @Autowired
-    private MarkService markService;
+    private StudentService studentService;
     @Autowired
     private HttpSession session;
 
-    @GetMapping("")
-    public String getHomePage(){
-        return "teacher/Home";
-    }
+    @Autowired
+    private MarkService markService;
 
-    @GetMapping("/classrooms")
+
+
+    @GetMapping("")
+    public ResponseEntity<?> displayListTeachingClassrooms () {
+        Account account = (Account) session.getAttribute("account");
+        List<ClassroomDTO> classroomList = classroomService.getAllTeachingClassrooms(account.getId());
+        return ResponseEntity.ok(classroomList);
+    }
+    @GetMapping("/{id}")
     public ResponseEntity<?> displayTeachingClassroom () {
         Account account = (Account) session.getAttribute("account");
         List<ClassroomDTO> classroomList = classroomService.getAllTeachingClassrooms(account.getId());
         return ResponseEntity.ok(classroomList);
     }
+    @GetMapping("/{id}/students")
+    @Operation(summary = "View students ", description = "Teacher can view all student in a classrooms")
+    public ResponseEntity<?> displayStudentsbyClassroom(@PathVariable(name = "id") Integer classID,
+            @RequestParam(required = false, defaultValue = "1") int pageNumber,
+            @RequestParam(required = false, defaultValue = "5") int pageSize,
+            @RequestParam(required = false, defaultValue = "id,ASC") String sort) {
+        Account account = (Account) session.getAttribute("account");
+        List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(classID, account.getId(), pageNumber, pageSize, sort)  ;
+        return ResponseEntity.ok(studentDTOList);
+    }
+//    @GetMapping("/{id}/students/{studentID}")
+//    @Operation(summary = "View student information ", description = "Teacher can view student information by classrooms")
+//    public ResponseEntity<?> displayStudentbyClassroom(@PathVariable Integer subjectId  ) {
+//        Account account = (Account) session.getAttribute("account");
+//        List<Mark> markList = markService.getMarksBySubject(account, subjectId);
+//        return ResponseEntity.ok(markList);
+//    }
+//
+//    @GetMapping("/{id}/students/{studentID}/marks")
+//    @Operation(summary = "View Mark ", description = "Teacher can view student mark ")
+//    public ResponseEntity<?> displayStudentMark(@PathVariable Integer subjectId  ) {
+//        Account account = (Account) session.getAttribute("account");
+//        List<Mark> markList = markService.getMarksBySubject(account, subjectId);
+//        return ResponseEntity.ok(markList);
+//    }
+//
+//    @PostMapping("/{id}/students/{studentID}/mark")
+//    @Operation(summary = "View Mark ", description = "Teacher can view student mark ")
+//    public ResponseEntity<?> addStudentMark(@PathVariable Integer subjectId  ) {
+//        Account account = (Account) session.getAttribute("account");
+//        List<Mark> markList = markService.getMarksBySubject(account, subjectId);
+//        return ResponseEntity.ok(markList);
+//    }
+
+
 
 
 

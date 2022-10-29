@@ -29,8 +29,8 @@ public class Student {
     @Column(name = "academic_session")
     private int academicSession;
 
-    @Column(name = "account_id")
-    private int accountId;
+    @OneToOne
+    private Account account;
 
     @Transient
     @ManyToMany(fetch = FetchType.LAZY)

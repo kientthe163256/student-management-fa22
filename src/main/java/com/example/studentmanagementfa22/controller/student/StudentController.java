@@ -12,6 +12,8 @@ import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.MarkService;
 import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.utility.StudentMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -51,6 +53,7 @@ public class StudentController {
     }
 
     @GetMapping("/information")
+    @Operation(summary = "View information", description = "Student can view his personal information")
     public ResponseEntity<StudentDTO> displayInformation() {
         Account account = (Account) session.getAttribute("account");
         Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
@@ -65,18 +68,22 @@ public class StudentController {
         return ResponseEntity.ok(studentDTO);
     }
     @GetMapping("/subjectList")
+    @Operation(summary = "Subject List", description = "List of all course in student 's major")
     public ResponseEntity<?> displaySubject( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
         Page<Subject> subjectPage = subjectService.getAllSubject(pageNumber);
         List<Subject> subjectList = subjectPage.getContent();
         return ResponseEntity.ok(subjectList);
     }
     @PutMapping("/information")
+    @Operation(summary = "Change information", description = "Student can change his personal information")
+    @ApiResponse(responseCode = "201", description = "Update information successfully")
     public ResponseEntity<?> editInformation(@Valid @RequestBody StudentDTO student) {
         Account account = (Account) session.getAttribute("account");
         accountService.editInformation(account, student);
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
     @GetMapping("/subjectRegistered")
+    @Operation(summary = "List subject registered", description = "Display list of classroom that student has registered")
     public ResponseEntity<?> displaySubjectRegistered ( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
         Account account = (Account) session.getAttribute("account");
         Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
@@ -94,6 +101,7 @@ public class StudentController {
         return ResponseEntity.ok(classroomDTOList);
     }
     @GetMapping("/mark/{subjectId}")
+    @Operation(summary = "View Mark ", description = "Student can view mark of each subject")
     public ResponseEntity<?> displayMarkbySubject(@PathVariable Integer subjectId  ) {
         Account account = (Account) session.getAttribute("account");
         List<Mark> markList = markService.getMarksBySubject(account, subjectId);

@@ -1,0 +1,62 @@
+@startuml
+Actor Teacher
+participant SecurityConfig
+participant CustomSuccessHandler
+participant ClassroomManageController
+participant StudentService
+participant TeacherRepository
+participant AccountRepository
+participant MapperAccountStudentDTO
+database MySQL
+
+autonumber 1.0
+Teacher -> SecurityConfig: login account
+
+activate Teacher
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Teacher: redirect login
+end
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+activate CustomSuccessHandler
+CustomSuccessHandler -> ClassroomManageController: dispatch user account
+activate ClassroomManageController
+deactivate CustomSuccessHandler
+autonumber 2.0
+ClassroomManageController -> StudentService: get students by criteria
+activate StudentService
+StudentService -> TeacherRepository: find teacher by account
+activate TeacherRepository
+TeacherRepository -> MySQL: Select
+activate MySQL
+MySQL --> TeacherRepository : return response
+deactivate MySQL
+TeacherRepository -->StudentService: return teacher
+deactivate TeacherRepository
+break Arguments exceptions
+StudentService --> ClassroomManageController: return error message
+end
+autonumber 3.0
+StudentService -> AccountRepository: find students Account by criteria
+activate AccountRepository
+AccountRepository -> MySQL: Select
+activate MySQL
+MySQL --> AccountRepository: return response
+deactivate MySQL
+AccountRepository --> StudentService: return student's accounts
+
+autonumber 4.0
+StudentService -> MapperAccountStudentDTO: map account to StudentDTO
+activate MapperAccountStudentDTO
+MapperAccountStudentDTO --> StudentService: return list of StudentDTOs
+deactivate MapperAccountStudentDTO
+StudentService --> ClassroomManageController: return list of StudentDTOs
+deactivate StudentService
+ClassroomManageController --> Teacher: return list of StudentDTOs
+deactivate ClassroomManageController
+deactivate Teacher
+
+@enduml

@@ -1,27 +1,17 @@
 package com.example.studentmanagementfa22.service.impl;
 
-import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
-import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.Tuple;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,11 +24,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private IGenericMapper<Teacher, TeacherDTO> mapper;
 
-    @Autowired
-    private AccountService accountService;
 
-    @Autowired
-    private EntityManager em;
 
     @Override
     public void addTeacherWithNewAccount(Account account) {

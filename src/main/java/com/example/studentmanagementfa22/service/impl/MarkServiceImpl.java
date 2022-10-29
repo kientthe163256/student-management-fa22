@@ -3,8 +3,10 @@ package com.example.studentmanagementfa22.service.impl;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.entity.Student;
+import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.MarkRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
+import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.MarkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,13 +15,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class MarkServiceImpl implements MarkService {
     @Autowired
     private MarkRepository markRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Autowired
     private StudentRepository studentRepo;
@@ -34,8 +37,12 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public Mark editStudentMark(int markID, Mark editMark) {
-        Optional<Mark> optionalMark = markRepository.findMarkById(markID);
+    public Mark editStudentMark(int markID, Mark editMark, int accountID) {
+        Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountID);
+        if (optionalTeacher.isEmpty()) {
+            throw  new NoSuchElementException("Teacher not found");
+        }
+        Optional<Mark> optionalMark = markRepository.getMarkByIDandTeacherID(optionalTeacher.get().getId(), markID );
         if (optionalMark.isEmpty()) {
             throw new NoSuchElementException("Mark not found");
         }

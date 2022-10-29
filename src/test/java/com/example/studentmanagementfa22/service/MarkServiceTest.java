@@ -41,7 +41,7 @@ public class MarkServiceTest {
 
         Student mockStudent = Student.builder()
                 .id(1)
-                .accountId(5)
+                .account(mockAccount)
                 .build();
         Optional<Student> mockOptionalStudent= Optional.of(mockStudent);
         Subject mockSubject = Subject.builder()

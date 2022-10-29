@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
 @RestController
 @RequestMapping("/student/classroom")
 public class ClassroomController {
@@ -22,6 +23,7 @@ public class ClassroomController {
     private HttpSession session;
 
     @GetMapping("/classroomList")
+    @Operation(summary = "Display list of classroom", description = "A List of classroom that has the subject student has not registered")
     public ResponseEntity<?> displayClassroom( @RequestParam(required = false, defaultValue = "1") int pageNumber,
                                                @RequestParam int subjectId ) {
         Page<ClassroomDTO> classroomPage = classroomService.getAllAvailClassroom(pageNumber, subjectId);
@@ -36,6 +38,7 @@ public class ClassroomController {
     }
 
     @PostMapping("/registerClassroom")
+    @Operation(summary = "Regiter a classroom", description = "Student can only register for a classroom per subject")
     public ResponseEntity<?> registerClassroom(@RequestParam int classId ) {
         Account account = (Account) session.getAttribute("account");
         try {
