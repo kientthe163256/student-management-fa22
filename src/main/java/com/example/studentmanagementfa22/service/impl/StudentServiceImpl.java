@@ -70,7 +70,7 @@ public class StudentServiceImpl implements StudentService {
                 : Sort.by(direction, ""+criteria);
 
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
-        Page<Account> accounts = accountRepository.findStudentAccountByClassroomandTeacher(classID, optionalTeacher.get().getId(), pageRequest);
+        Page<Account> accounts = accountRepository.findStudentAccountsByClassroomandTeacher(classID, optionalTeacher.get().getId(), pageRequest);
         List<StudentDTO> studentDTOList = accounts.stream().map(account -> {
             StudentDTO studentDTO = mapper.mapToDTO(account);
             Optional<Student> optionalStudent = studentRepository.findStudentByAccountId(account.getId());

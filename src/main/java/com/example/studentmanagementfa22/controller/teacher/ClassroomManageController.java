@@ -3,14 +3,17 @@ package com.example.studentmanagementfa22.controller.teacher;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
+import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.studentmanagementfa22.service.MarkService;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -54,14 +57,19 @@ public class ClassroomManageController {
         List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(classID, account.getId(), pageNumber, pageSize, sort)  ;
         return ResponseEntity.ok(studentDTOList);
     }
-//    @GetMapping("/{id}/students/{studentID}")
-//    @Operation(summary = "View student information ", description = "Teacher can view student information by classrooms")
-//    public ResponseEntity<?> displayStudentbyClassroom(@PathVariable Integer subjectId  ) {
-//        Account account = (Account) session.getAttribute("account");
-//        List<Mark> markList = markService.getMarksBySubject(account, subjectId);
-//        return ResponseEntity.ok(markList);
-//    }
-//
+    @PostMapping("/{id}/students/{studentId}/marks")
+    @Operation(summary = "Add Mark ", description = "Teacher can add student mark ")
+    public ResponseEntity<?> addStudentMark(@PathVariable(name = "id") Integer classId,
+                                            @PathVariable(name = "studentId") Integer studentId,
+                                            @Valid @RequestBody Mark newMark) {
+        Account account = (Account) session.getAttribute("account");
+        newMark.setStudentId(studentId);
+        markService.addStudentMark(newMark, account.getId(), classId);
+        return new ResponseEntity<>(newMark, HttpStatus.OK);
+    }
+
+
+
 //    @GetMapping("/{id}/students/{studentID}/marks")
 //    @Operation(summary = "View Mark ", description = "Teacher can view student mark ")
 //    public ResponseEntity<?> displayStudentMark(@PathVariable Integer subjectId  ) {

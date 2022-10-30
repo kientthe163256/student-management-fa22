@@ -28,12 +28,5 @@ public class MarkManageController {
         return new ResponseEntity<>(mark, HttpStatus.OK);
     }
 
-//    @PostMapping("/marks/{studentId}")
-//    public ResponseEntity<?> addStudentMark(@PathVariable(name = "") Integer markID,
-//                                             @Valid @RequestBody Mark editMark) {
-//        Account account = (Account) session.getAttribute("account");
-//        Mark mark = markService.editStudentMark(markID, editMark, account.getId());
-//        return new ResponseEntity<>(mark, HttpStatus.OK);
-//    }
 
 }

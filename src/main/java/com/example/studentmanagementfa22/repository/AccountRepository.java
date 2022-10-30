@@ -39,5 +39,5 @@ public interface AccountRepository extends JpaRepository<Account, String> {
                     "AND c.teacher_id = ?2 "
             ,nativeQuery = true)
     //Pagination of native query results requires an extra step.
-    Page<Account> findStudentAccountByClassroomandTeacher( int  teacherId,  int classId, Pageable pageable);
+    Page<Account> findStudentAccountsByClassroomandTeacher( int  teacherId,  int classId, Pageable pageable);
 }

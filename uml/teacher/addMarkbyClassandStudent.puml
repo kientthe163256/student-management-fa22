@@ -1,0 +1,70 @@
+@startuml
+Actor Teacher
+participant SecurityConfig
+participant CustomSuccessHandler
+participant ClassroomManageController
+participant MarkService
+participant MarkRepository
+participant Repository
+database MySQL
+
+autonumber 1.0
+Teacher -> SecurityConfig: login account
+
+activate Teacher
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Teacher: redirect login
+end
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+activate CustomSuccessHandler
+CustomSuccessHandler -> ClassroomManageController: dispatch user account
+activate ClassroomManageController
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+ClassroomManageController -> MarkService: add new student's mark
+activate MarkService
+MarkService ->Repository: get teacher,classroom, student
+activate Repository
+Repository -> MySQL: SELECT
+activate MySQL
+MySQL --> Repository: return response
+deactivate MySQL
+Repository --> MarkService: return teacher, classroom, student
+deactivate Repository
+break entity not found
+MarkService --> ClassroomManageController: return error message
+end
+
+break Teacher not authorized
+MarkService --> ClassroomManageController: return error message
+end
+
+MarkService -> MarkRepository: get Total Weight's mark
+activate MarkRepository
+MarkRepository -> MySQL: SELECT Sum
+activate MySQL
+MySQL --> MarkRepository: return response
+deactivate MySQL
+MarkRepository --> MarkService: return Total Weight's mark
+break new total weight exceed 1.0
+MarkService --> ClassroomManageController: return error message
+end
+
+autonumber 3.0
+MarkService -> MarkRepository: save mark
+MarkRepository -> MySQL: insert
+activate MySQL
+MySQL --> MarkRepository: return response
+deactivate MySQL
+MarkRepository --> MarkService: return response
+deactivate MarkRepository
+MarkService --> ClassroomManageController: return response
+deactivate MarkService
+ClassroomManageController --> Teacher: return new mark
+deactivate ClassroomManageController
+@enduml

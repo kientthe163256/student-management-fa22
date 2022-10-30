@@ -26,4 +26,7 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
     Optional<Mark> getMarkByIDandTeacherID(@Param("teacher_id") int  teacherId, @Param("mark_id")  int markId);
 
     Optional<Mark> findMarkById( int markId);
+    @Query(value = "SELECT IFNULL(SUM(weight), 0)AS TotalWeight FROM student_management_fa22.mark\n" +
+        "WHERE student_id = :student_id", nativeQuery = true)
+    double getTotalWeightofStudentMark(@Param("student_id") int studentId);
 }

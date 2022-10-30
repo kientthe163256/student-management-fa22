@@ -3,6 +3,7 @@ package com.example.studentmanagementfa22.service.impl;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
@@ -20,6 +21,9 @@ import java.util.stream.Collectors;
 public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private TeacherRepository teacherRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Autowired
     private IGenericMapper<Teacher, TeacherDTO> mapper;
@@ -78,6 +82,19 @@ public class TeacherServiceImpl implements TeacherService {
                 .map(t -> mapper.mapToDTO(t))
                 .collect(Collectors.toList());
         return teacherDTOList;
+    }
+
+    @Override
+    public boolean checkStudentExistbyCriteria(Integer studentId, Integer teacherAccountId, Integer subjectId) {
+        Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(teacherAccountId);
+        if (optionalTeacher.isEmpty()) {
+            throw  new NoSuchElementException("Teacher not found");
+        }
+        int teacherId = optionalTeacher.get().getId();
+        if(studentRepository.getNoStudentbyCriteria(studentId, teacherId, subjectId) != 1) {
+            throw  new NoSuchElementException("You are not the teacher of this student");
+        }
+        return true;
     }
 
     @Override

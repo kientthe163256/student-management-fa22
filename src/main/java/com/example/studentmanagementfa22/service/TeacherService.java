@@ -18,4 +18,6 @@ public interface TeacherService {
     void deleteTeacher(Integer teacherId);
 
     List<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort);
+
+    boolean checkStudentExistbyCriteria(Integer studentId, Integer teacherAccountId, Integer classroomId);
 }

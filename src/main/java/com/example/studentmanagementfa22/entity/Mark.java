@@ -22,7 +22,6 @@ import java.util.Date;
 public class Mark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull(message = "Mark ID can not be null")
     private Integer id;
 
     @Column(name = "subject_id")
@@ -40,6 +39,9 @@ public class Mark {
     private double grade;
 
     @Column(name = "weight")
+    @NotNull(message = "Mark 's weight can not be null")
+    @Min(value = 0, message = "Minimum weight is 0")
+    @Max(value = 1, message = "Maximum weight is 1")
     private double weight;
 
     private boolean deleted;

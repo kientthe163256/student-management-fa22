@@ -1,16 +1,14 @@
 package com.example.studentmanagementfa22.service.impl;
 
-import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.entity.Mark;
-import com.example.studentmanagementfa22.entity.Student;
-import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.entity.*;
+import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.MarkRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.MarkService;
+import com.example.studentmanagementfa22.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,7 +21,11 @@ public class MarkServiceImpl implements MarkService {
 
     @Autowired
     private TeacherRepository teacherRepository;
+    @Autowired
+    private ClassroomRepository classroomRepository;
 
+    @Autowired
+    private TeacherService teacherService;
     @Autowired
     private StudentRepository studentRepo;
 
@@ -51,5 +53,36 @@ public class MarkServiceImpl implements MarkService {
         mark.setModifyDate(new Date());
         markRepository.save(mark);
         return mark;
+    }
+
+    @Override
+    public void addStudentMark(Mark mark, Integer accountId, Integer classId) {
+        Optional<Student> student = studentRepo.findById(mark.getStudentId());
+        if(student.isEmpty()) {
+            throw new NoSuchElementException("Student ID not exists");
+        }
+        Optional<Classroom> classroom = classroomRepository.findById(classId);
+        if (classroom.isEmpty()){
+            throw new NoSuchElementException("Classroom not exist");
+        }
+        Optional<Teacher> teacher = teacherRepository.findTeacherByAccountId(accountId);
+        if (teacher.isEmpty()) {
+            throw  new NoSuchElementException("Teacher not found");
+        }
+        if(!teacherService.checkStudentExistbyCriteria(student.get().getId(), accountId, classroom.get().getId())) {
+            throw new IllegalArgumentException("You are not allowed to add this student subject'marks");
+        }
+        mark.setCreateDate(new Date());
+        mark.setSubjectId(classroom.get().getSubjectId());
+        mark.setId(mark.getId());
+        mark.setWeight(mark.getWeight());
+        mark.setGrade(mark.getGrade());
+        // check weight
+        int studentId = student.get().getId();
+        double currentWeight = markRepository.getTotalWeightofStudentMark(studentId);
+        if (mark.getWeight() + currentWeight > 1.0) {
+            throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
+        }
+        markRepository.save(mark);
     }
 }
