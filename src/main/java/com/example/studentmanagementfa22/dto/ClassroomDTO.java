@@ -1,12 +1,13 @@
 package com.example.studentmanagementfa22.dto;
 
 import com.example.studentmanagementfa22.entity.ClassType;
-import com.example.studentmanagementfa22.entity.Subject;
-import com.example.studentmanagementfa22.entity.Teacher;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import lombok.*;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.Date;
 
 
 @Data
@@ -21,6 +22,9 @@ public class ClassroomDTO {
     private Integer currentNoStudent;
 
     private Integer noStudent;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", lenient = OptBoolean.FALSE, timezone= "Asia/Ho_Chi_Minh")
+    private Date create_date;
 
     @Enumerated(value = EnumType.STRING)
     private ClassType classType;

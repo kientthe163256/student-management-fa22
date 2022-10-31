@@ -36,17 +36,15 @@ public class ClassroomManageController {
 
 
     @GetMapping("")
-    public ResponseEntity<?> displayListTeachingClassrooms () {
+    public ResponseEntity<?> displayListTeachingClassrooms (@RequestParam(required = false, defaultValue = "1") int pageNumber,
+                                                            @RequestParam(required = false, defaultValue = "5") int pageSize,
+                                                            @RequestParam(required = false, defaultValue = "id,ASC") String sort) {
         Account account = (Account) session.getAttribute("account");
-        List<ClassroomDTO> classroomList = classroomService.getAllTeachingClassrooms(account.getId());
+        List<ClassroomDTO> classroomList = classroomService.getAllTeachingClassrooms(account.getId(), pageNumber, pageSize, sort);
         return ResponseEntity.ok(classroomList);
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<?> displayTeachingClassroom () {
-        Account account = (Account) session.getAttribute("account");
-        List<ClassroomDTO> classroomList = classroomService.getAllTeachingClassrooms(account.getId());
-        return ResponseEntity.ok(classroomList);
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> displayTeachingClassroom () {}
     @GetMapping("/{id}/students")
     @Operation(summary = "View students ", description = "Teacher can view all student in a classrooms")
     public ResponseEntity<?> displayStudentsbyClassroom(@PathVariable(name = "id") Integer classID,

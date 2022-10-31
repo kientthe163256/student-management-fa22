@@ -15,13 +15,16 @@ import com.example.studentmanagementfa22.utility.SubjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,17 +87,39 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .collect(Collectors.toList());
     }
 
+    private static final List<String> CRITERIA =  Arrays.asList("classroom_name", "create_date", "id");
     @Override
-    public List<ClassroomDTO> getAllTeachingClassrooms(int accountID) {
+    public List<ClassroomDTO> getAllTeachingClassrooms(int accountID, int pageNumber, int pageSize, String sort) {
         Optional<Teacher> teacher = teacherRepository.findTeacherByAccountId(accountID);
         if (teacher.isEmpty()){
             throw new NoSuchElementException("teacher not found");
         }
-        List<Classroom> classrooms = classroomRepository.findClassroomsByTeacherId(teacher.get().getId());
-        return classrooms
-                .stream()
-                .map(classroom -> mapToClassroomDTO(classroom))
+        //handle invalid format
+        if (!Pattern.matches(".+,[A-Za-z]+", sort)){
+            throw new IllegalArgumentException("Sort must be in format 'criteria,direction'. Ex: classroom_name,ASC");
+        }
+        //handle invalid sort criteria
+        String criteria = sort.split(",")[0].trim();
+        if (!CRITERIA.contains(criteria)){
+            throw new IllegalArgumentException("Sort criteria must be classroom_name,  id, create_date!");
+        }
+        String rawdirection = sort.split(",")[1].trim().toUpperCase();
+        Sort.Direction direction = Sort.Direction.fromString(rawdirection);
+        Sort sortObject =  Sort.by(direction, criteria);
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
+
+        Page<Classroom> classrooms = classroomRepository.findClassroomsByTeacherId(teacher.get().getId(), pageRequest);
+//        List<ClassroomDTO> classroomDTOList = classrooms.stream()
+//                .map(classroom -> mapToClassroomDTO(classroom))
+//                .collect(Collectors.toList());
+        List<ClassroomDTO> classroomDTOList = classrooms.stream()
+                .map(classroom -> {
+                    ClassroomDTO classroomDTO = mapToClassroomDTO(classroom);
+                    classroomDTO.setCreate_date(classroom.getCreateDate());
+                    return  classroomDTO;
+                })
                 .collect(Collectors.toList());
+        return classroomDTOList;
     }
 
     @Override

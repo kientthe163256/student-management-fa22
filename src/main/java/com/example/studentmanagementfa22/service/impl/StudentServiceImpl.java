@@ -64,7 +64,6 @@ public class StudentServiceImpl implements StudentService {
         }
         String rawdirection = sort.split(",")[1].trim().toUpperCase();
         Sort.Direction direction = Sort.Direction.fromString(rawdirection);
-        //if criteria is account's field, add 'account.'
         Sort sortObject = criteria.equals("id")
                 ? Sort.by(direction, criteria)
                 : Sort.by(direction, ""+criteria);
