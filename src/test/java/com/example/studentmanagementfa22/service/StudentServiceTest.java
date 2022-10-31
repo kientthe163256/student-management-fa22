@@ -2,14 +2,23 @@ package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
+import com.example.studentmanagementfa22.entity.Classroom;
+import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.StudentServiceImpl;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +41,7 @@ public class StudentServiceTest {
 
     @InjectMocks
     private StudentServiceImpl studentService;
- //   @MockitoSettings(strictness = Strictness.WARN)
+//    @MockitoSettings( strictness = Strictness.WARN)
 
 //    @Test
 //    public void getListofStudentByCriteria() {
@@ -51,8 +60,8 @@ public class StudentServiceTest {
 //                .id(2)
 //                .teacherId(2)
 //                .build();
-//        Account studentAcc1 = Account.builder().id(1).build();
-//        Account studentAcc2 = Account.builder().id(2).build();
+//        Account studentAcc1 = Account.builder().id(1).username("student1").build();
+//        Account studentAcc2 = Account.builder().id(2).username("student2").build();
 //        StudentDTO studentDTO1 = StudentDTO.builder().id(3).accountId(studentAcc1.getId()).build();
 //        StudentDTO studentDTO2 = StudentDTO.builder().id(4).accountId(studentAcc2.getId()).build();
 //        List<StudentDTO> mockStudentDTOList = new ArrayList<>();
@@ -69,16 +78,13 @@ public class StudentServiceTest {
 //        when(accountRepository.findStudentAccountsByClassroomandTeacher(mockOptionalTeacher.get().getId(), mockClassroom.getId(), pageRequest)).thenReturn(mockPageStudentAccount);
 //        when(mapper.mapToDTO(studentAcc1)).thenReturn(studentDTO1);
 //        when(mapper.mapToDTO(studentAcc2)).thenReturn(studentDTO2);
-//        when(mockPageStudentAccount.stream().map(account -> {
-//            StudentDTO studentDTO = mapper.mapToDTO(account);
-//            return  studentDTO;
-//        }).collect(Collectors.toList())).thenReturn(mockStudentDTOList);
+//     //   when(mockPageStudentAccount.stream().map(account -> mapper.mapToDTO(account)).collect(Collectors.toList())).thenReturn(mockStudentDTOList);
 //        // call Service
 //        List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(2,3,1,5,"id,DESC" );
 //        //Assert result
 //        assertEquals(2, studentDTOList.size());
 //        assertTrue(studentDTOList.get(0).getId() > studentDTOList.get(1).getId(), "Sorted by ID descending");
-
-
-    //}
+//
+//
+//    }
 }

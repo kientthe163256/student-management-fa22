@@ -46,7 +46,7 @@ public class StudentServiceImpl implements StudentService {
                 .build();
         studentRepository.save(student);
     }
-    private static final List<String> CRITERIA =  Arrays.asList("first_name", "last_name", "id", "dob", "username");
+    private static final List<String> CRITERIA =  Arrays.asList("first_name", "last_name", "account_id", "dob", "username", "academicSession");
     @Override
     public List<StudentDTO> getStudentsByClassroomandTeacher(Integer classID, Integer accountID, int pageNumber, int pageSize, String sort) {
         Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountID);
@@ -60,13 +60,13 @@ public class StudentServiceImpl implements StudentService {
         //handle invalid sort criteria
         String criteria = sort.split(",")[0].trim();
         if (!CRITERIA.contains(criteria)){
-            throw new IllegalArgumentException("Sort criteria must be first_name, last_name, id, dob or username!");
+            throw new IllegalArgumentException("Sort criteria must be first_name, last_name, account_id, dob or username!");
         }
         String rawdirection = sort.split(",")[1].trim().toUpperCase();
         Sort.Direction direction = Sort.Direction.fromString(rawdirection);
-        Sort sortObject = criteria.equals("id")
-                ? Sort.by(direction, criteria)
-                : Sort.by(direction, ""+criteria);
+        Sort sortObject = criteria.equals("account_id")
+                ? Sort.by(direction, "id")
+                : Sort.by(direction, criteria);
 
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
         Page<Account> accounts = accountRepository.findStudentAccountsByClassroomandTeacher(classID, optionalTeacher.get().getId(), pageRequest);
@@ -78,6 +78,8 @@ public class StudentServiceImpl implements StudentService {
             }
             studentDTO.setAcademicSession(optionalStudent.get().getAcademicSession());
             studentDTO.setId(optionalStudent.get().getId());
+            studentDTO.setAccountId(account.getId());
+            studentDTO.setPassword(null);
            return  studentDTO;
         }).collect(Collectors.toList());
 

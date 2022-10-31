@@ -109,9 +109,6 @@ public class ClassroomServiceImpl implements ClassroomService {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
 
         Page<Classroom> classrooms = classroomRepository.findClassroomsByTeacherId(teacher.get().getId(), pageRequest);
-//        List<ClassroomDTO> classroomDTOList = classrooms.stream()
-//                .map(classroom -> mapToClassroomDTO(classroom))
-//                .collect(Collectors.toList());
         List<ClassroomDTO> classroomDTOList = classrooms.stream()
                 .map(classroom -> {
                     ClassroomDTO classroomDTO = mapToClassroomDTO(classroom);

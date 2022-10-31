@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -38,5 +41,13 @@ public class AccountRepositoryTest {
     public void getAllAccount(){
         List<Account> accounts = accountRepository.findAll();
         assertThat(accounts).isNotNull();
+    }
+    @Test
+    public void getStudentAccountbyPage() {
+        Sort sortObject = Sort.by(Sort.Direction.DESC,"id");
+        PageRequest pageRequest = PageRequest.of(1, 2, sortObject);
+        Page<Account> accounts = accountRepository.findStudentAccountsByClassroomandTeacher(2, 2, pageRequest);
+        assertThat(accounts).isNotNull();
+        Assertions.assertEquals(3,accounts.getTotalPages());
     }
 }
