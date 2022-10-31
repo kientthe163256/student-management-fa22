@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -19,6 +21,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "mark")
+@SQLDelete(sql = "UPDATE teacher SET deleted = true WHERE id=?")
+@Where(clause = "deleted = false")
 public class Mark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

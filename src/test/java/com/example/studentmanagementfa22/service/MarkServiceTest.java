@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,6 +68,24 @@ public class MarkServiceTest {
         assertEquals(markList.size(), mockMarkList.size());
         assertEquals(markList.get(0).getStudentId(), mockMarkList.get(0).getStudentId());
         assertEquals(markList.get(0).getGrade(), mockMarkList.get(0).getGrade());
+
+    }
+    @Test
+    public void checkDeleteMark() {
+        Mark mockMark = Mark.builder()
+                .id(1)
+                .studentId(1)
+                .subjectId(1)
+                .grade(7.0)
+                .weight(0.1)
+                .deleted(false)
+                .build();
+        doAnswer( invocation -> {
+            mockMark.setDeleted(true);
+            return  null;
+        }).when(markRepository).deleteMark(1);
+        markService.deleteMark(1);
+        assertTrue(mockMark.isDeleted());
 
     }
 }

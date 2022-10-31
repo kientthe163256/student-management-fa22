@@ -85,4 +85,13 @@ public class MarkServiceImpl implements MarkService {
         }
         markRepository.save(mark);
     }
+
+    @Override
+    public void deleteMark(Integer id) {
+        Optional<Mark> optionalMark = markRepository.findMarkById(id);
+        if (optionalMark.isEmpty()) {
+            throw new NoSuchElementException("Mark not found");
+        }
+        markRepository.deleteMark(id);
+    }
 }
