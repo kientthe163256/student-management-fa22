@@ -1,11 +1,9 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.entity.*;
-import com.example.studentmanagementfa22.repository.ClassroomRepository;
-import com.example.studentmanagementfa22.repository.MarkRepository;
-import com.example.studentmanagementfa22.repository.StudentRepository;
-import com.example.studentmanagementfa22.repository.TeacherRepository;
+import com.example.studentmanagementfa22.repository.*;
 import com.example.studentmanagementfa22.service.MarkService;
+import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +21,9 @@ public class MarkServiceImpl implements MarkService {
     private TeacherRepository teacherRepository;
     @Autowired
     private ClassroomRepository classroomRepository;
+
+    @Autowired
+    private StudentService studentService;
 
     @Autowired
     private TeacherService teacherService;
@@ -56,8 +57,8 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public void addStudentMark(Mark mark, Integer accountId, Integer classId) {
-        Optional<Student> student = studentRepo.findById(mark.getStudentId());
+    public void addStudentMark(Mark mark, Integer accountId, Integer classId,Integer studentId) {
+        Optional<Student> student = studentRepo.findById(studentId);
         if(student.isEmpty()) {
             throw new NoSuchElementException("Student ID not exists");
         }
@@ -69,16 +70,20 @@ public class MarkServiceImpl implements MarkService {
         if (teacher.isEmpty()) {
             throw  new NoSuchElementException("Teacher not found");
         }
-        if(!teacherService.checkStudentExistbyCriteria(student.get().getId(), accountId, classroom.get().getId())) {
+        // check student join class
+        if(!studentService.checkStudentJoinedClass(student.get().getId(), classId)) {
+            throw new IllegalArgumentException("Student does not join this class");
+        }
+        // check teacher assign to class
+        if(!teacherService.checkTeacherAssignedClass(teacher.get().getId(), classId)) {
             throw new IllegalArgumentException("You are not allowed to add this student subject'marks");
         }
         mark.setCreateDate(new Date());
-        mark.setSubjectId(classroom.get().getSubjectId());
+        mark.setSubject(classroom.get().getSubject());
         mark.setId(mark.getId());
         mark.setWeight(mark.getWeight());
         mark.setGrade(mark.getGrade());
-        // check weight
-        int studentId = student.get().getId();
+        mark.setStudent(student.get());
         double currentWeight = markRepository.getTotalWeightofStudentMark(studentId);
         if (mark.getWeight() + currentWeight > 1.0) {
             throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);

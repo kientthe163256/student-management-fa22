@@ -9,4 +9,6 @@ public interface StudentService {
     void addStudentWithNewAccount(Account account);
 
     List<StudentDTO> getStudentsByClassroomandTeacher(Integer classID, Integer accountID, int pageNumber, int pageSize, String sort);
+
+    boolean checkStudentJoinedClass(Integer id, Integer classId);
 }

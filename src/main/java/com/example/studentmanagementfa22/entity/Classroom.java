@@ -42,11 +42,11 @@ public class Classroom {
     @NotNull(message = "Classtype can't be null")
     private ClassType classType;
 
-    @Column(name = "teacher_id")
-    private Integer teacherId;
+    @OneToOne
+    private  Teacher teacher;
 
-    @Column(name = "subject_id")
-    private Integer subjectId;
+    @OneToOne
+    private  Subject subject;
 
     private boolean deleted;
 

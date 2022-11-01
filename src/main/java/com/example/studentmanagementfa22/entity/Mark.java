@@ -28,11 +28,11 @@ public class Mark {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "subject_id")
-    private int subjectId;
+    @OneToOne
+    private  Subject subject;
 
-    @Column(name = "student_id")
-    private int studentId;
+    @OneToOne
+    private  Student student;
 
     @Column(name ="mark_item")
     private String markItem;

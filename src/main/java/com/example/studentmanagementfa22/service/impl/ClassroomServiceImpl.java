@@ -68,7 +68,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                     classroom.getClassroomName(),
                     classroom.getNoStudent(),
                     ClassType.SUBJECT.name(),
-                    classroom.getSubjectId());
+                    classroom.getSubject().getId());
         }
     }
 
@@ -145,7 +145,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (student.isEmpty()) {
             throw new Exception("User is not found");
         }
-        if (classroomRepository.numOfSubjectClassByStudent(classroom.getSubjectId(), student.get().getId()) == 0) {
+        if (classroomRepository.numOfSubjectClassByStudent(classroom.getSubject().getId(), student.get().getId()) == 0) {
             classroomRepository.registerClassroom(student.get().getId(), classId);
             classroomRepository.updateNoStudentOfClass(classId);
         } else {
@@ -157,11 +157,11 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public ClassroomDTO mapToClassroomDTO(Classroom classroom) {
         ClassroomDTO classroomDTO = classroomMapper.mapToDTO(classroom);
-        if (classroom.getSubjectId() != null) {
-            classroomDTO.setSubject(subjectMapper.mapToDTO(subjectService.getById(classroom.getSubjectId())));
+        if (classroom.getSubject().getId() != null) {
+            classroomDTO.setSubject(subjectMapper.mapToDTO(subjectService.getById(classroom.getSubject().getId())));
         }
-        if (classroom.getTeacherId() != null) {
-            classroomDTO.setTeacher(teacherService.getTeacherDTOById(classroom.getTeacherId()));
+        if (classroom.getTeacher().getId() != null) {
+            classroomDTO.setTeacher(teacherService.getTeacherDTOById(classroom.getTeacher().getId()));
         }
         return classroomDTO;
     }

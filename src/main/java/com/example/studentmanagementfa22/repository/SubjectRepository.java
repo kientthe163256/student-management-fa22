@@ -33,4 +33,5 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     void deleteSubject(@Param("subjectId") Integer subjectId);
 
     Subject findBySubjectName(String subjectName);
+
 }

@@ -85,14 +85,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public boolean checkStudentExistbyCriteria(Integer studentId, Integer teacherAccountId, Integer subjectId) {
-        Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(teacherAccountId);
-        if (optionalTeacher.isEmpty()) {
-            throw  new NoSuchElementException("Teacher not found");
+    public boolean checkTeacherAssignedClass(Integer loggInTeacherId, Integer classroomId) {
+        Optional<Teacher> classroomTeacher = teacherRepository.findTeacherByClassroomId(classroomId);
+        if(classroomTeacher.isEmpty()) {
+            throw new NoSuchElementException("No teacher have been assigned to this classroom");
         }
-        int teacherId = optionalTeacher.get().getId();
-        if(studentRepository.getNoStudentbyCriteria(studentId, teacherId, subjectId) != 1) {
-            throw  new NoSuchElementException("You are not the teacher of this student");
+        if(loggInTeacherId != classroomTeacher.get().getId()) {
+            return false;
         }
         return true;
     }

@@ -61,8 +61,7 @@ public class ClassroomManageController {
                                             @PathVariable(name = "studentId") Integer studentId,
                                             @Valid @RequestBody Mark newMark) {
         Account account = (Account) session.getAttribute("account");
-        newMark.setStudentId(studentId);
-        markService.addStudentMark(newMark, account.getId(), classId);
+        markService.addStudentMark(newMark, account.getId(), classId, studentId);
         return new ResponseEntity<>(newMark, HttpStatus.OK);
     }
 

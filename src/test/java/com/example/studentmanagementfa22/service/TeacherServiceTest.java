@@ -64,21 +64,21 @@ public class TeacherServiceTest {
         assertEquals(teacherDTO, mockTeacherDTO);//equal some fields
     }
 
-    @Test
-    public void checkStudentExistbyCriteria() {
-        //Integer studentId, Integer teacherAccountId, Integer subjectId
-        Account mockAccount = Account.builder().id(3).roleId(2).build();
-        Teacher mockTeacher = Teacher.builder().id(2).account(mockAccount).build();
-        int mockStudentId = 1;
-        int mockSubjectId = 2;
-        Optional<Teacher> mockOptionalTeacher = Optional.of(mockTeacher);
-        when(teacherRepository.findTeacherByAccountId(mockAccount.getId())).thenReturn(mockOptionalTeacher);
-        when(studentRepository.getNoStudentbyCriteria(1,mockTeacher.getId(),2)).thenReturn(1);
-        // call servie
-        boolean testResult= teacherService.checkStudentExistbyCriteria(mockStudentId,mockAccount.getId(),mockSubjectId);
-        //Assert result
-        assertEquals(true,testResult);
-    }
+//    @Test
+//    public void checkStudentExistbyCriteria() {
+//        //Integer studentId, Integer teacherAccountId, Integer subjectId
+//        Account mockAccount = Account.builder().id(3).roleId(2).build();
+//        Teacher mockTeacher = Teacher.builder().id(2).account(mockAccount).build();
+//        int mockStudentId = 1;
+//        int mockSubjectId = 2;
+//        Optional<Teacher> mockOptionalTeacher = Optional.of(mockTeacher);
+//        when(teacherRepository.findTeacherByAccountId(mockAccount.getId())).thenReturn(mockOptionalTeacher);
+//        when(studentRepository.getNoStudentbyCriteria(1,mockTeacher.getId(),2)).thenReturn(1);
+//        // call servie
+//        boolean testResult= teacherService.checkStudentExistbyCriteria(mockStudentId,mockAccount.getId(),mockSubjectId);
+//        //Assert result
+//        assertEquals(true,testResult);
+//    }
 
 
     @Test

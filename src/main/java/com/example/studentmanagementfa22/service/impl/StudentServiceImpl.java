@@ -85,4 +85,12 @@ public class StudentServiceImpl implements StudentService {
 
         return studentDTOList;
     }
+
+    @Override
+    public boolean checkStudentJoinedClass(Integer studentId, Integer classId) {
+        if(studentRepository.getStudentClassroom(studentId,classId) == 0) {
+            return false;
+        }
+        return true;
+    }
 }

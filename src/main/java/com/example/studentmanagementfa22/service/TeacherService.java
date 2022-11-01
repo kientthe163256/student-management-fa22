@@ -19,5 +19,5 @@ public interface TeacherService {
 
     List<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort);
 
-    boolean checkStudentExistbyCriteria(Integer studentId, Integer teacherAccountId, Integer classroomId);
+    boolean checkTeacherAssignedClass( Integer teacherId, Integer classroomId);
 }
