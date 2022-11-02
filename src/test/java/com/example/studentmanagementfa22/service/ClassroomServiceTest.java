@@ -135,7 +135,6 @@ public class ClassroomServiceTest {
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
-        verify(classroomRepository, times(1)).assignClassroom(teacherId, classId);
     }
 
     @Test
@@ -157,13 +156,13 @@ public class ClassroomServiceTest {
         doAnswer((Answer<Integer>) invocation -> {
             mockClassroom.setTeacherId(teacherId);
             return 1;
-        }).when(classroomRepository).assignClassroom(teacherId, classId);
+        }).when(classroomRepository).save(mockClassroom);
 
-        Integer noRecordAffected = classroomService.assignClassroom(teacherId, classId);
-        assertEquals(noRecordAffected, 1);
-        assertEquals(mockClassroom.getTeacherId(), teacherId);
+        ClassroomDTO savedClass = classroomService.assignClassroom(teacherId, classId);
 
-        verify(classroomRepository, times(1)).assignClassroom(teacherId, classId);
+        assertEquals(savedClass.getTeacher().getId(), teacherId);
+
+        verify(classroomRepository, times(1)).save(mockClassroom);
         verify(classroomRepository, times(1)).findById(classId);
     }
 
@@ -176,6 +175,11 @@ public class ClassroomServiceTest {
                 .subjectId(1)
                 .build();
         String newClassName = "Edited";
+        Classroom editClass = Classroom.builder()
+                .id(classId)
+                .classroomName(newClassName)
+                .subjectId(1)
+                .build();
         ClassroomDTO editedClassroomDTO = ClassroomDTO.builder()
                 .id(classId)
                 .classroomName(newClassName)
@@ -196,7 +200,7 @@ public class ClassroomServiceTest {
             return classroomDTO;
         }).when(classroomMapper).mapToDTO(mockClassroom);
 
-        ClassroomDTO actualClass = classroomService.updateClassroom(newClassName, classId);
+        ClassroomDTO actualClass = classroomService.updateClassroom(editClass, classId);
         assertEquals(actualClass.getClassroomName(), editedClassroomDTO.getClassroomName());
 
         verify(classroomRepository).save(mockClassroom);

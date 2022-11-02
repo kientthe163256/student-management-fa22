@@ -1,7 +1,9 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Classroom;
+import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
 import org.springframework.data.domain.Page;
 
@@ -18,7 +20,7 @@ public interface ClassroomService {
 
     Page<ClassroomDTO> getAllAvailClassroom (int pageNumber, int subjectId);
 
-    Page<ClassroomDTO> getAllClassroomsPaging(int pageNumber);
+    Pagination<ClassroomDTO> getAllClassroomsPaging(int pageNumber, int pageSize, String sort);
 
     Page<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId);
 
@@ -26,13 +28,13 @@ public interface ClassroomService {
 
     ClassroomDTO mapToClassroomDTO(Classroom classroom);
 
-    Integer assignClassroom(Integer teacherId, Integer classId);
+    ClassroomDTO assignClassroom(Integer teacherId, Integer classId);
 
     Classroom getById(Integer classId);
 
     List<Classroom> getBySubjectId(Integer subjectId);
 
-    ClassroomDTO updateClassroom(String newClassName, Integer classId);
+    ClassroomDTO updateClassroom(Classroom classroom, Integer classId);
 
     void deleteClassroom(Integer classId);
 }

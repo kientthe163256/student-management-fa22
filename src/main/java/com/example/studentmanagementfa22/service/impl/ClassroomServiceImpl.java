@@ -4,13 +4,15 @@ import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.service.TeacherService;
-import com.example.studentmanagementfa22.utility.IGenericMapper;
+import com.example.studentmanagementfa22.utility.ClassroomMapper;
+import com.example.studentmanagementfa22.utility.PagingHelper;
 import com.example.studentmanagementfa22.utility.SubjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     private StudentRepository studentRepository;
 
     @Autowired
-    private IGenericMapper<Classroom, ClassroomDTO> classroomMapper;
+    private ClassroomMapper mapper;
 
     @Autowired
     private SubjectService subjectService;
@@ -156,22 +155,26 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public ClassroomDTO mapToClassroomDTO(Classroom classroom) {
-        ClassroomDTO classroomDTO = classroomMapper.mapToDTO(classroom);
-        if (classroom.getSubject().getId() != null) {
+        ClassroomDTO classroomDTO = mapper.mapToDTO(classroom);
+        if (classroom.getSubject() != null) {
             classroomDTO.setSubject(subjectMapper.mapToDTO(subjectService.getById(classroom.getSubject().getId())));
         }
-        if (classroom.getTeacher().getId() != null) {
+        if (classroom.getTeacher() != null) {
             classroomDTO.setTeacher(teacherService.getTeacherDTOById(classroom.getTeacher().getId()));
         }
         return classroomDTO;
     }
 
     @Override
-    public Integer assignClassroom(Integer teacherId, Integer classId) {
+    public ClassroomDTO assignClassroom(Integer teacherId, Integer classId) {
         //try to find teacher and classroom if not exist throw NoSuchElement
         Teacher teacher = teacherService.getById(teacherId);
         Classroom classroom = getById(classId);
-        return classroomRepository.assignClassroom(teacherId, classId);
+
+        classroom.setTeacher(teacher);
+        classroom.setModifyDate(new Date());
+        Classroom savedClassroom = classroomRepository.save(classroom);
+        return mapToClassroomDTO(savedClassroom);
     }
 
     @Override
@@ -190,11 +193,11 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public ClassroomDTO updateClassroom(String newClassName, Integer classId) {
+    public ClassroomDTO updateClassroom(Classroom classroom, Integer classId) {
         Classroom currentClassroom = getById(classId);
-        currentClassroom.setClassroomName(newClassName);
+        currentClassroom.setClassroomName(classroom.getClassroomName());
         Classroom savedClassroom = classroomRepository.save(currentClassroom);
-        return classroomMapper.mapToDTO(savedClassroom);
+        return mapper.mapToDTO(savedClassroom);
     }
 
     @Override
@@ -208,10 +211,28 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public Page<ClassroomDTO> getAllClassroomsPaging(int pageNumber) {
-        PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
+    public Pagination<ClassroomDTO> getAllClassroomsPaging(int pageNumber, int pageSize, String sort){
+        //use PagingHelper to validate raw sort input
+        Map<String, Object> validatedSort = PagingHelper.getCriteriaAndDirection(sort);
+        String criteria = (String) validatedSort.get("criteria");
+        Sort.Direction direction = (Sort.Direction) validatedSort.get("direction");
+
+        Sort sortObject;
+        //Check if criteria is a ClassroomDTO attribute
+        if (PagingHelper.objectContainsField(ClassroomDTO.class, criteria))
+            sortObject = Sort.by(direction, criteria);
+         else
+            throw new InvalidSortFieldException(ClassroomDTO.class);
+
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
         Page<Classroom> classroomPage = classroomRepository.findAll(pageRequest);
-        return classroomPage.map(classroom -> mapToClassroomDTO(classroom));
+        List<ClassroomDTO> classroomDTOList = classroomPage.stream()
+                .map(t -> mapper.mapToDTO(t))
+                .collect(Collectors.toList());
+
+        //get first, previous, next, last, total
+        Map<String, Integer> fields = PagingHelper.getPaginationFields(classroomPage, pageNumber);
+        return new Pagination<>(classroomDTOList, fields.get("first"), fields.get("previous"), fields.get("next"), fields.get("last"), fields.get("total"));
     }
 
 

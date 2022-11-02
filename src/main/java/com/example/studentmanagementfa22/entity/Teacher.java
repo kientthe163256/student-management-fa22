@@ -25,9 +25,6 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-//    @Column(name = "account_id")
-//    private int accountId;
-
     private boolean deleted;
 
     @Column(name = "create_date")

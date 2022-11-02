@@ -61,7 +61,8 @@ public class StudentController {
             return new ResponseEntity("user not found", HttpStatus.BAD_REQUEST);
         }
         Student student1 = student.get();
-        StudentDTO studentDTO = studentMapper.mapToDTO(account);
+//        StudentDTO studentDTO = studentMapper.mapToDTO(account);
+        StudentDTO studentDTO = new StudentDTO();
         studentDTO.setAcademicSession(student1.getAcademicSession());
         studentDTO.setId(student1.getId());
         studentDTO.setAccountId(account.getId());

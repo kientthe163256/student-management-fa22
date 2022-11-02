@@ -29,8 +29,6 @@ public class SubjectServiceImpl implements SubjectService {
     @Autowired
     private SubjectMapper mapper;
 
-//    @Autowired
-//    private ClassroomService classroomService;
 
     @Override
     public Page<Subject> getAllSubject(int pageNumber){

@@ -7,10 +7,9 @@ import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidInputException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
-import com.example.studentmanagementfa22.service.RoleService;
 import com.example.studentmanagementfa22.service.AccountService;
-import com.example.studentmanagementfa22.service.StudentService;
-import com.example.studentmanagementfa22.utility.IGenericMapper;
+import com.example.studentmanagementfa22.service.RoleService;
+import com.example.studentmanagementfa22.utility.AccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,10 +35,7 @@ public class AccountServiceImpl implements AccountService {
     private RoleService roleService;
 
     @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private IGenericMapper<Account, AccountDTO> mapper;
+    private AccountMapper mapper;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 

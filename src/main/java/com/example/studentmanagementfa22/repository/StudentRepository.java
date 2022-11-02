@@ -1,11 +1,16 @@
 package com.example.studentmanagementfa22.repository;
 
+import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
@@ -36,4 +41,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             "AND c.teacher_id = ?2",
             nativeQuery = true)
     Optional<Student> getStudentbyTeacher(Integer studentId, Integer teacherId);
+
+    Page<Student> findByClassroomsIn(List<Classroom> classroomList, Pageable pageable);
 }
