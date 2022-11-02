@@ -11,7 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TeacherDTO {
     private Integer id;
-
     private AccountDTO account;
-
 }

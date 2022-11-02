@@ -1,18 +1,33 @@
 package com.example.studentmanagementfa22.service.impl;
 
+import com.example.studentmanagementfa22.dto.AccountDTO;
+import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
+import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
+import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
+import com.example.studentmanagementfa22.utility.PagingHelper;
+import com.example.studentmanagementfa22.utility.TeacherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -23,18 +38,20 @@ public class TeacherServiceImpl implements TeacherService {
     private TeacherRepository teacherRepository;
 
     @Autowired
-    private StudentRepository studentRepository;
+    private TeacherMapper mapper;
 
     @Autowired
-    private IGenericMapper<Teacher, TeacherDTO> mapper;
+    private AccountService accountService;
 
+    @Autowired
+    private StudentRepository studentRepository;
 
 
     @Override
     public void addTeacherWithNewAccount(Account account) {
         Date today = new Date();
         Teacher teacher = Teacher.builder()
-//                .accountId(account.getId())
+                .account(account)
                 .createDate(today)
                 .modifyDate(today)
                 .build();
@@ -56,32 +73,31 @@ public class TeacherServiceImpl implements TeacherService {
         return teacher;
     }
 
-    private static final List<String> CRITERIA =  Arrays.asList("firstName", "lastName", "id", "dob", "username");
     @Override
-    public List<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort) {
-        //handle invalid format
-        if (!Pattern.matches("[A-Za-z]+,[A-Za-z]+", sort)){
-            throw new IllegalArgumentException("Sort must be in format 'criteria,direction'. Ex: firstName,ASC");
-        }
-        //handle invalid sort criteria
-        String criteria = sort.split(",")[0].trim();
-        if (!CRITERIA.contains(criteria)){
-            throw new IllegalArgumentException("Sort criteria must be firstName, lastName, id, dob or username!");
-        }
-        //split raw input and initialize Direction (throw InvalidFormatException)
-        String rawDirection = sort.split(",")[1].trim().toUpperCase();
-        Sort.Direction direction = Sort.Direction.fromString(rawDirection);
-        //if criteria is account's field, add 'account.'
-        Sort sortObject = criteria.equals("id")
-                ? Sort.by(direction, criteria)
-                : Sort.by(direction, "account."+criteria);
+    public Pagination<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort) {
+        //use PagingHelper to validate raw sort input
+        Map<String, Object> validatedSort = PagingHelper.getCriteriaAndDirection(sort);
+        String criteria = (String) validatedSort.get("criteria");
+        Sort.Direction direction = (Sort.Direction) validatedSort.get("direction");
+
+        Sort sortObject;
+        //Check if criteria is a ClassroomDTO attribute
+        if (PagingHelper.objectContainsField(TeacherDTO.class, criteria))
+            sortObject = Sort.by(direction, criteria);
+        else if (PagingHelper.objectContainsField(AccountDTO.class, criteria))
+            sortObject = Sort.by(direction, "account." + criteria);
+        else
+            throw new InvalidSortFieldException(ClassroomDTO.class);
 
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
         Page<Teacher> teacherPage = teacherRepository.findAll(pageRequest);
         List<TeacherDTO> teacherDTOList = teacherPage.stream()
                 .map(t -> mapper.mapToDTO(t))
                 .collect(Collectors.toList());
-        return teacherDTOList;
+
+        //get first, previous, next, last, total
+        Map<String, Integer> fields = PagingHelper.getPaginationFields(teacherPage, pageNumber);
+        return new Pagination<>(teacherDTOList, fields.get("first"), fields.get("previous"), fields.get("next"), fields.get("last"), fields.get("total"));
     }
 
     @Override
@@ -101,9 +117,7 @@ public class TeacherServiceImpl implements TeacherService {
         Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);
         if (optionalTeacher.isPresent()) {
             Teacher teacher = optionalTeacher.get();
-            TeacherDTO teacherDTO = mapper.mapToDTO(teacher);
-//            teacherDTO.setAccount(accountService.getAccountDTOById(teacher.getAccountId()));
-            return teacherDTO;
+            return mapper.mapToDTO(teacher);
         }
         return null;
     }

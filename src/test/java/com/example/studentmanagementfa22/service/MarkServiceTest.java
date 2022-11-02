@@ -11,8 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +41,7 @@ public class MarkServiceTest {
 
         Student mockStudent = Student.builder()
                 .id(1)
-                .account(mockAccount)
+//                .accountId(5)
                 .build();
         Optional<Student> mockOptionalStudent= Optional.of(mockStudent);
         Subject mockSubject = Subject.builder()
@@ -52,8 +50,8 @@ public class MarkServiceTest {
 
         Mark mockMark = Mark.builder()
                 .id(1)
-                .student(mockStudent)
-                .subject(mockSubject)
+                .studentId(1)
+                .subjectId(1)
                 .grade(7.0)
                 .weight(0.1)
                 .build();
@@ -66,27 +64,8 @@ public class MarkServiceTest {
         List<Mark> markList = markService.getMarksBySubject(mockAccount, 1);
         // assert the result
         assertEquals(markList.size(), mockMarkList.size());
-        assertEquals(markList.get(0).getStudent().getId(), mockMarkList.get(0).getStudent().getId());
+        assertEquals(markList.get(0).getStudentId(), mockMarkList.get(0).getStudentId());
         assertEquals(markList.get(0).getGrade(), mockMarkList.get(0).getGrade());
 
-    }
-    @Test
-    public void checkDeleteMark() {
-        Student mockStudent = Student.builder().id(1).build();
-        Subject mockSubject = Subject.builder().id(1).build();
-        Mark mockMark = Mark.builder()
-                .id(1)
-                .student(mockStudent)
-                .subject(mockSubject)
-                .grade(7.0)
-                .weight(0.1)
-                .deleted(false)
-                .build();
-        doAnswer( invocation -> {
-            mockMark.setDeleted(true);
-            return  null;
-        }).when(markRepository).deleteMark(1);
-        markService.deleteMark(1, 2);
-        assertTrue(mockMark.isDeleted());
     }
 }

@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.exception;
 
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidInputException;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolationException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -43,8 +45,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex) {
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
@@ -55,7 +56,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleMethodArgumentNotValid(ConstraintViolationException ex) {
+    public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getConstraintViolations().forEach((error) -> {
             String fieldName = error.getPropertyPath().toString();
@@ -87,5 +88,14 @@ public class CustomExceptionHandler {
     @ExceptionHandler(ActionNotAllowedException.class)
     public ResponseEntity<String> handleNotAllowed(ActionNotAllowedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(InvalidSortFieldException.class)
+    public ResponseEntity<String> handleInvalidSortField(InvalidSortFieldException ex) {
+        StringBuilder message = new StringBuilder("Invalid field! Available fields: ");
+        for (Field f : ex.getTargetClass().getDeclaredFields()){
+            message.append(f.getName()).append(", ");
+        }
+        return new ResponseEntity<>(message.deleteCharAt(message.length()-2).toString(), HttpStatus.FORBIDDEN);
     }
 }

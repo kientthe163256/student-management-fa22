@@ -42,4 +42,6 @@ public class StudentDTO {
     private int academicSession;
 
     private int accountId;
+
+    private AccountDTO account;
 }

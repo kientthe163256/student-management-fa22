@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.controller.admin;
 
 import com.example.studentmanagementfa22.dto.TeacherDTO;
+import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.TeacherService;
@@ -34,8 +35,8 @@ public class TeacherManagementController {
             @RequestParam(required = false, defaultValue = "1") int pageNumber,
             @RequestParam(required = false, defaultValue = "5") int pageSize,
             @RequestParam(required = false, defaultValue = "id,ASC") String sort){
-        List<TeacherDTO> teacherDTOList = teacherService.getAllTeacherPaging(pageNumber, pageSize, sort);
-        return ResponseEntity.ok(teacherDTOList);
+        Pagination<TeacherDTO> teachers = teacherService.getAllTeacherPaging(pageNumber, pageSize, sort);
+        return ResponseEntity.ok(teachers);
     }
 
     @Operation(summary = "Find teacher by ID", description = "Find teacher by teacher id then returns teacher dto")

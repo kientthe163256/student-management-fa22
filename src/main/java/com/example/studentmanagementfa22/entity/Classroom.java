@@ -11,7 +11,9 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Data
@@ -39,14 +41,14 @@ public class Classroom {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "class_type")
-    @NotNull(message = "Classtype can't be null")
+    @NotNull(message = "ClassType can't be null")
     private ClassType classType;
 
-    @OneToOne
-    private  Teacher teacher;
+    @ManyToOne
+    private Teacher teacher;
 
-    @OneToOne
-    private  Subject subject;
+    @ManyToOne
+    private Subject subject;
 
     private boolean deleted;
 
@@ -61,4 +63,7 @@ public class Classroom {
     @Column(name = "delete_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", lenient = OptBoolean.FALSE, timezone= "Asia/Ho_Chi_Minh")
     private Date deleteDate;
+
+    @ManyToMany(mappedBy = "classrooms")
+    Collection<Student> students;
 }

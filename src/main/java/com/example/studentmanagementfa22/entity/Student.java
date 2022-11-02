@@ -10,6 +10,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -29,12 +30,14 @@ public class Student {
     @Column(name = "academic_session")
     private int academicSession;
 
+    @ManyToMany
+    @JoinTable(name = "student_classroom",
+            joinColumns = @JoinColumn(name = "student_id"),
+    inverseJoinColumns = @JoinColumn(name = "classroom_id"))
+    private Collection<Classroom> classrooms;
+
     @OneToOne
     private Account account;
-
-    @Transient
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<Classroom> classrooms;
 
     private boolean deleted;
 

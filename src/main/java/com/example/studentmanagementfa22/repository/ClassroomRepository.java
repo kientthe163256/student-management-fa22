@@ -69,13 +69,7 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
             "ON cla.id = stuclass.classroom_id\n" +
             "WHERE student_id = :student_id", nativeQuery = true)
     Page<Classroom> findAllRegisteredClass(Pageable pageable,@Param("student_id") int studentId);
-    @Override
-    @Query(value = "SELECT * from classroom where deleted = 0", nativeQuery = true)
-    Page<Classroom> findAll(Pageable pageable);
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE classroom set teacher_id = :teacherId where id = :classId", nativeQuery = true)
-    Integer assignClassroom(@Param("teacherId") Integer teacherId, @Param("classId") Integer classId);
+
 
     List<Classroom> findBySubjectId(Integer subjectId);
 
