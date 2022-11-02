@@ -29,8 +29,8 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
 
     Optional<Mark> findMarkById( int markId);
     @Query(value = "SELECT IFNULL(SUM(weight), 0)AS TotalWeight FROM student_management_fa22.mark\n" +
-        "WHERE student_id = :student_id", nativeQuery = true)
-    double getTotalWeightofStudentMark(@Param("student_id") int studentId);
+            "WHERE student_id = ?1 and subject_id = ?2", nativeQuery = true)
+    double getTotalWeightofStudentMark( int studentId, Integer subjectId);
     @Modifying
     @Transactional
     @Query(value = "UPDATE mark set deleted = 1, delete_date = CURRENT_TIMESTAMP() where id = ?1", nativeQuery = true)

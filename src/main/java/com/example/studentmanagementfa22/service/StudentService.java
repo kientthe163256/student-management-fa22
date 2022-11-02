@@ -11,4 +11,6 @@ public interface StudentService {
     List<StudentDTO> getStudentsByClassroomandTeacher(Integer classID, Integer accountID, int pageNumber, int pageSize, String sort);
 
     boolean checkStudentJoinedClass(Integer id, Integer classId);
+
+    boolean checkStudentTeacher(Integer student, Integer teacherId);
 }

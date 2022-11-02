@@ -52,6 +52,12 @@ public class MarkServiceImpl implements MarkService {
         Mark mark = optionalMark.get();
         mark.setGrade(editMark.getGrade());
         mark.setModifyDate(new Date());
+        double currentWeight = markRepository.getTotalWeightofStudentMark(mark.getStudent().getId(), mark.getSubject().getId());
+        //check total weight after edit
+        if (  currentWeight - mark.getWeight() + editMark.getWeight()  > 1.0) {
+            throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
+        }
+        mark.setWeight(editMark.getWeight());
         markRepository.save(mark);
         return mark;
     }
@@ -70,33 +76,33 @@ public class MarkServiceImpl implements MarkService {
         if (teacher.isEmpty()) {
             throw  new NoSuchElementException("Teacher not found");
         }
-        // check student join class
-        if(!studentService.checkStudentJoinedClass(student.get().getId(), classId)) {
-            throw new IllegalArgumentException("Student does not join this class");
-        }
-        // check teacher assign to class
-        if(!teacherService.checkTeacherAssignedClass(teacher.get().getId(), classId)) {
-            throw new IllegalArgumentException("You are not allowed to add this student subject'marks");
-        }
+        studentService.checkStudentJoinedClass(student.get().getId(), classId);
+        teacherService.checkTeacherAssignedClass(teacher.get().getId(),classId);
+        studentService.checkStudentTeacher(student.get().getId(), teacher.get().getId());
         mark.setCreateDate(new Date());
         mark.setSubject(classroom.get().getSubject());
         mark.setId(mark.getId());
         mark.setWeight(mark.getWeight());
         mark.setGrade(mark.getGrade());
         mark.setStudent(student.get());
-        double currentWeight = markRepository.getTotalWeightofStudentMark(studentId);
+        double currentWeight = markRepository.getTotalWeightofStudentMark(studentId, mark.getSubject().getId());
         if (mark.getWeight() + currentWeight > 1.0) {
             throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
         }
         markRepository.save(mark);
     }
 
+
     @Override
-    public void deleteMark(Integer id) {
-        Optional<Mark> optionalMark = markRepository.findMarkById(id);
+    public void deleteMark(Integer markId, Integer accountId) {
+        Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountId);
+        if (optionalTeacher.isEmpty()) {
+            throw  new NoSuchElementException("Teacher not found");
+        }
+        Optional<Mark> optionalMark = markRepository.getMarkByIDandTeacherID(optionalTeacher.get().getId(), markId );
         if (optionalMark.isEmpty()) {
             throw new NoSuchElementException("Mark not found");
         }
-        markRepository.deleteMark(id);
+        markRepository.deleteMark(markId);
     }
 }

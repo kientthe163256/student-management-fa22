@@ -8,6 +8,7 @@ import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.StudentService;
+import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +31,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private TeacherService teacherService;
 
     @Autowired
     private IGenericMapper<Account, StudentDTO> mapper;
@@ -89,7 +93,15 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public boolean checkStudentJoinedClass(Integer studentId, Integer classId) {
         if(studentRepository.getStudentClassroom(studentId,classId) == 0) {
-            return false;
+            throw new IllegalArgumentException("Student does not join this class");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean checkStudentTeacher(Integer studentId, Integer teacherId) {
+        if(studentRepository.getStudentbyTeacher(studentId,teacherId).isEmpty()) {
+            throw  new IllegalArgumentException("You are not the teacher of this student");
         }
         return true;
     }

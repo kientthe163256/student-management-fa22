@@ -26,4 +26,14 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query(value = "SELECT count(sc.student_id) FROM student_management_fa22.student_classroom sc Where sc.student_id =?1 AND sc.classroom_id = ?2",
             nativeQuery = true)
     int getStudentClassroom(Integer studentId, Integer classId);
+
+    @Query(value = "select distinct s.* FROM student_management_fa22.student AS s \n" +
+            "JOIN student_management_fa22.student_classroom AS sc\n" +
+            "ON s.id = sc.student_id\n" +
+            "JOIN student_management_fa22.classroom c\n" +
+            "ON c.id = sc.classroom_id\n" +
+            "WHERE s.id = ?1\n" +
+            "AND c.teacher_id = ?2",
+            nativeQuery = true)
+    Optional<Student> getStudentbyTeacher(Integer studentId, Integer teacherId);
 }

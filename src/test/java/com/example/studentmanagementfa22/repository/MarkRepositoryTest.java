@@ -9,9 +9,5 @@ import org.springframework.util.Assert;
 public class MarkRepositoryTest {
     @Autowired
     private  MarkRepository markRepository;
-    @Test
-    public void getTotalWeightofStudentMark() {
-        double currentWeight = markRepository.getTotalWeightofStudentMark(1);
-        Assert.isTrue(currentWeight <= 1.0, "Total weight can not exceed 1.0");
-    }
+
 }

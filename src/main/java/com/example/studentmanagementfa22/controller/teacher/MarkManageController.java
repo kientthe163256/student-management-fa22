@@ -31,8 +31,9 @@ public class MarkManageController {
     }
     @Operation(summary = "Delete mark", description = "Delete mark of Student by mark id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMark(@PathVariable Integer id) {
-        markService.deleteMark(id);
+    public ResponseEntity<String> deleteMark(@PathVariable Integer markId) {
+        Account account = (Account) session.getAttribute("account");
+        markService.deleteMark(markId, account.getId());
         return ResponseEntity.ok("Mark deleted successfully");
     }
 

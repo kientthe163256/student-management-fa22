@@ -86,7 +86,7 @@ public class MarkServiceTest {
             mockMark.setDeleted(true);
             return  null;
         }).when(markRepository).deleteMark(1);
-        markService.deleteMark(1);
+        markService.deleteMark(1, 2);
         assertTrue(mockMark.isDeleted());
     }
 }

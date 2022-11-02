@@ -91,7 +91,7 @@ public class TeacherServiceImpl implements TeacherService {
             throw new NoSuchElementException("No teacher have been assigned to this classroom");
         }
         if(loggInTeacherId != classroomTeacher.get().getId()) {
-            return false;
+            throw  new IllegalArgumentException("You are not the teacher of this classroom");
         }
         return true;
     }

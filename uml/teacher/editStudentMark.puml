@@ -28,7 +28,7 @@ autonumber 2.0
 ClassroomManageController -> MarkService: edit Mark of Student
 activate MarkService
 
-MarkService -> MarkRepository: find mark by ID and Student
+MarkService -> MarkRepository: find mark by ID and Teacher
 activate MarkRepository
 break Invalid Mark Object
 MarkService --> ClassroomManageController: return error message
@@ -39,6 +39,9 @@ activate MySQL
 MySQL --> MarkRepository: return response
 deactivate MySQL
 MarkRepository --> MarkService: return Mark
+break Total weight after update exceed 1.0
+MarkService --> ClassroomManageController: return error message
+end
 MarkService -> MarkRepository: Edit Mark
 MarkRepository -> MySQL: UPDATE
 activate MySQL

@@ -4,6 +4,7 @@ participant SecurityConfig
 participant CustomSuccessHandler
 participant MarkManageController
 participant MarkService
+participant TeacherRepository
 participant MarkRepository
 database MySQL
 
@@ -26,7 +27,19 @@ deactivate CustomSuccessHandler
 autonumber 2.0
 MarkManageController -> MarkService : delete Mark
 activate MarkService
-MarkService -> MarkRepository: check Mark exists
+MarkService -> TeacherRepository: get Teacher
+activate TeacherRepository
+TeacherRepository -> MySQL: select
+activate MySQL
+MySQL --> TeacherRepository: return response
+deactivate MySQL
+TeacherRepository --> MarkService: return teacher
+break Teacher not exists
+MarkService --> MarkManageController: return error message
+end
+
+
+MarkService -> MarkRepository: get Mark by Id and Teacher
 activate MarkRepository
 MarkRepository -> MySQL: Select
 activate MySQL
