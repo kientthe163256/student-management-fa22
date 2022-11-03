@@ -3,8 +3,10 @@ package com.example.studentmanagementfa22.service;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
+import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.AccountRepository;
+import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.StudentServiceImpl;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
@@ -26,7 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class StudentServiceTest {
@@ -38,6 +40,8 @@ public class StudentServiceTest {
 
     @Mock
     private IGenericMapper<Account, StudentDTO> mapper;
+    @Mock
+    private StudentRepository studentRepository;
 
     @InjectMocks
     private StudentServiceImpl studentService;
@@ -85,6 +89,25 @@ public class StudentServiceTest {
 //        assertEquals(2, studentDTOList.size());
 //        assertTrue(studentDTOList.get(0).getId() > studentDTOList.get(1).getId(), "Sorted by ID descending");
 //
-//
 //    }
+    @Test
+    public void checkStudentJoinedClass() {
+        Classroom mockClassroom = Classroom.builder().id(2).build();
+        Student mockStudent = Student.builder().id(9).build();
+        when(studentRepository.getStudentClassroom(mockStudent.getId(),mockClassroom.getId())).thenReturn(1);
+        boolean check = studentService.checkStudentJoinedClass(mockStudent.getId(), mockClassroom.getId());
+        assertTrue(check, "Student joined class");
+        verify(studentRepository, times(1)).getStudentClassroom(9,2);
+    }
+
+    @Test
+    public void checkStudentTeacher() {
+        Student mockStudent = Student.builder().id(9).build();
+        Teacher mockTeacher = Teacher.builder().id(4).build();
+        Optional<Student> optionalStudent = Optional.of(mockStudent);
+        when(studentRepository.getStudentbyTeacher(mockStudent.getId(), mockTeacher.getId())).thenReturn(optionalStudent);
+        boolean check = studentService.checkStudentTeacher(mockStudent.getId(),mockTeacher.getId());
+        assertTrue(check, "Student joined teacher 's class");
+        verify(studentRepository, times(1)).getStudentbyTeacher(9,4);
+    }
 }

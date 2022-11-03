@@ -160,7 +160,6 @@ public class AccountServiceTest {
             accountService.registerNewAccount(account);
         } catch (ElementAlreadyExistException e) {
             System.out.println(e.getMessage());
-            ;
         }
     }
 

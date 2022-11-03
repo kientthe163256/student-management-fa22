@@ -31,7 +31,7 @@ public class ClassRepositoryTest {
                 .classroomName("AB1521")
                 .classType(ClassType.SESSION)
                 .noStudent(12)
-                .teacherId(1)
+//                .teacherId(1)
                 .build();
         classroomRepository.save(classroom);
         Classroom foundClassroom = classroomRepository.findByClassroomName("AB1521");

@@ -52,42 +52,36 @@ public class StudentServiceImpl implements StudentService {
     private static final List<String> CRITERIA =  Arrays.asList("first_name", "last_name", "account_id", "dob", "username", "academicSession");
     @Override
     public List<StudentDTO> getStudentsByClassroomandTeacher(Integer classID, Integer accountID, int pageNumber, int pageSize, String sort) {
-//        Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountID);
-//        if (optionalTeacher.isEmpty()) {
-//            throw  new NoSuchElementException("Teacher not found");
-//        }
-//        //handle invalid format
-//        if (!Pattern.matches(".+,[A-Za-z]+", sort)){
-//            throw new IllegalArgumentException("Sort must be in format 'criteria,direction'. Ex: first_name,ASC");
-//        }
-//        //handle invalid sort criteria
-//        String criteria = sort.split(",")[0].trim();
-//        if (!CRITERIA.contains(criteria)){
-//            throw new IllegalArgumentException("Sort criteria must be first_name, last_name, account_id, dob or username!");
-//        }
-//        String rawdirection = sort.split(",")[1].trim().toUpperCase();
-//        Sort.Direction direction = Sort.Direction.fromString(rawdirection);
-//        Sort sortObject = criteria.equals("account_id")
-//                ? Sort.by(direction, "id")
-//                : Sort.by(direction, criteria);
-//
-//        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
-//        Page<Account> accounts = accountRepository.findStudentAccountsByClassroomandTeacher(classID, optionalTeacher.get().getId(), pageRequest);
-//        List<StudentDTO> studentDTOList = accounts.stream().map(account -> {
-//            StudentDTO studentDTO = mapper.mapToDTO(account);
-//            Optional<Student> optionalStudent = studentRepository.findStudentByAccountId(account.getId());
-//            if (optionalStudent.isEmpty()) {
-//                throw new NoSuchElementException("Student not found");
-//            }
-//            studentDTO.setAcademicSession(optionalStudent.get().getAcademicSession());
-//            studentDTO.setId(optionalStudent.get().getId());
-//            studentDTO.setAccountId(account.getId());
-//            studentDTO.setPassword(null);
-//           return  studentDTO;
-//        }).collect(Collectors.toList());
-//
-//        return studentDTOList;
-        return null;
+        Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountID);
+        if (optionalTeacher.isEmpty()) {
+            throw  new NoSuchElementException("Teacher not found");
+        }
+        //handle invalid format
+        if (!Pattern.matches(".+,[A-Za-z]+", sort)){
+            throw new IllegalArgumentException("Sort must be in format 'criteria,direction'. Ex: first_name,ASC");
+        }
+        //handle invalid sort criteria
+        String criteria = sort.split(",")[0].trim();
+        if (!CRITERIA.contains(criteria)){
+            throw new IllegalArgumentException("Sort criteria must be first_name, last_name, account_id, dob or username!");
+        }
+        String rawdirection = sort.split(",")[1].trim().toUpperCase();
+        Sort.Direction direction = Sort.Direction.fromString(rawdirection);
+        Sort sortObject = criteria.equals("account_id")
+                ? Sort.by(direction, "id")
+                : Sort.by(direction, criteria);
+
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
+        Page<Account> accounts = accountRepository.findStudentAccountsByClassroomandTeacher(classID, optionalTeacher.get().getId(), pageRequest);
+        List<StudentDTO> studentDTOList = accounts.stream().map(account -> {
+            Optional<Student> optionalStudent = studentRepository.findStudentByAccountId(account.getId());
+            if (optionalStudent.isEmpty()) {
+                throw new NoSuchElementException("Student not found");
+            }
+            StudentDTO studentDTO = mapper.mapToDTO(optionalStudent.get());
+           return  studentDTO;
+        }).collect(Collectors.toList());
+        return studentDTOList;
     }
 
     @Override

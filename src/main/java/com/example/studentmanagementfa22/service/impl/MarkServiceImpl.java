@@ -94,8 +94,8 @@ public class MarkServiceImpl implements MarkService {
 
 
     @Override
-    public void deleteMark(Integer markId, Integer accountId) {
-        Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountId);
+    public void deleteMark(Integer markId, Integer teacherAccountId) {
+        Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(teacherAccountId);
         if (optionalTeacher.isEmpty()) {
             throw  new NoSuchElementException("Teacher not found");
         }

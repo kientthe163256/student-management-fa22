@@ -3,6 +3,7 @@ package com.example.studentmanagementfa22.service;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
+import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
@@ -54,15 +55,17 @@ public class ClassroomServiceTest {
     @Test
     public void getAllAvailClassroom() {
         // 1. Create mock data
+        Subject mockSubject = Subject.builder().id(1).build();
         Classroom mockClassroom = Classroom.builder()
                 .id(5)
                 .classroomName("mock class")
-                .subjectId(1)
+                .subject(mockSubject)
                 .build();
         ClassroomDTO mockClassroomDTO = ClassroomDTO.builder()
                 .id(5)
                 .classroomName("mock class")
                 .build();
+
         List<Classroom> classroomList = new ArrayList<>();
         classroomList.add(mockClassroom);
         Page<Classroom> mockPageClassroom = new PageImpl<>(classroomList);
@@ -144,7 +147,7 @@ public class ClassroomServiceTest {
         Classroom mockClassroom = Classroom.builder()
                 .id(classId)
                 .classroomName("mock class")
-                .subjectId(1)
+//                .subjectId(1)
                 .build();
         Optional<Classroom> optionalClassroom = Optional.of(mockClassroom);
         Teacher mockTeacher = Teacher.builder()
@@ -154,7 +157,7 @@ public class ClassroomServiceTest {
         when(teacherService.getById(teacherId)).thenReturn(mockTeacher);
         doReturn(optionalClassroom).when(classroomRepository).findById(classId);
         doAnswer((Answer<Integer>) invocation -> {
-            mockClassroom.setTeacherId(teacherId);
+            mockClassroom.setTeacher(mockTeacher);
             return 1;
         }).when(classroomRepository).save(mockClassroom);
 
@@ -172,13 +175,13 @@ public class ClassroomServiceTest {
         Classroom mockClassroom = Classroom.builder()
                 .id(classId)
                 .classroomName("mock class")
-                .subjectId(1)
+//                .subjectId(1)
                 .build();
         String newClassName = "Edited";
         Classroom editClass = Classroom.builder()
                 .id(classId)
                 .classroomName(newClassName)
-                .subjectId(1)
+//                .subjectId(1)
                 .build();
         ClassroomDTO editedClassroomDTO = ClassroomDTO.builder()
                 .id(classId)

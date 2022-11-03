@@ -48,7 +48,7 @@ public class MapperTest {
                 .classroomName("SE1231")
                 .classType(ClassType.SESSION)
                 .noStudent(1)
-                .teacherId(1)
+//                .teacherId(1)
                 .build();
         ClassroomDTO classroomDTO = classroomMapper.mapToDTO(classroom);
         assertNotNull(classroomDTO);
