@@ -1,18 +1,12 @@
 package com.example.studentmanagementfa22.utility;
 
-import com.example.studentmanagementfa22.dto.ClassroomDTO;
-import com.example.studentmanagementfa22.entity.Classroom;
-import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidInputException;
-import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Repository;
-
+import javax.persistence.Column;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class PagingHelper {
     public static Map<String, Object> getCriteriaAndDirection(String sort){
@@ -49,6 +43,19 @@ public class PagingHelper {
     public static boolean objectContainsField(Class object, String fieldName) {
         return Arrays.stream(object.getDeclaredFields())
                 .anyMatch(f -> f.getName().equals(fieldName));
+    }
+    public static String objectFieldtoColumn(Class object, String fieldName) {
+        for (Field field : object.getDeclaredFields()) {
+            String fName = field.getName();
+            if (fName.equals("id")) {
+                return fieldName;
+            }
+            if (field.getAnnotation(Column.class) != null ) {
+                if (fName.equals(fieldName))
+                    return field.getAnnotation(Column.class).name();
+            }
+        }
+        return null;
     }
 
 }

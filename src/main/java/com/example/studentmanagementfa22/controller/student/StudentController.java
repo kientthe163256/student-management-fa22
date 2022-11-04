@@ -65,7 +65,6 @@ public class StudentController {
         StudentDTO studentDTO = new StudentDTO();
         studentDTO.setAcademicSession(student1.getAcademicSession());
         studentDTO.setId(student1.getId());
-        studentDTO.setAccountId(account.getId());
         return ResponseEntity.ok(studentDTO);
     }
     @GetMapping("/subjectList")
