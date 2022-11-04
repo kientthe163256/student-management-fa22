@@ -86,36 +86,48 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .collect(Collectors.toList());
     }
 
-    private static final List<String> CRITERIA =  Arrays.asList("classroom_name", "create_date", "id");
     @Override
-    public List<ClassroomDTO> getAllTeachingClassrooms(int accountID, int pageNumber, int pageSize, String sort) {
+//    public List<ClassroomDTO> getAllTeachingClassrooms(int accountID, int pageNumber, int pageSize, String sort) {
+        public Pagination<ClassroomDTO> getAllTeachingClassrooms(int accountID,int pageNumber, int pageSize, String sort) {
         Optional<Teacher> teacher = teacherRepository.findTeacherByAccountId(accountID);
         if (teacher.isEmpty()){
             throw new NoSuchElementException("teacher not found");
         }
         //handle invalid format
-        if (!Pattern.matches(".+,[A-Za-z]+", sort)){
-            throw new IllegalArgumentException("Sort must be in format 'criteria,direction'. Ex: classroom_name,ASC");
+//        if (!Pattern.matches(".+,[A-Za-z]+", sort)){
+//            throw new IllegalArgumentException("Sort must be in format 'criteria,direction'. Ex: classroom_name,ASC");
+//        }
+//        //handle invalid sort criteria
+//        String criteria = sort.split(",")[0].trim();
+//        if (!CRITERIA.contains(criteria)){
+//            throw new IllegalArgumentException("Sort criteria must be classroom_name,  id, create_date!");
+//        }
+//        String rawdirection = sort.split(",")[1].trim().toUpperCase();
+//        Sort.Direction direction = Sort.Direction.fromString(rawdirection);
+//        Sort sortObject =  Sort.by(direction, criteria);
+        Map<String, Object> validatedSort = PagingHelper.getCriteriaAndDirection(sort);
+        String criteria = (String) validatedSort.get("criteria");
+        Sort.Direction direction = (Sort.Direction) validatedSort.get("direction");
+
+        Sort sortObject;
+        //Check if criteria is a ClassroomDTO attribute
+        if (PagingHelper.objectContainsField(Classroom.class, criteria)) {
+            sortObject = Sort.by(direction, PagingHelper.objectFieldtoColumn(Classroom.class, criteria));
         }
-        //handle invalid sort criteria
-        String criteria = sort.split(",")[0].trim();
-        if (!CRITERIA.contains(criteria)){
-            throw new IllegalArgumentException("Sort criteria must be classroom_name,  id, create_date!");
-        }
-        String rawdirection = sort.split(",")[1].trim().toUpperCase();
-        Sort.Direction direction = Sort.Direction.fromString(rawdirection);
-        Sort sortObject =  Sort.by(direction, criteria);
+        else
+            throw new InvalidSortFieldException(Classroom.class);
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sortObject);
 
         Page<Classroom> classrooms = classroomRepository.findClassroomsByTeacherId(teacher.get().getId(), pageRequest);
+        Map<String, Integer> fields = PagingHelper.getPaginationFields(classrooms, pageNumber);
         List<ClassroomDTO> classroomDTOList = classrooms.stream()
                 .map(classroom -> {
                     ClassroomDTO classroomDTO = mapToClassroomDTO(classroom);
-                    classroomDTO.setCreate_date(classroom.getCreateDate());
+                    classroomDTO.setCreateDate(classroom.getCreateDate());
                     return  classroomDTO;
                 })
                 .collect(Collectors.toList());
-        return classroomDTOList;
+        return new Pagination<>(classroomDTOList, fields.get("first"), fields.get("previous"), fields.get("next"), fields.get("last"), fields.get("total"));
     }
 
     @Override

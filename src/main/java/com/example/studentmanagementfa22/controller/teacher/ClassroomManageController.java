@@ -4,6 +4,7 @@ import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Mark;
+import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +41,7 @@ public class ClassroomManageController {
                                                             @RequestParam(required = false, defaultValue = "5") int pageSize,
                                                             @RequestParam(required = false, defaultValue = "id,ASC") String sort) {
         Account account = (Account) session.getAttribute("account");
-        List<ClassroomDTO> classroomList = classroomService.getAllTeachingClassrooms(account.getId(), pageNumber, pageSize, sort);
+        Pagination<ClassroomDTO> classroomList = classroomService.getAllTeachingClassrooms(account.getId(), pageNumber, pageSize, sort);
         return ResponseEntity.ok(classroomList);
     }
 //    @GetMapping("/{id}")

@@ -1,7 +1,6 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
-import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
@@ -16,7 +15,9 @@ public interface ClassroomService {
 
     List<ClassroomDTO> getAllClassrooms();
 
-    List<ClassroomDTO> getAllTeachingClassrooms(int accountID, int pageNumber, int pageSize, String sort);
+    Pagination<ClassroomDTO> getAllTeachingClassrooms(int accountID, int pageNumber, int pageSize, String sort);
+
+
 
     Page<ClassroomDTO> getAllAvailClassroom (int pageNumber, int subjectId);
 
