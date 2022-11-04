@@ -3,13 +3,13 @@ package com.example.studentmanagementfa22.service.impl;
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
-import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.entity.Pagination;
-import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
+import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.AccountService;
+import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import com.example.studentmanagementfa22.utility.PagingHelper;
@@ -41,7 +41,10 @@ public class TeacherServiceImpl implements TeacherService {
     private TeacherMapper mapper;
 
     @Autowired
-    private AccountService accountService;
+    private StudentService studentService;
+
+    @Autowired
+    private ClassroomRepository classroomRepository;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -109,6 +112,26 @@ public class TeacherServiceImpl implements TeacherService {
         if(loggInTeacherId != classroomTeacher.get().getId()) {
             throw  new IllegalArgumentException("You are not the teacher of this classroom");
         }
+        return true;
+    }
+
+    @Override
+    public boolean checkTeacherClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentId) {
+        Optional<Student> student = studentRepository.findById(studentId);
+        if(student.isEmpty()) {
+            throw new NoSuchElementException("Student ID not exists");
+        }
+        Optional<Classroom> classroom = classroomRepository.findById(classId);
+        if (classroom.isEmpty()){
+            throw new NoSuchElementException("Classroom not exist");
+        }
+        Optional<Teacher> teacher = teacherRepository.findTeacherByAccountId(teacherAccountId);
+        if (teacher.isEmpty()) {
+            throw  new NoSuchElementException("Teacher not found");
+        }
+        studentService.checkStudentJoinedClass(student.get().getId(), classId);
+        studentService.checkStudentTeacher(student.get().getId(), teacher.get().getId());
+        checkTeacherAssignedClass(teacher.get().getId(),classId);
         return true;
     }
 

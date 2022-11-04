@@ -10,8 +10,9 @@ public interface MarkService {
 
     Mark editStudentMark(int markID, Mark editMark, int accountID);
 
-    void addStudentMark(Mark studentId, Integer id, Integer classId, Integer integer);
+    Mark addStudentMark(Mark studentId, Integer id, Integer classId, Integer integer);
 
     void deleteMark(Integer id, Integer accountId);
 
+    List<Mark> getMarksByClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentID);
 }

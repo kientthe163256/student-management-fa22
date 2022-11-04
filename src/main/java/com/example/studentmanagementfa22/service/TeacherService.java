@@ -20,5 +20,7 @@ public interface TeacherService {
 
     boolean checkTeacherAssignedClass( Integer teacherId, Integer classroomId);
 
+    boolean checkTeacherClassroomStudent(Integer teacherAccountId, Integer classId,Integer studentId);
+
     Pagination<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort);
 }

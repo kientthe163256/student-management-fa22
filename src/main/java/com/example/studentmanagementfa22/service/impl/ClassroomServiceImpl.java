@@ -93,18 +93,6 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (teacher.isEmpty()){
             throw new NoSuchElementException("teacher not found");
         }
-        //handle invalid format
-//        if (!Pattern.matches(".+,[A-Za-z]+", sort)){
-//            throw new IllegalArgumentException("Sort must be in format 'criteria,direction'. Ex: classroom_name,ASC");
-//        }
-//        //handle invalid sort criteria
-//        String criteria = sort.split(",")[0].trim();
-//        if (!CRITERIA.contains(criteria)){
-//            throw new IllegalArgumentException("Sort criteria must be classroom_name,  id, create_date!");
-//        }
-//        String rawdirection = sort.split(",")[1].trim().toUpperCase();
-//        Sort.Direction direction = Sort.Direction.fromString(rawdirection);
-//        Sort sortObject =  Sort.by(direction, criteria);
         Map<String, Object> validatedSort = PagingHelper.getCriteriaAndDirection(sort);
         String criteria = (String) validatedSort.get("criteria");
         Sort.Direction direction = (Sort.Direction) validatedSort.get("direction");

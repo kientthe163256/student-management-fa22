@@ -37,6 +37,7 @@ public class ClassroomManageController {
 
 
     @GetMapping("")
+    @Operation(summary = "View classrooms ", description = "Teacher can view the classrooms he teaches")
     public ResponseEntity<?> displayListTeachingClassrooms (@RequestParam(required = false, defaultValue = "1") int pageNumber,
                                                             @RequestParam(required = false, defaultValue = "5") int pageSize,
                                                             @RequestParam(required = false, defaultValue = "id,ASC") String sort) {
@@ -44,8 +45,6 @@ public class ClassroomManageController {
         Pagination<ClassroomDTO> classroomList = classroomService.getAllTeachingClassrooms(account.getId(), pageNumber, pageSize, sort);
         return ResponseEntity.ok(classroomList);
     }
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> displayTeachingClassroom () {}
     @GetMapping("/{id}/students")
     @Operation(summary = "View students ", description = "Teacher can view all student in a classrooms")
     public ResponseEntity<?> displayStudentsbyClassroom(@PathVariable(name = "id") Integer classID,
@@ -62,19 +61,20 @@ public class ClassroomManageController {
                                             @PathVariable(name = "studentId") Integer studentId,
                                             @Valid @RequestBody Mark newMark) {
         Account account = (Account) session.getAttribute("account");
-        markService.addStudentMark(newMark, account.getId(), classId, studentId);
-        return new ResponseEntity<>(newMark, HttpStatus.OK);
+         Mark mark = markService.addStudentMark(newMark, account.getId(), classId, studentId);
+        return new ResponseEntity<>(mark, HttpStatus.OK);
     }
 
 
 
-//    @GetMapping("/{id}/students/{studentID}/marks")
-//    @Operation(summary = "View Mark ", description = "Teacher can view student mark ")
-//    public ResponseEntity<?> displayStudentMark(@PathVariable Integer subjectId  ) {
-//        Account account = (Account) session.getAttribute("account");
-//        List<Mark> markList = markService.getMarksBySubject(account, subjectId);
-//        return ResponseEntity.ok(markList);
-//    }
+    @GetMapping("/{id}/students/{studentID}/marks")
+    @Operation(summary = "View Mark ", description = "Teacher can view student mark ")
+    public ResponseEntity<?> displayStudentMark(@PathVariable(name = "id") Integer classId,
+                                                @PathVariable(name = "studentID") Integer studentID) {
+        Account account = (Account) session.getAttribute("account");
+        List<Mark> markList = markService.getMarksByClassroomStudent(account.getId(),classId , studentID);
+        return ResponseEntity.ok(markList);
+    }
 //
 //    @PostMapping("/{id}/students/{studentID}/mark")
 //    @Operation(summary = "View Mark ", description = "Teacher can view student mark ")

@@ -28,11 +28,11 @@ public class MarkServiceImpl implements MarkService {
     @Autowired
     private TeacherService teacherService;
     @Autowired
-    private StudentRepository studentRepo;
+    private StudentRepository studentRepository;
 
     @Override
     public List<Mark> getMarksBySubject(Account account, int subjectId) {
-        Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
+        Optional<Student> student = studentRepository.findStudentByAccountId(account.getId());
         if (student.isEmpty()) {
             return null;
         }
@@ -63,22 +63,10 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public void addStudentMark(Mark mark, Integer accountId, Integer classId,Integer studentId) {
-        Optional<Student> student = studentRepo.findById(studentId);
-        if(student.isEmpty()) {
-            throw new NoSuchElementException("Student ID not exists");
-        }
+    public Mark addStudentMark(Mark mark, Integer accountId, Integer classId,Integer studentId) {
+        teacherService.checkTeacherClassroomStudent(accountId, classId, studentId);
+        Optional<Student> student = studentRepository.findById(studentId);
         Optional<Classroom> classroom = classroomRepository.findById(classId);
-        if (classroom.isEmpty()){
-            throw new NoSuchElementException("Classroom not exist");
-        }
-        Optional<Teacher> teacher = teacherRepository.findTeacherByAccountId(accountId);
-        if (teacher.isEmpty()) {
-            throw  new NoSuchElementException("Teacher not found");
-        }
-        studentService.checkStudentJoinedClass(student.get().getId(), classId);
-        teacherService.checkTeacherAssignedClass(teacher.get().getId(),classId);
-        studentService.checkStudentTeacher(student.get().getId(), teacher.get().getId());
         mark.setCreateDate(new Date());
         mark.setSubject(classroom.get().getSubject());
         mark.setId(mark.getId());
@@ -89,7 +77,8 @@ public class MarkServiceImpl implements MarkService {
         if (mark.getWeight() + currentWeight > 1.0) {
             throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
         }
-        markRepository.save(mark);
+        return  markRepository.save(mark);
+
     }
 
 
@@ -104,5 +93,13 @@ public class MarkServiceImpl implements MarkService {
             throw new NoSuchElementException("Mark not found");
         }
         markRepository.deleteMark(markId);
+    }
+
+    @Override
+    public List<Mark> getMarksByClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentId) {
+        teacherService.checkTeacherClassroomStudent(teacherAccountId, classId, studentId);
+        Optional<Classroom> classroom = classroomRepository.findById(classId);
+        List<Mark> markList = markRepository.getMarkbySubject( studentId, classroom.get().getSubject().getId());
+        return markList;
     }
 }

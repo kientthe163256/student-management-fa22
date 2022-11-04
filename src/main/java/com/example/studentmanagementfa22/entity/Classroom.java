@@ -48,7 +48,7 @@ public class Classroom {
 
     @ManyToOne
     @JoinColumn(name = "subject_id")
-    @JsonBackReference
+  //  @JsonBackReference
     private Subject subject;
 
     private boolean deleted;
@@ -66,5 +66,6 @@ public class Classroom {
     private Date deleteDate;
 
     @ManyToMany(mappedBy = "classrooms")
+  //  @JsonBackReference
     Collection<Student> students;
 }

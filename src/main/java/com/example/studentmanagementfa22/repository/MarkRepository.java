@@ -35,4 +35,5 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
     @Transactional
     @Query(value = "UPDATE mark set deleted = 1, delete_date = CURRENT_TIMESTAMP() where id = ?1", nativeQuery = true)
     void deleteMark(Integer id);
+
 }
