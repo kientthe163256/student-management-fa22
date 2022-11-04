@@ -91,11 +91,12 @@ public class SubjectServiceImpl implements SubjectService {
         if (subject.isDeleted()){
             throw new InvalidInputException("Subject already deleted");
         }
-//        List<Classroom> classroomList = classroomService.getBySubjectId(subjectId);
-//        if (!classroomList.isEmpty()){
-//            throw new ActionNotAllowedException("Can not delete cause there is still a classroom with this subject");
-//        }
-        subjectRepository.deleteSubject(subjectId);
+        if (subject.getClassrooms().size() > 0){
+            throw new ActionNotAllowedException("Can not delete cause there is still a classroom with this subject");
+        }
+        subject.setDeleted(true);
+        subject.setDeleteDate(new Date());
+        subjectRepository.save(subject);
     }
 
     @Override

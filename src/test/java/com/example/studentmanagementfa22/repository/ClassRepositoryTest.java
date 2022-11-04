@@ -12,11 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.Assert;
+
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -31,11 +32,10 @@ public class ClassRepositoryTest {
                 .classroomName("AB1521")
                 .classType(ClassType.SESSION)
                 .noStudent(12)
-                .teacherId(1)
                 .build();
         classroomRepository.save(classroom);
         Classroom foundClassroom = classroomRepository.findByClassroomName("AB1521");
-        Assert.notNull(foundClassroom);
+        assertNotNull(foundClassroom);
     }
 
     @Test
@@ -47,30 +47,28 @@ public class ClassRepositoryTest {
                 .build();
         classroomRepository.save(classroom);
         Classroom foundClassroom = classroomRepository.findByClassroomName("TE1521");
-        Assert.notNull(foundClassroom);
+        assertNotNull(foundClassroom);
     }
 
     @Test
     public void saveSessionClassroom(){
         classroomRepository.addSessionClassroom("TE1616", 12, ClassType.SESSION.name());
         Classroom classroom = classroomRepository.findByClassroomName("TE1616");
-        Assert.notNull(classroom);
+        assertNotNull(classroom);
     }
 
     @Test
     public void getAllClassroom(){
-        ClassType classType = ClassType.SESSION;
-        System.out.println(classType.name());
         List<Classroom> classroomList = classroomRepository.findAll();
-        Assert.notNull(classroomList);
+        assertNotNull(classroomList);
     }
+
     @Test
     public void getTeachingClassrooms() {
         Sort sortObject = Sort.by(Sort.Direction.DESC,"id");
         PageRequest pageRequest = PageRequest.of(1, 3, sortObject);
         Page<Classroom> classrooms =  classroomRepository.findClassroomsByTeacherId(2, pageRequest);
-        Assertions.assertEquals(2,classrooms.getTotalPages());
-        assertThat(classrooms).isNotNull();
+        assertNotNull(classrooms);
     }
 
 }

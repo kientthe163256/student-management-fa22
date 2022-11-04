@@ -27,11 +27,6 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
             "WHERE sc.student_id = ?1", nativeQuery = true)
     Page<Subject> findAllSubjectRegistered(Pageable pageable, @Param("student_id") int studentId);
 
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE subject set deleted = 1, delete_date = curdate() where id = :subjectId", nativeQuery = true)
-    void deleteSubject(@Param("subjectId") Integer subjectId);
-
     Subject findBySubjectName(String subjectName);
 
 }

@@ -57,7 +57,6 @@ public class ClassroomServiceTest {
         Classroom mockClassroom = Classroom.builder()
                 .id(5)
                 .classroomName("mock class")
-                .subjectId(1)
                 .build();
         ClassroomDTO mockClassroomDTO = ClassroomDTO.builder()
                 .id(5)
@@ -144,7 +143,6 @@ public class ClassroomServiceTest {
         Classroom mockClassroom = Classroom.builder()
                 .id(classId)
                 .classroomName("mock class")
-                .subjectId(1)
                 .build();
         Optional<Classroom> optionalClassroom = Optional.of(mockClassroom);
         Teacher mockTeacher = Teacher.builder()
@@ -154,7 +152,7 @@ public class ClassroomServiceTest {
         when(teacherService.getById(teacherId)).thenReturn(mockTeacher);
         doReturn(optionalClassroom).when(classroomRepository).findById(classId);
         doAnswer((Answer<Integer>) invocation -> {
-            mockClassroom.setTeacherId(teacherId);
+            mockClassroom.setTeacher(mockTeacher);
             return 1;
         }).when(classroomRepository).save(mockClassroom);
 
@@ -172,13 +170,11 @@ public class ClassroomServiceTest {
         Classroom mockClassroom = Classroom.builder()
                 .id(classId)
                 .classroomName("mock class")
-                .subjectId(1)
                 .build();
         String newClassName = "Edited";
         Classroom editClass = Classroom.builder()
                 .id(classId)
                 .classroomName(newClassName)
-                .subjectId(1)
                 .build();
         ClassroomDTO editedClassroomDTO = ClassroomDTO.builder()
                 .id(classId)
