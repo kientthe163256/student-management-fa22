@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.controller.teacher;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.dto.MarkDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Mark;
@@ -61,7 +62,7 @@ public class ClassroomManageController {
                                             @PathVariable(name = "studentId") Integer studentId,
                                             @Valid @RequestBody Mark newMark) {
         Account account = (Account) session.getAttribute("account");
-         Mark mark = markService.addStudentMark(newMark, account.getId(), classId, studentId);
+        MarkDTO mark = markService.addStudentMark(newMark, account.getId(), classId, studentId);
         return new ResponseEntity<>(mark, HttpStatus.OK);
     }
 
@@ -72,7 +73,7 @@ public class ClassroomManageController {
     public ResponseEntity<?> displayStudentMark(@PathVariable(name = "id") Integer classId,
                                                 @PathVariable(name = "studentID") Integer studentID) {
         Account account = (Account) session.getAttribute("account");
-        List<Mark> markList = markService.getMarksByClassroomStudent(account.getId(),classId , studentID);
+        List<MarkDTO> markList = markService.getMarksByClassroomStudent(account.getId(),classId , studentID);
         return ResponseEntity.ok(markList);
     }
 //

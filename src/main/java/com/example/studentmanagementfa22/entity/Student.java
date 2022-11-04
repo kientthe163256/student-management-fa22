@@ -1,13 +1,10 @@
 package com.example.studentmanagementfa22.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.OptBoolean;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
@@ -29,8 +26,9 @@ public class Student {
     @Column(name = "academic_session")
     private int academicSession;
 
+    @JsonIgnore
     @ManyToMany
-  //  @JsonManagedReference
+    @JsonManagedReference
     @JoinTable(name = "student_classroom",
             joinColumns = @JoinColumn(name = "student_id"),
     inverseJoinColumns = @JoinColumn(name = "classroom_id"))

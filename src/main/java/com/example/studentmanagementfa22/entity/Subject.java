@@ -1,6 +1,6 @@
 package com.example.studentmanagementfa22.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.OptBoolean;
@@ -46,6 +46,7 @@ public class Subject {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", lenient = OptBoolean.FALSE, timezone = "Asia/Ho_Chi_Minh")
     private Date deleteDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "subject", fetch = FetchType.EAGER) //
     @JsonManagedReference
     Collection<Classroom> classrooms;

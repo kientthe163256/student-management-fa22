@@ -1,16 +1,19 @@
 package com.example.studentmanagementfa22.service.impl;
 
+import com.example.studentmanagementfa22.dto.MarkDTO;
 import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.repository.*;
 import com.example.studentmanagementfa22.service.MarkService;
 import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MarkServiceImpl implements MarkService {
@@ -24,6 +27,9 @@ public class MarkServiceImpl implements MarkService {
 
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private IGenericMapper<Mark, MarkDTO> mapper;
 
     @Autowired
     private TeacherService teacherService;
@@ -40,7 +46,7 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public Mark editStudentMark(int markID, Mark editMark, int accountID) {
+    public MarkDTO editStudentMark(int markID, Mark editMark, int accountID) {
         Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountID);
         if (optionalTeacher.isEmpty()) {
             throw  new NoSuchElementException("Teacher not found");
@@ -58,12 +64,12 @@ public class MarkServiceImpl implements MarkService {
             throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
         }
         mark.setWeight(editMark.getWeight());
-        markRepository.save(mark);
-        return mark;
+        markRepository.updateMark(mark.getGrade(), mark.getWeight(), markID);
+        return mapper.mapToDTO(mark);
     }
 
     @Override
-    public Mark addStudentMark(Mark mark, Integer accountId, Integer classId,Integer studentId) {
+    public MarkDTO addStudentMark(Mark mark, Integer accountId, Integer classId, Integer studentId) {
         teacherService.checkTeacherClassroomStudent(accountId, classId, studentId);
         Optional<Student> student = studentRepository.findById(studentId);
         Optional<Classroom> classroom = classroomRepository.findById(classId);
@@ -77,7 +83,9 @@ public class MarkServiceImpl implements MarkService {
         if (mark.getWeight() + currentWeight > 1.0) {
             throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
         }
-        return  markRepository.save(mark);
+        markRepository.addMark(mark.getGrade(), mark.getWeight(), mark.getMarkItem(), mark.getStudent().getId(), mark.getSubject().getId());
+        MarkDTO markDTO = mapper.mapToDTO(mark);
+        return markDTO;
 
     }
 
@@ -96,10 +104,14 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public List<Mark> getMarksByClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentId) {
+    public List<MarkDTO> getMarksByClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentId) {
         teacherService.checkTeacherClassroomStudent(teacherAccountId, classId, studentId);
         Optional<Classroom> classroom = classroomRepository.findById(classId);
         List<Mark> markList = markRepository.getMarkbySubject( studentId, classroom.get().getSubject().getId());
-        return markList;
+        List<MarkDTO> markDTOList = markList.stream().map(mark -> {
+            MarkDTO markDTO = mapper.mapToDTO(mark);
+            return markDTO;
+        }).collect(Collectors.toList());
+        return markDTOList;
     }
 }

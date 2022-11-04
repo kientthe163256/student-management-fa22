@@ -1,9 +1,6 @@
 package com.example.studentmanagementfa22.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.OptBoolean;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
@@ -43,12 +40,14 @@ public class Classroom {
     @NotNull(message = "ClassType can't be null")
     private ClassType classType;
 
+    @JsonIgnore
     @ManyToOne
     private Teacher teacher;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "subject_id")
-  //  @JsonBackReference
+    @JsonBackReference
     private Subject subject;
 
     private boolean deleted;
@@ -65,7 +64,8 @@ public class Classroom {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", lenient = OptBoolean.FALSE, timezone= "Asia/Ho_Chi_Minh")
     private Date deleteDate;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "classrooms")
-  //  @JsonBackReference
+    @JsonBackReference
     Collection<Student> students;
 }

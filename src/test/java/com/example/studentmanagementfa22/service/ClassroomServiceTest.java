@@ -1,7 +1,7 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
-import com.example.studentmanagementfa22.entity.Account;
+
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.entity.Teacher;
@@ -147,7 +147,6 @@ public class ClassroomServiceTest {
         Classroom mockClassroom = Classroom.builder()
                 .id(classId)
                 .classroomName("mock class")
-                .subjectId(1)
                 .build();
         Optional<Classroom> optionalClassroom = Optional.of(mockClassroom);
         Teacher mockTeacher = Teacher.builder()

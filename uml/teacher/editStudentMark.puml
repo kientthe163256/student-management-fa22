@@ -5,6 +5,7 @@ participant CustomSuccessHandler
 participant ClassroomManageController
 participant MarkService
 participant MarkRepository
+participant MapMarkDTO
 database MySQL
 
 autonumber 1.0
@@ -49,9 +50,14 @@ MySQL --> MarkRepository: return response
 deactivate MySQL
 MarkRepository --> MarkService: return mark
 deactivate MarkRepository
-MarkService --> ClassroomManageController: return Mark
+autonumber 3.0
+MarkService -> MapMarkDTO: map to Map To MarkDTO
+activate MapMarkDTO
+MapMarkDTO --> MarkService: return markDTO
+deactivate MapMarkDTO
+MarkService --> ClassroomManageController: return markDTO
 deactivate MarkService
-ClassroomManageController --> Teacher: mark
+ClassroomManageController --> Teacher: markDTO
 deactivate ClassroomManageController
 deactivate Teacher
 

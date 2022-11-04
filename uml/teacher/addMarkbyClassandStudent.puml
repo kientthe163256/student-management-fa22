@@ -4,10 +4,12 @@ participant SecurityConfig
 participant CustomSuccessHandler
 participant ClassroomManageController
 participant MarkService
+participant TeacherService
 participant MarkRepository
 participant StudentReposiory
 participant ClassroomRepository
 participant TeacherRepository
+participant MapMarkDTO
 database MySQL
 
 autonumber 1.0
@@ -30,9 +32,53 @@ deactivate CustomSuccessHandler
 autonumber 2.0
 ClassroomManageController -> MarkService: add new student's mark
 activate MarkService
+MarkService -> TeacherService: check
+activate TeacherService
 autonumber 2.1
 
-    MarkService ->StudentReposiory: get student
+    TeacherService ->StudentReposiory: get student
+                 activate StudentReposiory
+                 StudentReposiory -> MySQL: SELECT
+                 activate MySQL
+                 MySQL --> StudentReposiory: return response
+                 deactivate MySQL
+                 StudentReposiory --> TeacherService: return student
+                 deactivate StudentReposiory
+                 break Student not found
+                 TeacherService --> MarkService: return error message
+                 end
+                 TeacherService ->TeacherRepository: get teacher
+                         activate TeacherRepository
+                         TeacherRepository -> MySQL: SELECT
+                         activate MySQL
+                         MySQL --> TeacherRepository: return response
+                         deactivate MySQL
+                         TeacherRepository --> TeacherService: return teacher
+                         deactivate TeacherRepository
+                 break Teacher not found
+                 TeacherService --> MarkService: return error message
+                 end
+                 TeacherService -> ClassroomRepository: get classroom
+                         activate ClassroomRepository
+                         ClassroomRepository -> MySQL: SELECT
+                         activate MySQL
+                         MySQL --> ClassroomRepository: return response
+                         deactivate MySQL
+                         ClassroomRepository --> TeacherService: return classroom
+                         deactivate ClassroomRepository
+                 break Classroom not found
+                 TeacherService --> MarkService: return error message
+                 end
+break Student does not join class
+TeacherService --> MarkService: return error message
+end
+break Teacher not authorized
+TeacherService --> MarkService: return error message
+end
+deactivate TeacherService
+
+autonumber 3.0
+MarkService ->StudentReposiory: get student
                  activate StudentReposiory
                  StudentReposiory -> MySQL: SELECT
                  activate MySQL
@@ -40,21 +86,7 @@ autonumber 2.1
                  deactivate MySQL
                  StudentReposiory --> MarkService: return student
                  deactivate StudentReposiory
-                 break Student not found
-                 MarkService --> ClassroomManageController: return error message
-                 end
-                 MarkService ->TeacherRepository: get teacher
-                         activate TeacherRepository
-                         TeacherRepository -> MySQL: SELECT
-                         activate MySQL
-                         MySQL --> TeacherRepository: return response
-                         deactivate MySQL
-                         TeacherRepository --> MarkService: return teacher
-                         deactivate TeacherRepository
-                 break Teacher not found
-                 MarkService --> ClassroomManageController: return error message
-                 end
-                 MarkService -> ClassroomRepository: get classroom
+MarkService -> ClassroomRepository: get classroom
                          activate ClassroomRepository
                          ClassroomRepository -> MySQL: SELECT
                          activate MySQL
@@ -62,17 +94,10 @@ autonumber 2.1
                          deactivate MySQL
                          ClassroomRepository --> MarkService: return classroom
                          deactivate ClassroomRepository
-                 break Classroom not found
-                                  MarkService --> ClassroomManageController: return error message
-                                  end
 
-break Student does not join class
-MarkService --> ClassroomManageController: return error message
-end
-break Teacher not authorized
-MarkService --> ClassroomManageController: return error message
-end
-autonumber 3.0
+
+
+autonumber 4.0
 MarkService -> MarkRepository: get Total Weight's mark
 activate MarkRepository
 MarkRepository -> MySQL: SELECT Sum
@@ -83,7 +108,6 @@ MarkRepository --> MarkService: return Total Weight's mark
 break new total weight exceed 1.0
 MarkService --> ClassroomManageController: return error message
 end
-
 autonumber 4.0
 MarkService -> MarkRepository: save mark
 MarkRepository -> MySQL: insert
@@ -92,6 +116,13 @@ MySQL --> MarkRepository: return response
 deactivate MySQL
 MarkRepository --> MarkService: return response
 deactivate MarkRepository
+
+autonumber 5.0
+MarkService -> MapMarkDTO : map mark to MarkDTO
+activate MapMarkDTO
+MapMarkDTO --> MarkService: return markDTO
+deactivate MapMarkDTO
+
 MarkService --> ClassroomManageController: return response
 deactivate MarkService
 ClassroomManageController --> Teacher: return new mark
