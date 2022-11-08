@@ -211,6 +211,12 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    public ClassroomDTO getClassDTOById(Integer classId) {
+        Classroom classroom = getById(classId);
+        return mapper.mapToDTO(classroom);
+    }
+
+    @Override
     public Pagination<ClassroomDTO> getAllClassroomsPaging(int pageNumber, int pageSize, String sort){
         //use PagingHelper to validate raw sort input
         Map<String, Object> validatedSort = PagingHelper.getCriteriaAndDirection(sort);

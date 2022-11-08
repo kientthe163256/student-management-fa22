@@ -49,6 +49,16 @@ public class ClassroomManagementController {
         return ResponseEntity.ok(classroomPage);
     }
 
+    @Operation(summary = "Get classroom", description = "Get classroom by id")
+    @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "String"))
+    @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content(mediaType = "String"))
+    @ApiResponse(responseCode = "404", description = "Classroom is not found", content = @Content(mediaType = "String"))
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getClassroomById(@PathVariable Integer id){
+        ClassroomDTO classroomDTO = classroomService.getClassDTOById(id);
+        return new ResponseEntity(classroomDTO, HttpStatus.OK);
+    }
+
     @Operation(summary = "Assign classroom", description = "Assign classroom to a teacher")
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "String"))
     @ApiResponse(responseCode = "400", description = "Invalid input format", content = @Content(mediaType = "String"))

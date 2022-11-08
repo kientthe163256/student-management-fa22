@@ -2,6 +2,7 @@ package com.example.studentmanagementfa22.controller.admin;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.SubjectDTO;
+import com.example.studentmanagementfa22.dto.SuccessResponseDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.service.SubjectService;
@@ -60,15 +61,16 @@ public class SubjectController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSubject(@PathVariable Integer id){
         subjectService.deleteSubject(id);
-        return ResponseEntity.ok("Subject deleted successfully");
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK, "Subject deleted successfully"));
     }
 
     @Operation(summary = "Update subject", description = "Update subject by id")
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "String"))
     @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content(mediaType = "String"))
     @ApiResponse(responseCode = "404", description = "Subject is not found", content = @Content(mediaType = "String"))
-    @PutMapping()
-    public ResponseEntity<?> updateSubject(@Valid @RequestBody SubjectDTO subject){
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateSubject(@Valid @RequestBody SubjectDTO subject, @PathVariable Integer id){
+        subject.setId(id);
         SubjectDTO editedSubject = subjectService.updateSubject(subject);
         return ResponseEntity.ok(editedSubject);
     }

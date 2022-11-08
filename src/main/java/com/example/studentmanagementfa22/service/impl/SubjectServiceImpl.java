@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -88,9 +89,6 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void deleteSubject(Integer subjectId) {
         Subject subject = getById(subjectId);
-        if (subject.isDeleted()){
-            throw new InvalidInputException("Subject already deleted");
-        }
         if (subject.getClassrooms().size() > 0){
             throw new ActionNotAllowedException("Can not delete cause there is still a classroom with this subject");
         }
@@ -100,8 +98,13 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    @Transactional
     public SubjectDTO updateSubject(SubjectDTO editSubject) {
         Subject currentSubject = getById(editSubject.getId());
+        Subject subjectWithName = getByName(editSubject.getSubjectName());
+        if (subjectWithName != null){
+            throw new InvalidInputException("There is already a subject with given name");
+        }
         currentSubject.setSubjectName(editSubject.getSubjectName());
         currentSubject.setNumberOfCredit(editSubject.getNumberOfCredit());
         currentSubject.setModifyDate(new Date());

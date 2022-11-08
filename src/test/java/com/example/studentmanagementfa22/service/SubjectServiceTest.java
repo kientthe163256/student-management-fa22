@@ -150,4 +150,14 @@ public class SubjectServiceTest {
         verify(subjectRepository, times(1)).findById(EXIST_ID);
         verify(subjectRepository, times(0)).save(mockSubject);
     }
+
+    @Test
+    public void deleteSubjectWithNonExistId(){
+        when(subjectRepository.findById(NON_EXIST_ID)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> {
+            subjectService.deleteSubject(NON_EXIST_ID);
+        });
+        verify(subjectRepository, times(1)).findById(NON_EXIST_ID);
+    }
 }

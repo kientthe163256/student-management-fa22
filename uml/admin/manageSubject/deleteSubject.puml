@@ -1,0 +1,45 @@
+@startuml
+Actor Admin
+participant CustomExceptionHandler
+participant SubjectController
+participant SubjectService
+participant SubjectRepository
+database MySQL
+
+autonumber 1.0
+Admin -> SubjectController: delete subject
+activate Admin
+activate SubjectController
+SubjectController -> SubjectService: delete subject
+
+activate SubjectService
+autonumber 2.0
+alt Subject does not exist
+    SubjectService --> CustomExceptionHandler: throw NoSuchElementException
+    activate CustomExceptionHandler
+    CustomExceptionHandler --> Admin: display error response
+autonumber 3.0
+else Subject exists
+    autonumber 3.1
+    alt There still a classroom teaching that subject
+        SubjectService --> CustomExceptionHandler: throw ActionNotAllowedException
+        CustomExceptionHandler --> Admin: display error response
+        deactivate CustomExceptionHandler
+    else No classroom teaching that subject
+        SubjectService -> SubjectRepository: save
+        deactivate SubjectService
+        activate SubjectRepository
+        SubjectRepository -> MySQL: update
+        activate MySQL
+        MySQL --> SubjectRepository: return response
+        deactivate MySQL
+        deactivate SubjectRepository
+
+        SubjectController --> Admin: return success response dto
+        deactivate SubjectController
+        deactivate Admin
+    end
+end
+
+
+@enduml

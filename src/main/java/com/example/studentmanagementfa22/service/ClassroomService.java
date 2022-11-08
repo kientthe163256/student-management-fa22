@@ -17,8 +17,6 @@ public interface ClassroomService {
 
     Pagination<ClassroomDTO> getAllTeachingClassrooms(int accountID, int pageNumber, int pageSize, String sort);
 
-
-
     Page<ClassroomDTO> getAllAvailClassroom (int pageNumber, int subjectId);
 
     Pagination<ClassroomDTO> getAllClassroomsPaging(int pageNumber, int pageSize, String sort);
@@ -38,4 +36,6 @@ public interface ClassroomService {
     ClassroomDTO updateClassroom(Classroom classroom, Integer classId);
 
     void deleteClassroom(Integer classId);
+
+    ClassroomDTO getClassDTOById(Integer classId);
 }
