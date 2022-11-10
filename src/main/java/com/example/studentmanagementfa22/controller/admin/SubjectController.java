@@ -1,10 +1,7 @@
 package com.example.studentmanagementfa22.controller.admin;
 
-import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.dto.ResponseDTO;
 import com.example.studentmanagementfa22.dto.SubjectDTO;
-import com.example.studentmanagementfa22.dto.SuccessResponseDTO;
-import com.example.studentmanagementfa22.dto.TeacherDTO;
-import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -31,8 +28,7 @@ public class SubjectController {
     @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "String"))
     @GetMapping()
     public List<SubjectDTO> displaySubjectList(@RequestParam(required = false, defaultValue = "1") int pageNumber){
-        List<SubjectDTO> subjectDTOList = subjectService.getSubjectDTOList(pageNumber);
-        return subjectDTOList;
+        return subjectService.getSubjectDTOList(pageNumber);
     }
 
     @Operation(summary = "Get subject by ID", description = "Get by id then returns subject dto")
@@ -41,8 +37,7 @@ public class SubjectController {
     @ApiResponse(responseCode = "404", description = "Subject is not found", content = @Content(mediaType = "String"))
     @GetMapping("/{id}")
     public SubjectDTO getSubjectById(@PathVariable Integer id) {
-        SubjectDTO subjectDTO = subjectService.getSubjectDTOByID(id);
-        return subjectDTO;
+        return subjectService.getSubjectDTOByID(id);
     }
 
     @Operation(summary = "Add new subject", description = "Add new subject")
@@ -51,7 +46,7 @@ public class SubjectController {
     @PostMapping()
     public ResponseEntity<?> addNewSubject(@Valid @RequestBody SubjectDTO subjectDTO){
         subjectService.addNewSubject(subjectDTO);
-        return new ResponseEntity("Subject added successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(new ResponseDTO<>("Subject added successfully",201), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Delete subject", description = "Delete subject by id")
@@ -61,7 +56,7 @@ public class SubjectController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSubject(@PathVariable Integer id){
         subjectService.deleteSubject(id);
-        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK, "Subject deleted successfully"));
+        return ResponseEntity.ok(new ResponseDTO<>("Subject deleted successfully", 200));
     }
 
     @Operation(summary = "Update subject", description = "Update subject by id")
