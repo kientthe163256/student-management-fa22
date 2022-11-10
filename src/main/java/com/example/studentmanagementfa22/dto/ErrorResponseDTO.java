@@ -1,14 +1,13 @@
-package com.example.studentmanagementfa22.entity;
+package com.example.studentmanagementfa22.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class ErrorResponse<T> {
+public class ErrorResponseDTO<T> {
     private T errorMessage;
     private int statusCode;
 }

@@ -196,6 +196,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public ClassroomDTO updateClassroom(Classroom classroom, Integer classId) {
         Classroom currentClassroom = getById(classId);
         currentClassroom.setClassroomName(classroom.getClassroomName());
+        currentClassroom.setModifyDate(new Date());
         Classroom savedClassroom = classroomRepository.save(currentClassroom);
         return mapper.mapToDTO(savedClassroom);
     }

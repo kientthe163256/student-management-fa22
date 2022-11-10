@@ -1,6 +1,6 @@
 package com.example.studentmanagementfa22.exception;
 
-import com.example.studentmanagementfa22.entity.ErrorResponse;
+import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidInputException;
@@ -26,23 +26,23 @@ import java.util.NoSuchElementException;
 public class CustomExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity handleNoSuchElement(NoSuchElementException exception) {
-        return new ResponseEntity(new ErrorResponse(exception.getMessage(), 404), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(new ErrorResponseDTO(exception.getMessage(), 404), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ElementAlreadyExistException.class)
     public ResponseEntity handleElementExisted(ElementAlreadyExistException exception) {
-        return new ResponseEntity(new ErrorResponse(exception.getMessage(), 400), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ErrorResponseDTO(exception.getMessage(), 400), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity handleUsernameNotFound(UsernameNotFoundException exception) {
-        return new ResponseEntity(new ErrorResponse(exception.getMessage(), 404), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(new ErrorResponseDTO(exception.getMessage(), 404), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity handleException(MethodArgumentTypeMismatchException ex) {
         String message = "Invalid input format for " + ex.getName() + ". Required type: " + ex.getRequiredType().getSimpleName();
-        return new ResponseEntity(new ErrorResponse(message, 400), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ErrorResponseDTO(message, 400), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -53,7 +53,7 @@ public class CustomExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity(new ErrorResponse(errors, 400), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ErrorResponseDTO(errors, 400), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -64,32 +64,32 @@ public class CustomExceptionHandler {
             String errorMessage = error.getMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity(new ErrorResponse(errors, 400), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ErrorResponseDTO(errors, 400), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity handleIllegalArgument(IllegalArgumentException ex) {
-        return new ResponseEntity(new ErrorResponse(ex.getMessage(), 400), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ErrorResponseDTO(ex.getMessage(), 400), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidInputException.class)
     public ResponseEntity handleInvalidInput(InvalidInputException ex) {
-        return new ResponseEntity(new ErrorResponse(ex.getMessage(), 400), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ErrorResponseDTO(ex.getMessage(), 400), HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(InvalidFormatException.class)
     public ResponseEntity handleInvalidFormat(InvalidFormatException ex) {
         String message = "Invalid format for type " + ex.getTargetType().getSimpleName() + " with given value " + ex.getValue();
-        return new ResponseEntity(new ErrorResponse(message, 400), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ErrorResponseDTO(message, 400), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity handleDisabledException(DisabledException ex) {
-        return new ResponseEntity(new ErrorResponse(ex.getMessage(), 403), HttpStatus.FORBIDDEN);
+        return new ResponseEntity(new ErrorResponseDTO(ex.getMessage(), 403), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ActionNotAllowedException.class)
     public ResponseEntity handleNotAllowed(ActionNotAllowedException ex) {
-        return new ResponseEntity(new ErrorResponse(ex.getMessage(), 403), HttpStatus.FORBIDDEN);
+        return new ResponseEntity(new ErrorResponseDTO(ex.getMessage(), 403), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(InvalidSortFieldException.class)
@@ -99,6 +99,6 @@ public class CustomExceptionHandler {
             messageBuilder.append(f.getName()).append(", ");
         }
         String errorMessage = messageBuilder.deleteCharAt(messageBuilder.length()-2).toString();
-        return new ResponseEntity(new ErrorResponse(errorMessage, 400), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ErrorResponseDTO(errorMessage, 400), HttpStatus.BAD_REQUEST);
     }
 }
