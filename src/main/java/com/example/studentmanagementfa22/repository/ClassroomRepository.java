@@ -17,10 +17,10 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     Classroom findByClassroomName(String classroomName);
 
 
-    @Query(value = "SELECT c.* FROM #{#entityName} c WHERE c.teacher_id = ?1 ORDER BY ?#{#pageable} ",
+    @Query(value = "SELECT c.* FROM student_management_fa22.classroom c WHERE c.teacher_id = ?1  ",
             countQuery = "SELECT  count(c.id) FROM student_management_fa22.classroom c WHERE c.teacher_id = ?1",
             nativeQuery = true)
-    Page<Classroom> findClassroomsByTeacherId(Integer teacherId, Pageable pageable);
+    Page<Classroom> findClassroomsByTeacherId( Integer teacherId, Pageable pageable);
 
 
     @Query(value = "SELECT * FROM student_management_fa22.classroom \n" +

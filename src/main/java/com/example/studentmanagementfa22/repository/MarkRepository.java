@@ -38,14 +38,14 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO mark (grade, weight, mark_item, student_id, subject_id, create_date) VALUES (?1, ?2, ?3, ?4, ?5,  CURRENT_TIMESTAMP)",
+    @Query(value = "INSERT INTO mark (grade, marktype_id, mark_item, student_id, subject_id, create_date) VALUES (?1, ?2, ?3, ?4, ?5,  CURRENT_TIMESTAMP)",
             nativeQuery = true)
-    void addMark(double grade, double weight, String markItem, int studentId, int subjectId);
+    void addMark(double grade, double markTypeId, String markItem, int studentId, int subjectId);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE mark set grade = ?1, weight = ?2  ,modify_date = CURRENT_TIMESTAMP() where id = ?3", nativeQuery = true)
-    void updateMark(double grade, double weight, int markId);
+    @Query(value = "UPDATE mark set grade = ?1  ,modify_date = CURRENT_TIMESTAMP() where id = ?2", nativeQuery = true)
+    void updateMark(double grade, int markId);
 
     @Query(value = "select count(m.id) from mark m join classroom c on m.subject_id = c.subject_id where c.id", nativeQuery = true)
     int getTotalMarkByClassId(@Param("class_id") int classId);

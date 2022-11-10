@@ -56,13 +56,14 @@ public class ClassroomManageController {
         List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(classID, account.getId(), pageNumber, pageSize, sort)  ;
         return ResponseEntity.ok(studentDTOList);
     }
-    @PostMapping("/{id}/students/{studentId}/marks")
+    @PostMapping("/{classId}/students/{studentId}/marks/{markTypeId")
     @Operation(summary = "Add Mark ", description = "Teacher can add student mark ")
-    public ResponseEntity<?> addStudentMark(@PathVariable(name = "id") Integer classId,
+    public ResponseEntity<?> addStudentMark(@PathVariable(name = "classId") Integer classId,
                                             @PathVariable(name = "studentId") Integer studentId,
+                                            @PathVariable(name = "markTypeId") Integer markTypeId,
                                             @Valid @RequestBody Mark newMark) {
         Account account = (Account) session.getAttribute("account");
-        MarkDTO mark = markService.addStudentMark(newMark, account.getId(), classId, studentId);
+        MarkDTO mark = markService.addStudentMark(newMark, account.getId(), classId, studentId, markTypeId);
         return new ResponseEntity<>(mark, HttpStatus.OK);
     }
 

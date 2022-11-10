@@ -1,0 +1,105 @@
+@startuml
+Actor Teacher
+participant SecurityConfig
+participant CustomSuccessHandler
+participant ClassroomManageController
+participant MarkService
+participant TeacherService
+participant MarkRepository
+participant StudentReposiory
+participant ClassroomRepository
+participant TeacherRepository
+participant MapMarkDTO
+database MySQL
+
+autonumber 1.0
+Teacher -> SecurityConfig: login account
+
+activate Teacher
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Teacher: redirect login
+end
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+activate CustomSuccessHandler
+CustomSuccessHandler -> ClassroomManageController: dispatch user account
+activate ClassroomManageController
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+ClassroomManageController -> MarkService: add new student's mark
+activate MarkService
+MarkService -> TeacherService: check
+activate TeacherService
+autonumber 2.1
+
+    TeacherService ->StudentReposiory: get student
+                 activate StudentReposiory
+                 StudentReposiory -> MySQL: SELECT
+                 activate MySQL
+                 MySQL --> StudentReposiory: return response
+                 deactivate MySQL
+                 StudentReposiory --> TeacherService: return student
+                 deactivate StudentReposiory
+                 break Student not found
+                 TeacherService --> MarkService: return error message
+                 end
+                 TeacherService ->TeacherRepository: get teacher
+                         activate TeacherRepository
+                         TeacherRepository -> MySQL: SELECT
+                         activate MySQL
+                         MySQL --> TeacherRepository: return response
+                         deactivate MySQL
+                         TeacherRepository --> TeacherService: return teacher
+                         deactivate TeacherRepository
+                 break Teacher not found
+                 TeacherService --> MarkService: return error message
+                 end
+                 TeacherService -> ClassroomRepository: get classroom
+                         activate ClassroomRepository
+                         ClassroomRepository -> MySQL: SELECT
+                         activate MySQL
+                         MySQL --> ClassroomRepository: return response
+                         deactivate MySQL
+                         ClassroomRepository --> TeacherService: return classroom
+                         deactivate ClassroomRepository
+                 break Classroom not found
+                 TeacherService --> MarkService: return error message
+                 end
+break Student does not join class
+TeacherService --> MarkService: return error message
+end
+break Teacher not authorized
+TeacherService --> MarkService: return error message
+end
+deactivate TeacherService
+autonumber 3.0
+MarkService -> ClassroomRepository: get classroom
+                         activate ClassroomRepository
+                         ClassroomRepository -> MySQL: SELECT
+                         activate MySQL
+                         MySQL --> ClassroomRepository: return response
+                         deactivate MySQL
+                         ClassroomRepository --> MarkService: return classroom
+                         deactivate ClassroomRepository
+
+autonumber 4.0
+MarkService -> MarkRepository: get Marks by subject and student
+activate MarkRepository
+MarkRepository -> MySQL: SELECT
+activate MySQL
+MySQL --> MarkRepository: return response
+deactivate MySQL
+MarkRepository -> MarkService: return list of marks
+deactivate MarkRepository
+MarkService -> MapMarkDTO: map to list MarkDTO
+activate MapMarkDTO
+MapMarkDTO --> MarkService: return list MarkDTO
+deactivate MapMarkDTO
+MarkService --> ClassroomManageController: return list MarkDTO
+deactivate MarkService
+ClassroomManageController --> Teacher: return list MarkDTO
+@enduml

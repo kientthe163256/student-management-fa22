@@ -26,7 +26,7 @@ public class MarkServiceImpl implements MarkService {
     private ClassroomRepository classroomRepository;
 
     @Autowired
-    private StudentService studentService;
+    private MarkTypeRepository markTypeRepository;
 
     @Autowired
     private IGenericMapper<Mark, MarkDTO> mapper;
@@ -58,32 +58,36 @@ public class MarkServiceImpl implements MarkService {
         Mark mark = optionalMark.get();
         mark.setGrade(editMark.getGrade());
         mark.setModifyDate(new Date());
-        double currentWeight = markRepository.getTotalWeightofStudentMark(mark.getStudent().getId(), mark.getSubject().getId());
-        //check total weight after edit
-        if (  currentWeight - mark.getWeight() + editMark.getWeight()  > 1.0) {
-            throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
-        }
-        mark.setWeight(editMark.getWeight());
-        markRepository.updateMark(mark.getGrade(), mark.getWeight(), markID);
+//        double currentWeight = markRepository.getTotalWeightofStudentMark(mark.getStudent().getId(), mark.getSubject().getId());
+//        //check total weight after edit
+//        if (  currentWeight - mark.getWeight() + editMark.getWeight()  > 1.0) {
+//            throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
+//        }
+//        mark.setWeight(editMark.getWeight());
+        markRepository.updateMark(mark.getGrade(), markID);
         return mapper.mapToDTO(mark);
     }
 
     @Override
-    public MarkDTO addStudentMark(Mark mark, Integer accountId, Integer classId, Integer studentId) {
+    public MarkDTO addStudentMark(Mark mark, Integer accountId, Integer classId, Integer studentId, Integer markTypeId) {
         teacherService.checkTeacherClassroomStudent(accountId, classId, studentId);
         Optional<Student> student = studentRepository.findById(studentId);
         Optional<Classroom> classroom = classroomRepository.findById(classId);
         mark.setCreateDate(new Date());
         mark.setSubject(classroom.get().getSubject());
         mark.setId(mark.getId());
-        mark.setWeight(mark.getWeight());
+        Optional<MarkType> markType = markTypeRepository.findById(markTypeId);
+        if (markType.isEmpty()) {
+            throw new NoSuchElementException("No mark type found");
+        }
+        mark.setMarkType(markType.get());
         mark.setGrade(mark.getGrade());
         mark.setStudent(student.get());
-        double currentWeight = markRepository.getTotalWeightofStudentMark(studentId, mark.getSubject().getId());
-        if (mark.getWeight() + currentWeight > 1.0) {
-            throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
-        }
-        markRepository.addMark(mark.getGrade(), mark.getWeight(), mark.getMarkItem(), mark.getStudent().getId(), mark.getSubject().getId());
+//        double currentWeight = markRepository.getTotalWeightofStudentMark(studentId, mark.getSubject().getId());
+//        if (mark.getWeight() + currentWeight > 1.0) {
+//            throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
+//        }
+        markRepository.addMark(mark.getGrade(), mark.getMarkType().getId(), mark.getMarkItem(), mark.getStudent().getId(), mark.getSubject().getId());
         MarkDTO markDTO = mapper.mapToDTO(mark);
         return markDTO;
 
@@ -108,10 +112,7 @@ public class MarkServiceImpl implements MarkService {
         teacherService.checkTeacherClassroomStudent(teacherAccountId, classId, studentId);
         Optional<Classroom> classroom = classroomRepository.findById(classId);
         List<Mark> markList = markRepository.getMarkbySubject( studentId, classroom.get().getSubject().getId());
-        List<MarkDTO> markDTOList = markList.stream().map(mark -> {
-            MarkDTO markDTO = mapper.mapToDTO(mark);
-            return markDTO;
-        }).collect(Collectors.toList());
+        List<MarkDTO> markDTOList = markList.stream().map(mark ->mapper.mapToDTO(mark)).collect(Collectors.toList());
         return markDTOList;
     }
 }

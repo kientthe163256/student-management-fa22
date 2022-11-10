@@ -11,7 +11,7 @@ public interface MarkService {
 
     MarkDTO editStudentMark(int markID, Mark editMark, int accountID);
 
-    MarkDTO addStudentMark(Mark studentId, Integer id, Integer classId, Integer integer);
+    MarkDTO addStudentMark(Mark newMark, Integer teacherAccountId ,Integer classId, Integer studentId, Integer markTypeId);
 
     void deleteMark(Integer id, Integer accountId);
 

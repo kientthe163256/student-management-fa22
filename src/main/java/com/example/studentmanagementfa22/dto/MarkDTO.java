@@ -16,11 +16,9 @@ import java.util.Date;
 public class MarkDTO {
     private Integer id;
 
-    private String markItem;
-
     private double grade;
 
-    private double weight;
+    private MarkTypeDTO markTypeDTO;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", lenient = OptBoolean.FALSE, timezone= "Asia/Ho_Chi_Minh")
     private Date createDate;

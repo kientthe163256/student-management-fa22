@@ -47,12 +47,13 @@ public class PagingHelper {
     public static String objectFieldtoColumn(Class object, String fieldName) {
         for (Field field : object.getDeclaredFields()) {
             String fName = field.getName();
-            if (fName.equals("id")) {
-                return fieldName;
-            }
-            if (field.getAnnotation(Column.class) != null ) {
-                if (fName.equals(fieldName))
+            if (fName.equals(fieldName)) {
+                if (fName.equals("id")) {
+                    return fieldName;
+                }
+                if (field.getAnnotation(Column.class) != null) {
                     return field.getAnnotation(Column.class).name();
+                }
             }
         }
         return null;

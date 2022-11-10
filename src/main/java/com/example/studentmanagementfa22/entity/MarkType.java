@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -20,29 +19,22 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "mark")
+@Table(name = "mark_type")
 @Where(clause = "deleted = false")
-public class Mark {
+public class MarkType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
-    private  Subject subject;
+    @Column(name="name")
+    private String name;
 
-    @OneToOne
-    private  Student student;
+    @Column(name = "weight")
+    @NotNull(message = "Mark 's weight can not be null")
+    @Min(value = 0, message = "Minimum weight is 0")
+    @Max(value = 1, message = "Maximum weight is 1")
+    private double weight;
 
-    @OneToOne
-    private  MarkType markType;
-
-    @Column(name ="mark_item")
-    private String markItem;
-
-    @Column(name = "grade")
-    @Min(value = 0, message = "Minimum grade is 0")
-    @Max(value = 10, message = "Maximum grade is 10")
-    private double grade;
 
     private boolean deleted;
 
