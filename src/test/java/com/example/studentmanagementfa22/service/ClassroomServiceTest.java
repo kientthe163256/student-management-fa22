@@ -2,9 +2,7 @@ package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 
-import com.example.studentmanagementfa22.entity.Classroom;
-import com.example.studentmanagementfa22.entity.Subject;
-import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
@@ -41,6 +39,11 @@ public class ClassroomServiceTest {
     private TeacherService teacherService;
 
     @Mock
+    private StudentService studentService;
+
+    @Mock
+    private  MarkService markService;
+    @Mock
     private IGenericMapper<Classroom, ClassroomDTO> classroomMapper;
 
     @InjectMocks
@@ -51,20 +54,59 @@ public class ClassroomServiceTest {
         Page<ClassroomDTO> classroomDTO = classroomService.getAllRegisteredClass(2, 1);
         Assert.notNull(classroomDTO);
     }
+    @Test
+    public void registerClassroomSuccessful() throws Exception {
+        Account mockAccount = Account.builder().id(1).username("HE163256").firstName("mock").lastName("Student account").build();
+        Student mockStudent = Student.builder().id(6).account(mockAccount).build();
+        Subject mockSubject = Subject.builder().id(1).build();
+        Classroom mockClassroom = Classroom.builder().id(5).classroomName("mock class").currentNoStudent(10).subject(mockSubject).build();
+        Student student = Student.builder().id(6).build();
+
+        when(classroomRepository.findById(5)).thenReturn(Optional.of(mockClassroom));
+        when(studentService.getStudentByAccountId(1)).thenReturn(mockStudent);
+        when(classroomRepository.numOfSubjectClassByStudent(1, 6)).thenReturn(0);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(classroomRepository).registerClassroom(6,5);
+        doAnswer((Answer<Void>) invocation -> {
+            mockClassroom.setCurrentNoStudent(11);
+            return null;
+        }).when(classroomRepository).updateNoStudentOfClass(5);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(markService).addStudentSubjectMark(6,1);
+
+        classroomService.registerClassroom(mockClassroom.getId(), mockAccount.getId());
+
+        verify(classroomRepository, times(1)).updateNoStudentOfClass(5);
+        verify(classroomRepository, times(1)).findById(5);
+        verify(classroomRepository, times(1)).numOfSubjectClassByStudent(1, 6);
+        verify(classroomRepository, times(1)).registerClassroom(6,5);
+    }
+    @Test
+    public void registerClassroomFail() throws Exception {
+        Account mockAccount = Account.builder().id(1).username("HE163256").firstName("mock").lastName("Student account").build();
+        Student mockStudent = Student.builder().id(6).account(mockAccount).build();
+        Subject mockSubject = Subject.builder().id(1).build();
+        Classroom mockClassroom = Classroom.builder().id(5).classroomName("mock class").currentNoStudent(10).subject(mockSubject).build();
+        Student student = Student.builder().id(6).build();
+
+        when(classroomRepository.findById(5)).thenReturn(Optional.of(mockClassroom));
+        when(studentService.getStudentByAccountId(1)).thenReturn(mockStudent);
+        when(classroomRepository.numOfSubjectClassByStudent(1, 6)).thenReturn(1);
+
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            classroomService.registerClassroom(mockClassroom.getId(), mockStudent.getId() );
+        });
+    }
 
     @Test
     public void getAllAvailClassroom() {
         // 1. Create mock data
         Subject mockSubject = Subject.builder().id(1).build();
-        Classroom mockClassroom = Classroom.builder()
-                .id(5)
-                .classroomName("mock class")
-                .subject(mockSubject)
-                .build();
-        ClassroomDTO mockClassroomDTO = ClassroomDTO.builder()
-                .id(5)
-                .classroomName("mock class")
-                .build();
+        Classroom mockClassroom = Classroom.builder().id(5).classroomName("mock class").subject(mockSubject).build();
+        ClassroomDTO mockClassroomDTO = ClassroomDTO.builder().id(5).classroomName("mock class").build();
 
         List<Classroom> classroomList = new ArrayList<>();
         classroomList.add(mockClassroom);

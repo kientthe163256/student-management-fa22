@@ -13,7 +13,7 @@ public interface StudentService {
 
     boolean checkStudentJoinedClass(Integer id, Integer classId);
 
-    void checkStudentTeacher(Integer student, Integer teacherId);
+    void checkStudentTeacher(Integer studentId, Integer teacherId);
 
     Student getStudentByAccountId(int accountId);
 }

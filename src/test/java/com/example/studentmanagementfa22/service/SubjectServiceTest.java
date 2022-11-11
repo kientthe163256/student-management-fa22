@@ -160,4 +160,15 @@ public class SubjectServiceTest {
         });
         verify(subjectRepository, times(1)).findById(NON_EXIST_ID);
     }
+
+    @Test
+    public void getSubjectById() {
+        Subject mocksubject = mockSubject();
+        when(subjectRepository.findById(EXIST_ID)).thenReturn(Optional.of(mocksubject));
+
+        Subject testSubject = subjectService.getById(EXIST_ID);
+        verify(subjectRepository, times(1)).findById(EXIST_ID);
+        assertEquals(testSubject, mocksubject);
+
+    }
 }

@@ -149,7 +149,6 @@ public class ClassroomServiceImpl implements ClassroomService {
         } else {
             throw new Exception("You have already registered for this subject");
         }
-
     }
 
     @Override

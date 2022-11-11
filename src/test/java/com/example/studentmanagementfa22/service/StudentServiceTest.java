@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -92,8 +93,17 @@ public class StudentServiceTest {
         Teacher mockTeacher = Teacher.builder().id(4).build();
         Optional<Student> optionalStudent = Optional.of(mockStudent);
         when(studentRepository.getStudentbyTeacher(mockStudent.getId(), mockTeacher.getId())).thenReturn(optionalStudent);
-//        boolean check = studentService.checkStudentTeacher(mockStudent.getId(),mockTeacher.getId());
-//        assertTrue(check, "Student joined teacher 's class");
         verify(studentRepository, times(1)).getStudentbyTeacher(9,4);
+    }
+
+    @Test
+    public void getStudentbyAccountId() {
+        Account mockAccount = Account.builder().id(1).username("HE163256").firstName("mock").lastName("Student account").build();
+        Student mockStudent = Student.builder().id(6).account(mockAccount).build();
+
+        when(studentRepository.findStudentByAccountId(1)).thenReturn(Optional.of(mockStudent));
+        Student testStudent = studentService.getStudentByAccountId(1);
+
+        assertEquals(testStudent.getAccount().getId(), mockAccount.getId());
     }
 }
