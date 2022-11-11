@@ -7,10 +7,7 @@ import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.repository.StudentRepository;
-import com.example.studentmanagementfa22.service.AccountService;
-import com.example.studentmanagementfa22.service.ClassroomService;
-import com.example.studentmanagementfa22.service.MarkService;
-import com.example.studentmanagementfa22.service.SubjectService;
+import com.example.studentmanagementfa22.service.*;
 import com.example.studentmanagementfa22.utility.StudentMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,6 +42,8 @@ public class StudentController {
     private MarkService markService;
 
     @Autowired
+    private StudentService studentService;
+    @Autowired
     private StudentMapper studentMapper;
 
     @GetMapping()
@@ -56,12 +55,8 @@ public class StudentController {
     @Operation(summary = "View information", description = "Student can view his personal information")
     public ResponseEntity<StudentDTO> displayInformation() {
         Account account = (Account) session.getAttribute("account");
-        Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
-        if (student.isEmpty()) {
-            return new ResponseEntity("user not found", HttpStatus.BAD_REQUEST);
-        }
-        Student student1 = student.get();
-//        StudentDTO studentDTO = studentMapper.mapToDTO(account);
+
+        Student student1 = studentService.getStudentByAccountId(account.getId());
         StudentDTO studentDTO = new StudentDTO();
         studentDTO.setAcademicSession(student1.getAcademicSession());
         studentDTO.setId(student1.getId());
@@ -86,11 +81,9 @@ public class StudentController {
     @Operation(summary = "List subject registered", description = "Display list of classroom that student has registered")
     public ResponseEntity<?> displaySubjectRegistered ( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
         Account account = (Account) session.getAttribute("account");
-        Optional<Student> student = studentRepo.findStudentByAccountId(account.getId());
-        if (student.isEmpty()) {
-            return new ResponseEntity("user not found", HttpStatus.BAD_REQUEST);
-        }
-        Page<ClassroomDTO> classroomDTOPage = classroomService.getAllRegisteredClass(pageNumber, student.get().getId());
+
+        Student student = studentService.getStudentByAccountId(account.getId());
+        Page<ClassroomDTO> classroomDTOPage = classroomService.getAllRegisteredClass(pageNumber, student.getId());
         if (classroomDTOPage.getTotalPages() < pageNumber) {
             return new ResponseEntity<>("The last page is "+classroomDTOPage.getTotalPages(), HttpStatus.BAD_REQUEST);
         }

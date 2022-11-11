@@ -49,4 +49,11 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
 
     @Query(value = "select count(m.id) from mark m join classroom c on m.subject_id = c.subject_id where c.id", nativeQuery = true)
     int getTotalMarkByClassId(@Param("class_id") int classId);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO mark ( student_id, subject_id, mark_type_id, create_date) VALUES (?1, ?2, ?3,  CURRENT_TIMESTAMP)",
+            nativeQuery = true)
+    void addStudentSubjectMark(Integer studentId, Integer subjectId, int markTypeId);
 }

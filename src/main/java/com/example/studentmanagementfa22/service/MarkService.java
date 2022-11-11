@@ -16,4 +16,7 @@ public interface MarkService {
     void deleteMark(Integer id, Integer accountId);
 
     List<MarkDTO> getMarksByClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentID);
+
+    void addStudentSubjectMark(Integer studentId, Integer subjectId);
+
 }

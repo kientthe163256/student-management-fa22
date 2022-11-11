@@ -6,6 +6,7 @@ import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.repository.*;
 import com.example.studentmanagementfa22.service.MarkService;
 import com.example.studentmanagementfa22.service.StudentService;
+import com.example.studentmanagementfa22.service.SubjectService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +31,18 @@ public class MarkServiceImpl implements MarkService {
     private IGenericMapper<Mark, MarkDTO> markMapper;
 
     @Autowired
-    private IGenericMapper<MarkType, MarkTypeDTO> markTypeMapper;
-
-
-    @Autowired
     private TeacherService teacherService;
+    @Autowired
+    private SubjectService subjectService;
 
     @Autowired
     private StudentService studentService;
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
+
 
     @Override
     public List<Mark> getMarksBySubject(Account account, int subjectId) {
@@ -105,5 +108,18 @@ public class MarkServiceImpl implements MarkService {
         List<Mark> markList = markRepository.getMarkbySubject( studentId, classroom.get().getSubject().getId());
         List<MarkDTO> markDTOList = markList.stream().map(mark ->markMapper.mapToDTO(mark)).collect(Collectors.toList());
         return markDTOList;
+    }
+
+    @Override
+    public void addStudentSubjectMark(Integer studentId, Integer subjectId) {
+      //  int numberOfMarks = subjectRepository.numberOfSubjectMarks(subjectId);
+        Subject subject = subjectService.getById(subjectId);
+        List<Integer> listOfMarkTypes = markTypeRepository.listOfMarkTypesBySubject(subject.getId());
+        for(int markTypeId : listOfMarkTypes) {
+            int numberOfMarksTypes = markTypeRepository.numberOfSubjectMarksTypes(subject.getId(), markTypeId);
+            for (int i = 0; i < numberOfMarksTypes; i++) {
+                markRepository.addStudentSubjectMark(studentId,subject.getId(),markTypeId);
+            }
+        }
     }
 }

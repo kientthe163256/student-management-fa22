@@ -25,4 +25,5 @@ public interface SubjectService {
     void deleteSubject(Integer subjectId);
 
     SubjectDTO updateSubject(SubjectDTO editSubject);
+
 }

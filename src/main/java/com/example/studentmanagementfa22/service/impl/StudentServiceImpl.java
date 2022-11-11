@@ -96,4 +96,13 @@ public class StudentServiceImpl implements StudentService {
             throw  new IllegalArgumentException("You are not the teacher of this student");
         }
     }
+
+    @Override
+    public Student getStudentByAccountId(int accountId) {
+        Optional<Student> student = studentRepository.findStudentByAccountId(accountId);
+        if (student.isEmpty()) {
+            throw new NoSuchElementException("Student does not exists");
+        }
+        return student.get();
+    }
 }

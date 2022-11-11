@@ -29,4 +29,10 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     Subject findBySubjectName(String subjectName);
 
+    @Query(value = "SELECT sum(no_marks) from student_management_fa22.subject_marktype\n" +
+            "WHERE subject_id = ?1",
+    nativeQuery = true)
+    int numberOfSubjectMarks(int subjectId);
+
+
 }

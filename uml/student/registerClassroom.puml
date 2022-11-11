@@ -3,10 +3,16 @@ Actor Student
 participant SecurityConfig
 participant CustomSuccessHandler
 participant ClassroomController
-database MySQL
+participant ClassroomService
 participant ClassroomRepository
+participant StudentService
 participant StudentRepository
-
+participant MarkService
+participant MarkRepository
+participant MarkTypeRepository
+participant SubjectService
+participant SubjectRepository
+database MySQL
 autonumber 1.0
 Student -> SecurityConfig: login account
 
@@ -27,26 +33,104 @@ activate CustomSuccessHandler
 CustomSuccessHandler -> ClassroomController: dispatch user account
 deactivate CustomSuccessHandler
 
+
+
 autonumber 2.0
-ClassroomController -> ClassroomRepository: find classroom by class id
+ClassroomController -> ClassroomService: register classroom
+activate ClassroomService
+ClassroomService -> ClassroomRepository: find classroom
+activate ClassroomRepository
 ClassroomRepository -> MySQL: Select
+activate MySQL
 MySQL --> ClassroomRepository: return response
-ClassroomRepository --> ClassroomController: return classroom
+deactivate MySQL
+ClassroomRepository --> ClassroomService: return classroom
+deactivate ClassroomRepository
+break Classroom not found
+ClassroomService --> ClassroomService: return error message
+end
+
 autonumber 3.0
 
-ClassroomController -> StudentRepository: find student by account id
+ClassroomService -> StudentService: find student by account id
+activate StudentService
+StudentService -> StudentRepository: get student
+activate StudentRepository
 StudentRepository -> MySQL: Select
+activate MySQL
 MySQL --> StudentRepository: return response
-StudentRepository --> ClassroomController: return student
- ClassroomController -> ClassroomRepository: register classroom
+deactivate MySQL
+StudentRepository --> StudentService: return student
+ deactivate StudentRepository
+ break Student not found
+ StudentService --> StudentService: return error message
+ end
+StudentService --> ClassroomService: return student
+deactivate StudentService
+
 autonumber 4.0
 alt Student have not registered this subject
-
+    ClassroomService --> ClassroomRepository: register classroom
+    activate ClassroomRepository
     ClassroomRepository ->MySQL: Update
-    ClassroomRepository --> ClassroomController: return success message
+    activate MySQL
+    MySQL --> ClassroomRepository:return response
+    deactivate MySQL
+    ClassroomRepository --> ClassroomService: return response
+    deactivate ClassroomRepository
+autonumber 5.0
+    ClassroomService -> MarkService: add student 's subject mark
+    activate MarkService
+    MarkService -> SubjectService: get subject
+    activate SubjectService
+    SubjectService -> SubjectRepository: get subject
+    activate SubjectRepository
+    SubjectRepository -> MySQL: Select
+    activate MySQL
+    MySQL --> SubjectRepository: return response
+    deactivate MySQL
+    SubjectRepository --> SubjectService: return subject
+    deactivate SubjectRepository
+    break Subject not found
+    SubjectService --> MarkService: return error message
+    deactivate SubjectService
+    end
+
+
+autonumber 6.0
+    MarkService -> MarkTypeRepository: list of MarkType by Subject
+    activate MarkTypeRepository
+    MarkTypeRepository -> MySQL: Select
+    activate MySQL
+    MySQL --> MarkTypeRepository: return list of mark type
+    deactivate MySQL
+    MarkTypeRepository --> MarkService: return list of mark type
+    loop list of mark type
+                MarkService -> MarkTypeRepository: get number of mark type
+                MarkTypeRepository -> MySQL: Select
+                activate MySQL
+                MySQL --> MarkTypeRepository: return response
+                deactivate MySQL
+                MarkTypeRepository --> MarkService: return number of mark type
+                loop number of mark type
+                MarkService -> MarkRepository: add student Mark
+                activate MarkRepository
+                MarkRepository -> MySQL: Insert
+                activate MySQL
+                MySQL --> MarkRepository: return response
+                deactivate MySQL
+                MarkRepository --> MarkService: return response
+                deactivate MarkRepository
+                end
+                deactivate MarkTypeRepository
+            end
+    MarkService --> ClassroomService: return response
+    deactivate MarkService
+    ClassroomService --> ClassroomController: return success message
 autonumber 4.1
 else Student have registered this subject
-    ClassroomController ->ClassroomController: return error message
+    ClassroomService ->ClassroomController: return error message
+    deactivate ClassroomService
 end
 
 

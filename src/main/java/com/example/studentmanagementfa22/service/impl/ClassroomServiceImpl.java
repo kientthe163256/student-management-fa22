@@ -8,9 +8,7 @@ import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortF
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
-import com.example.studentmanagementfa22.service.ClassroomService;
-import com.example.studentmanagementfa22.service.SubjectService;
-import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.service.*;
 import com.example.studentmanagementfa22.utility.ClassroomMapper;
 import com.example.studentmanagementfa22.utility.PagingHelper;
 import com.example.studentmanagementfa22.utility.SubjectMapper;
@@ -32,9 +30,6 @@ public class ClassroomServiceImpl implements ClassroomService {
     private ClassroomRepository classroomRepository;
 
     @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
     private ClassroomMapper mapper;
 
     @Autowired
@@ -42,6 +37,12 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private StudentService studentService;
+
+    @Autowired
+    private MarkService markService;
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -87,8 +88,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-//    public List<ClassroomDTO> getAllTeachingClassrooms(int accountID, int pageNumber, int pageSize, String sort) {
-        public Pagination<ClassroomDTO> getAllTeachingClassrooms(int accountID,int pageNumber, int pageSize, String sort) {
+    public Pagination<ClassroomDTO> getAllTeachingClassrooms(int accountID,int pageNumber, int pageSize, String sort) {
         Optional<Teacher> teacher = teacherRepository.findTeacherByAccountId(accountID);
         if (teacher.isEmpty()){
             throw new NoSuchElementException("teacher not found");
@@ -140,12 +140,11 @@ public class ClassroomServiceImpl implements ClassroomService {
             throw new NoSuchElementException("Class not found");
         }
         Classroom classroom = optionalClassroom.get();
-        Optional<Student> student = studentRepository.findStudentByAccountId(accountId);
-        if (student.isEmpty()) {
-            throw new Exception("User is not found");
-        }
-        if (classroomRepository.numOfSubjectClassByStudent(classroom.getSubject().getId(), student.get().getId()) == 0) {
-            classroomRepository.registerClassroom(student.get().getId(), classId);
+
+        Student student = studentService.getStudentByAccountId(accountId);
+        if (classroomRepository.numOfSubjectClassByStudent(classroom.getSubject().getId(), student.getId()) == 0) {
+            classroomRepository.registerClassroom(student.getId(), classId);
+            markService.addStudentSubjectMark(student.getId(), classroom.getSubject().getId());
             classroomRepository.updateNoStudentOfClass(classId);
         } else {
             throw new Exception("You have already registered for this subject");

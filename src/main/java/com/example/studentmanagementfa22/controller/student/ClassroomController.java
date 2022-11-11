@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.controller.student;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.dto.ResponseDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class ClassroomController {
         } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity("Register successfully", HttpStatus.OK);
+        return ResponseEntity.ok(new ResponseDTO<>("Registered classroom successfully", 201));
     }
 
 }
