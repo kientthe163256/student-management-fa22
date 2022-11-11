@@ -4,7 +4,9 @@ participant SecurityConfig
 participant CustomSuccessHandler
 participant MarkManageController
 participant MarkService
+participant StudentService
 participant TeacherRepository
+participant StudentRepository
 participant MarkRepository
 database MySQL
 
@@ -34,6 +36,7 @@ activate MySQL
 MySQL --> TeacherRepository: return response
 deactivate MySQL
 TeacherRepository --> MarkService: return teacher
+deactivate TeacherRepository
 break Teacher not exists
 MarkService --> MarkManageController: return error message
 end
@@ -51,6 +54,21 @@ break Mark not exists
 MarkService --> MarkManageController: return error message
 end
 autonumber 3.0
+MarkService -> StudentService: check student teacher
+activate StudentService
+StudentService -> StudentRepository: get student by teacher
+activate StudentRepository
+StudentRepository -> MySQL: Select
+activate MySQL
+MySQL -> StudentRepository: return response
+deactivate MySQL
+StudentRepository --> StudentService: return response
+deactivate StudentRepository
+StudentService --> MarkService: return response
+break Teacher not authorized
+StudentService --> MarkService: return error message
+end
+autonumber 4.0
 MarkService -> MarkRepository: delete Mark
 activate MarkRepository
 MarkRepository -> MySQL: Update

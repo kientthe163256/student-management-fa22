@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.controller.student;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.dto.MarkDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Mark;
@@ -97,7 +98,7 @@ public class StudentController {
     @Operation(summary = "View Mark ", description = "Student can view mark of each subject")
     public ResponseEntity<?> displayMarkbySubject(@PathVariable Integer subjectId  ) {
         Account account = (Account) session.getAttribute("account");
-        List<Mark> markList = markService.getMarksBySubject(account, subjectId);
+        List<MarkDTO> markList = markService.getMarksBySubject(account, subjectId);
         return ResponseEntity.ok(markList);
     }
 }

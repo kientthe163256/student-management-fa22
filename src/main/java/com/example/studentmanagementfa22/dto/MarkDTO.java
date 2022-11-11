@@ -16,6 +16,6 @@ public class MarkDTO {
 
     private MarkTypeDTO markType;
 
-    private StudentDTO student;
+//    private StudentDTO student;
 
 }

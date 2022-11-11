@@ -4,7 +4,9 @@ import com.example.studentmanagementfa22.dto.MarkDTO;
 
 import com.example.studentmanagementfa22.dto.MarkTypeDTO;
 import com.example.studentmanagementfa22.entity.*;
+import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.MarkRepository;
+import com.example.studentmanagementfa22.repository.MarkTypeRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,6 +16,8 @@ import static org.mockito.Mockito.times;
 
 import com.example.studentmanagementfa22.service.impl.MarkServiceImpl;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
+import com.example.studentmanagementfa22.utility.MarkMapper;
+import com.example.studentmanagementfa22.utility.MarkTypeMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,15 +40,27 @@ public class MarkServiceTest {
 
     @Mock
     private StudentRepository studentRepository;
+    @Mock
+    private ClassroomRepository classroomRepository;
 
-    @Mock TeacherService teacherService;
+    @Mock
+    private MarkTypeRepository markTypeRepository;
+
+    @Mock
+    private TeacherService teacherService;
+
+    @Mock
+    private  StudentService studentService;
+
+    @Mock
+    private SubjectService subjectService;
 
 
     @Mock
-    private IGenericMapper<Mark, MarkDTO> mapper;
+    private MarkMapper markMapper;
 
     @Mock
-    private IGenericMapper<MarkType, MarkTypeDTO> markTypeMapper;
+    private MarkTypeMapper markTypeMapper;
 
     @InjectMocks
     private MarkServiceImpl markService;
@@ -52,36 +68,49 @@ public class MarkServiceTest {
     @Test
     public void getStudentMarkBySubject() {
 
-        Account mockAccount = Account.builder()
-                .id(5)
-                .username("HE16356")
-                .dob(new Date(15))
-                .firstName("Mock")
-                .lastName("Account")
-                .build();
-
+        Account mockAccount = Account.builder().id(5).username("HE16356").dob(new Date(15)).firstName("Mock").lastName("Account").build();
         Student mockStudent = Student.builder().id(1).build();
         Optional<Student> mockOptionalStudent= Optional.of(mockStudent);
         Subject mockSubject = Subject.builder().id(1).build();
+        MarkType markType = MarkType.builder().id(3).name("mock mark type").build();
 
-        Mark mockMark = Mark.builder()
-                .id(1)
-                .student(mockStudent)
-                .subject(mockSubject)
-                .grade(7.0)
-                .build();
+        Mark mockMark = Mark.builder().id(1).student(mockStudent).markType(markType).subject(mockSubject).grade(7.0).build();
+        MarkDTO mockMarkDTO = MarkDTO.builder().id(3).grade(7.0).build();
         List<Mark> mockMarkList  = new ArrayList<>();
         mockMarkList.add(mockMark);
-        // define behavior of Repository
+        // define behavior
+        when(studentService.getStudentByAccountId(5)).thenReturn(mockStudent);
         when(markRepository.getMarkbySubject(mockStudent.getId(), mockSubject.getId())).thenReturn(mockMarkList);
         when(studentRepository.findStudentByAccountId(mockAccount.getId())).thenReturn(mockOptionalStudent);
+        when(markMapper.mapToDTO(mockMark)).thenReturn(mockMarkDTO);
         // call service method
-        List<Mark> markList = markService.getMarksBySubject(mockAccount, 1);
+        List<MarkDTO> markList = markService.getMarksBySubject(mockAccount, 1);
         // assert the result
         assertEquals(markList.size(), mockMarkList.size());
-        assertEquals(markList.get(0).getStudent().getId(), mockMarkList.get(0).getStudent().getId());
         assertEquals(markList.get(0).getGrade(), mockMarkList.get(0).getGrade());
 
+    }
+    @Test void getMarkByClassroomStudent() {
+        Student mockStudent = Student.builder().id(1).build();
+        Account mockAccount = Account.builder().id(2).roleId(2).build();
+        Teacher mockTeacher = Teacher.builder().id(4).account(mockAccount).build();
+        Subject mockSubject = Subject.builder().id(1).build();
+        Classroom classroom = Classroom.builder().id(3).classroomName("mock classroom").subject(mockSubject).build();
+
+        MarkType markType = MarkType.builder().id(3).name("mock mark type").build();
+
+        Mark mockMark = Mark.builder().id(1).student(mockStudent).markType(markType).grade(7.0).build();
+        MarkDTO mockMarkDTO = MarkDTO.builder().id(3).grade(7.0).build();
+        List<Mark> mockMarkList  = new ArrayList<>();
+        mockMarkList.add(mockMark);
+        when(teacherService.getTeacherByAccountId(mockAccount.getId())).thenReturn(mockTeacher);
+        when(classroomRepository.findById(3)).thenReturn(Optional.of(classroom));
+        when(markRepository.getMarkbySubject(mockStudent.getId(), mockSubject.getId())).thenReturn(mockMarkList);
+        when(markMapper.mapToDTO(mockMark)).thenReturn(mockMarkDTO);
+
+        List<MarkDTO> markList = markService.getMarksByClassroomStudent(mockTeacher.getId(), classroom.getId(),mockStudent.getId());
+        assertEquals(markList.size(), mockMarkList.size());
+        verify(markRepository, times(1)).getMarkbySubject(1,1);
     }
     @Test
     public void checkDeleteMark() {
@@ -99,6 +128,9 @@ public class MarkServiceTest {
         Optional<Teacher> optionalTeacher = Optional.of(mockTeacher);
         Optional<Mark> optionalMark = Optional.of(mockMark);
         when(teacherService.getTeacherByAccountId(mockAccount.getId())).thenReturn(mockTeacher);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(studentService).checkStudentTeacher(1, 1);
         when(markRepository.getMarkByIDandTeacherID( mockTeacher.getId(),mockMark.getId())).thenReturn(optionalMark);
         doAnswer( invocation -> {
             mockMark.setDeleted(true);
@@ -130,7 +162,7 @@ public class MarkServiceTest {
         when(markRepository.getMarkByIDandTeacherID( mockTeacher.getId(),unupdatedMark.getId())).thenReturn(optionalMark);
         when(markRepository.getTotalWeightofStudentMark(mockStudent.getId(), mockSubject.getId())).thenReturn(0.9);
 
-        doAnswer((Answer<MarkDTO>) invocation -> mockMapMarkToDTO(updatedMark)).when(mapper).mapToDTO(updatedMark);
+        doAnswer((Answer<MarkDTO>) invocation -> mockMapMarkToDTO(updatedMark)).when(markMapper).mapToDTO(updatedMark);
         doAnswer((Answer<MarkTypeDTO>) invocation -> mockMapTypeToDTO(mockMarkType)).when(markTypeMapper).mapToDTO(mockMarkType);
         doAnswer((Answer<MarkDTO>) invocation -> {
             mockUpdate(updatedMark, markDTO);
@@ -142,6 +174,36 @@ public class MarkServiceTest {
         assertEquals(updateMarkDTO.getGrade(), updatedMark.getGrade());
         verify(markRepository, times(1)).getMarkByIDandTeacherID(1,5);
         verify(markRepository, times(1)).getTotalWeightofStudentMark(9,8);
+    }
+
+    @Test
+    public void addMark() {
+        Student mockStudent = Student.builder().id(9).build();
+        Subject mockSubject = Subject.builder().id(8).subjectName("mock subject").build();
+        MarkType markType1 = MarkType.builder().id(1).name("mock mark type 1").build();
+        MarkType markType2 = MarkType.builder().id(2).name("mock mark type 2").build();
+        List<Integer> listOfMarkTypesId = new ArrayList<>();
+        listOfMarkTypesId.add(markType1.getId());
+        listOfMarkTypesId.add(markType2.getId());
+
+
+        when(subjectService.getById(8)).thenReturn(mockSubject);
+        when(markTypeRepository.listOfMarkTypesBySubject(8)).thenReturn(listOfMarkTypesId);
+        when(markTypeRepository.numberOfSubjectMarksTypes(8, 1)).thenReturn(1);
+        when(markTypeRepository.numberOfSubjectMarksTypes(9, 2)).thenReturn(2);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(markRepository).addStudentSubjectMark(9,8,1);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(markRepository).addStudentSubjectMark(9,8,2);
+
+        markService.addStudentSubjectMark(mockStudent.getId(), mockSubject.getId());
+
+        verify(markTypeRepository, times(1)).numberOfSubjectMarksTypes(mockSubject.getId(), markType1.getId());
+        verify(markTypeRepository, times(1)).numberOfSubjectMarksTypes(mockSubject.getId(), markType2.getId());
+        verify(markTypeRepository, times(1)).listOfMarkTypesBySubject(mockSubject.getId());
+        verify(markRepository, times(1)).addStudentSubjectMark(mockStudent.getId(), mockSubject.getId(), markType1.getId());
     }
 
     private MarkDTO mockUpdate(Mark currentMark, MarkDTO markDTO){

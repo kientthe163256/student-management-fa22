@@ -7,7 +7,6 @@ import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAll
 import com.example.studentmanagementfa22.repository.SubjectRepository;
 import com.example.studentmanagementfa22.service.impl.SubjectServiceImpl;
 import com.example.studentmanagementfa22.utility.SubjectMapper;
-import org.hibernate.jpa.spi.TupleBuilderTransformer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -161,6 +160,17 @@ public class SubjectServiceTest {
             subjectService.deleteSubject(NON_EXIST_ID);
         });
         verify(subjectRepository, times(1)).findById(NON_EXIST_ID);
+    }
+
+    @Test
+    public void getSubjectById() {
+        Subject mocksubject = mockSubject();
+        when(subjectRepository.findById(EXIST_ID)).thenReturn(Optional.of(mocksubject));
+
+        Subject testSubject = subjectService.getById(EXIST_ID);
+        verify(subjectRepository, times(1)).findById(EXIST_ID);
+        assertEquals(testSubject, mocksubject);
+
     }
 
     @Test

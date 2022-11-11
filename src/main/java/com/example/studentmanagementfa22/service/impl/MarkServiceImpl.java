@@ -38,14 +38,16 @@ public class MarkServiceImpl implements MarkService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
 
     @Override
-    public List<Mark> getMarksBySubject(Account account, int subjectId) {
-        Optional<Student> student = studentRepository.findStudentByAccountId(account.getId());
-        if (student.isEmpty()) {
-            return null;
-        }
-        return markRepository.getMarkbySubject(student.get().getId(), subjectId);
+    public List<MarkDTO> getMarksBySubject(Account account, int subjectId) {
+        Student student = studentService.getStudentByAccountId(account.getId());
+        List<Mark> markList =  markRepository.getMarkbySubject(student.getId(), subjectId);
+        List<MarkDTO> markDTOList = markList.stream().map(mark ->markMapper.mapToDTO(mark)).collect(Collectors.toList());
+        return markDTOList;
     }
 
     @Override
@@ -63,29 +65,24 @@ public class MarkServiceImpl implements MarkService {
         return markDTO;
     }
 
-    @Override
-    public MarkDTO addStudentMark(Mark mark, Integer accountId, Integer classId, Integer studentId, Integer markTypeId) {
-        teacherService.checkTeacherClassroomStudent(accountId, classId, studentId);
-        Optional<Student> student = studentRepository.findById(studentId);
-        Optional<Classroom> classroom = classroomRepository.findById(classId);
-        mark.setCreateDate(new Date());
-        mark.setSubject(classroom.get().getSubject());
-        mark.setId(mark.getId());
-        Optional<MarkType> markType = markTypeRepository.findById(markTypeId);
-        if (markType.isEmpty()) {
-            throw new NoSuchElementException("No mark type found");
-        }
-        mark.setMarkType(markType.get());
-        mark.setGrade(mark.getGrade());
-        mark.setStudent(student.get());
-//        double currentWeight = markRepository.getTotalWeightofStudentMark(studentId, mark.getSubject().getId());
-//        if (mark.getWeight() + currentWeight > 1.0) {
-//            throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
+//    @Override
+//    public MarkDTO addStudentMark(Mark mark, Integer accountId, Integer classId, Integer studentId, Integer markTypeId) {
+//        teacherService.checkTeacherClassroomStudent(accountId, classId, studentId);
+//        Optional<Student> student = studentRepository.findById(studentId);
+//        Optional<Classroom> classroom = classroomRepository.findById(classId);
+//        mark.setCreateDate(new Date());
+//        mark.setSubject(classroom.get().getSubject());
+//        mark.setId(mark.getId());
+//        Optional<MarkType> markType = markTypeRepository.findById(markTypeId);
+//        if (markType.isEmpty()) {
+//            throw new NoSuchElementException("No mark type found");
 //        }
-//        markRepository.addMark(mark.getGrade(), mark.getMarkType().getId(), mark.getMarkItem(), mark.getStudent().getId(), mark.getSubject().getId());
-        MarkDTO markDTO = markMapper.mapToDTO(mark);
-        return markDTO;
-    }
+//        mark.setMarkType(markType.get());
+//        mark.setGrade(mark.getGrade());
+//        mark.setStudent(student.get());
+//        markRepository.addMark(mark.getGrade(), mark.getMarkType().getId(), mark.getStudent().getId(), mark.getSubject().getId());
+//        return markMapper.mapToDTO(mark);
+//    }
 
 
     @Override
