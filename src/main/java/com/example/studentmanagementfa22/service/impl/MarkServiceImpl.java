@@ -1,13 +1,11 @@
 package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.MarkDTO;
+import com.example.studentmanagementfa22.dto.MarkReportDTO;
 import com.example.studentmanagementfa22.dto.MarkTypeDTO;
 import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.repository.*;
-import com.example.studentmanagementfa22.service.MarkService;
-import com.example.studentmanagementfa22.service.StudentService;
-import com.example.studentmanagementfa22.service.SubjectService;
-import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.service.*;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,9 +37,6 @@ public class MarkServiceImpl implements MarkService {
     private StudentService studentService;
     @Autowired
     private StudentRepository studentRepository;
-
-    @Autowired
-    private SubjectRepository subjectRepository;
 
 
     @Override
@@ -83,10 +78,13 @@ public class MarkServiceImpl implements MarkService {
         mark.setMarkType(markType.get());
         mark.setGrade(mark.getGrade());
         mark.setStudent(student.get());
-
-        markRepository.addMark(mark.getGrade(), mark.getMarkType().getId(), mark.getStudent().getId(), mark.getSubject().getId());
-        return markMapper.mapToDTO(mark);
-
+//        double currentWeight = markRepository.getTotalWeightofStudentMark(studentId, mark.getSubject().getId());
+//        if (mark.getWeight() + currentWeight > 1.0) {
+//            throw new IllegalArgumentException("Total weight can not be over 1.0. Current total weight: "+currentWeight);
+//        }
+//        markRepository.addMark(mark.getGrade(), mark.getMarkType().getId(), mark.getMarkItem(), mark.getStudent().getId(), mark.getSubject().getId());
+        MarkDTO markDTO = markMapper.mapToDTO(mark);
+        return markDTO;
     }
 
 
@@ -108,6 +106,24 @@ public class MarkServiceImpl implements MarkService {
         List<Mark> markList = markRepository.getMarkbySubject( studentId, classroom.get().getSubject().getId());
         List<MarkDTO> markDTOList = markList.stream().map(mark ->markMapper.mapToDTO(mark)).collect(Collectors.toList());
         return markDTOList;
+    }
+
+    @Override
+    public MarkReportDTO getMarkReportByClassId(int classId) {
+        Optional<Classroom> classroom = classroomRepository.findById(classId);
+        if (classroom.isEmpty()){
+            throw new NoSuchElementException("Classroom not found");
+        }
+        MarkReportDTO report = new MarkReportDTO();
+        report.setTotal(classroom.get().getCurrentNoStudent());
+        report.setHighest(markRepository.getHighestScore(classId));
+        report.setLowest(markRepository.getLowestScore(classId));
+        report.setAverage(markRepository.getAverageScore(classId));
+        report.setExcellent(markRepository.getNoStudentsInRange(classId, 9, 10));
+        report.setGood(markRepository.getNoStudentsInRange(classId, 8, 8.99));
+        report.setFair(markRepository.getNoStudentsInRange(classId, 5, 7.99));
+        report.setPoor(markRepository.getNoStudentsInRange(classId, 0, 4.99));
+        return report;
     }
 
     @Override

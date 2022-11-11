@@ -83,7 +83,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         List<Classroom> classrooms = classroomRepository.findAll();
         return classrooms
                 .stream()
-                .map(classroom -> mapToClassroomDTO(classroom))
+                .map(classroom -> mapper.mapToDTO(classroom))
                 .collect(Collectors.toList());
     }
 
@@ -110,7 +110,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         Map<String, Integer> fields = PagingHelper.getPaginationFields(classrooms, pageNumber);
         List<ClassroomDTO> classroomDTOList = classrooms.stream()
                 .map(classroom -> {
-                    ClassroomDTO classroomDTO = mapToClassroomDTO(classroom);
+                    ClassroomDTO classroomDTO = mapper.mapToDTO(classroom);
                     classroomDTO.setCreateDate(classroom.getCreateDate());
                     return  classroomDTO;
                 })
@@ -122,14 +122,14 @@ public class ClassroomServiceImpl implements ClassroomService {
     public Page<ClassroomDTO> getAllAvailClassroom(int pageNumber, int subjectID) {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllAvailClassroom(pageRequest, subjectID);
-        return classroomPage.map(classroom -> mapToClassroomDTO(classroom));
+        return classroomPage.map(classroom -> mapper.mapToDTO(classroom));
     }
 
     @Override
     public Page<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId) {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllRegisteredClass(pageRequest, studentId);
-        return classroomPage.map(classroom -> mapToClassroomDTO(classroom));
+        return classroomPage.map(classroom -> mapper.mapToDTO(classroom));
     }
 
     @Override
@@ -153,18 +153,6 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public ClassroomDTO mapToClassroomDTO(Classroom classroom) {
-        ClassroomDTO classroomDTO = mapper.mapToDTO(classroom);
-        if (classroom.getSubject() != null) {
-            classroomDTO.setSubject(subjectMapper.mapToDTO(subjectService.getById(classroom.getSubject().getId())));
-        }
-        if (classroom.getTeacher() != null) {
-            classroomDTO.setTeacher(teacherService.getTeacherDTOById(classroom.getTeacher().getId()));
-        }
-        return classroomDTO;
-    }
-
-    @Override
     public ClassroomDTO assignClassroom(Integer teacherId, Integer classId) {
         //try to find teacher and classroom if not exist throw NoSuchElement
         Teacher teacher = teacherService.getById(teacherId);
@@ -173,7 +161,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom.setTeacher(teacher);
         classroom.setModifyDate(new Date());
         Classroom savedClassroom = classroomRepository.save(classroom);
-        return mapToClassroomDTO(savedClassroom);
+        return mapper.mapToDTO(savedClassroom);
     }
 
     @Override

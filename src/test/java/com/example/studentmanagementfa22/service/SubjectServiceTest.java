@@ -7,13 +7,15 @@ import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAll
 import com.example.studentmanagementfa22.repository.SubjectRepository;
 import com.example.studentmanagementfa22.service.impl.SubjectServiceImpl;
 import com.example.studentmanagementfa22.utility.SubjectMapper;
+import org.hibernate.jpa.spi.TupleBuilderTransformer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
-
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
 import java.util.*;
 
 
@@ -159,5 +161,13 @@ public class SubjectServiceTest {
             subjectService.deleteSubject(NON_EXIST_ID);
         });
         verify(subjectRepository, times(1)).findById(NON_EXIST_ID);
+    }
+
+    @Test
+    public void addMarkTypeToSubjectSuccessfully(){
+        Subject subject = mockSubject();
+        int markTypeId = 1;
+        int noMarks = 1;
+        //how to initialize javax Tuple
     }
 }

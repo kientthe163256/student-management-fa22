@@ -14,12 +14,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
+@Transactional
 @RunWith(SpringRunner.class)
 public class ClassRepositoryTest {
     @Autowired

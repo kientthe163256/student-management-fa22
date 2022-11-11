@@ -12,9 +12,9 @@ public class StudentRepositoryTest {
     private StudentRepository studentRepository;
 
     @Test
-    public void getNoStudentbyCriteria() {
+    public void getNoStudentByCriteria() {
         int noStudent = studentRepository.getNoStudentbyCriteria(1,2,2);
-        assertEquals(noStudent, 1);
+        assertEquals(noStudent, 0);
     }
 
 }

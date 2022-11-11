@@ -47,7 +47,15 @@ public class Subject {
     private Date deleteDate;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "subject", fetch = FetchType.EAGER) //
+    @OneToMany(mappedBy = "subject")//, fetch = FetchType.EAGER)
     @JsonManagedReference
     Collection<Classroom> classrooms;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "subject_mark_type",
+            joinColumns = @JoinColumn(name = "subject_id"),
+            inverseJoinColumns = @JoinColumn(name = "mark_type_id"))
+    @JsonManagedReference
+    private Collection<MarkType> markTypes;
 }

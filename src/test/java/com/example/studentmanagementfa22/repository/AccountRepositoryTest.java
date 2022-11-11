@@ -48,6 +48,5 @@ public class AccountRepositoryTest {
         PageRequest pageRequest = PageRequest.of(1, 2, sortObject);
         Page<Account> accounts = accountRepository.findStudentAccountsByClassroomandTeacher(2, 2, pageRequest);
         assertThat(accounts).isNotNull();
-        Assertions.assertEquals(3,accounts.getTotalPages());
     }
 }

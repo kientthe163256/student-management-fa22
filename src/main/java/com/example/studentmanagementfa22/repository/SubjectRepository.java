@@ -10,7 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Tuple;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -29,6 +31,15 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     Subject findBySubjectName(String subjectName);
 
+    @Query(value = "INSERT INTO subject_mark_type(`subject_id`, `mark_type_id`, `no_marks`) VALUES (?1, ?2, ?3)", nativeQuery = true)
+    @Modifying
+    @Transactional
+    void addMarkTypeToSubject(int subjectId, int markTypeId, int noMarks);
+
+    @Query(value = "select mt.name, mt.weight, smt.no_marks from mark_type mt\n" +
+            "join subject_mark_type smt on mt.id = smt.mark_type_id\n" +
+            "where smt.subject_id = :subjectId", nativeQuery = true)
+    List<Tuple> getAssessmentsBySubjectId(@Param("subjectId") int subjectId);
     @Query(value = "SELECT sum(no_marks) from student_management_fa22.subject_marktype\n" +
             "WHERE subject_id = ?1",
     nativeQuery = true)

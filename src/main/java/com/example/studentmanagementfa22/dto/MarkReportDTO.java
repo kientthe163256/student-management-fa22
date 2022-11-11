@@ -9,13 +9,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScoreReportDTO {
-    private int total;
+public class MarkReportDTO {
+    private int total;          //total records
     private double highest;
     private double lowest;
     private double average;
-    private double excellent;
-    private double good;
-    private double fair;
-    private double poor;
+    private int excellent;   // >=9
+    private int good;        // >=8
+    private int fair;        // >=5
+    private int poor;        // <5
 }

@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.MarkDTO;
+import com.example.studentmanagementfa22.dto.MarkReportDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Mark;
 
@@ -16,6 +17,8 @@ public interface MarkService {
     void deleteMark(Integer id, Integer accountId);
 
     List<MarkDTO> getMarksByClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentID);
+
+    MarkReportDTO getMarkReportByClassId(int classId);
 
     void addStudentSubjectMark(Integer studentId, Integer subjectId);
 

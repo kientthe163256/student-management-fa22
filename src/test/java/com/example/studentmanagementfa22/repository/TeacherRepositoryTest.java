@@ -30,10 +30,7 @@ public class TeacherRepositoryTest {
 
     @Test
     public void getTeacherWithCriteria() {
-//        List<Teacher> teacherList = teacherService.findTeacherWithCriteria(1, 10, "id", "desc");
-//        assertNotNull(teacherList);
-
-        Pagination<TeacherDTO> objects = teacherService.getAllTeacherPaging(1, 10, " , ");
+        Pagination<TeacherDTO> objects = teacherService.getAllTeacherPaging(1, 10, "id,asc");
         assertNotNull(objects);
     }
 

@@ -1,7 +1,11 @@
 package com.example.studentmanagementfa22.controller.admin;
 
+import com.example.studentmanagementfa22.dto.MarkTypeDTO;
 import com.example.studentmanagementfa22.dto.ResponseDTO;
 import com.example.studentmanagementfa22.dto.SubjectDTO;
+import com.example.studentmanagementfa22.entity.MarkType;
+import com.example.studentmanagementfa22.entity.Subject;
+import com.example.studentmanagementfa22.repository.SubjectRepository;
 import com.example.studentmanagementfa22.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -15,12 +19,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/subjects")
 public class SubjectController {
     @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
 
     @Operation(summary = "View subject list", description = "Returns list of subject dto")
     @ApiResponse(responseCode = "200", description = "Successful operation",
@@ -68,5 +76,12 @@ public class SubjectController {
         subject.setId(id);
         SubjectDTO editedSubject = subjectService.updateSubject(subject);
         return ResponseEntity.ok(editedSubject);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<?> addAssessmentOfSubject(@PathVariable Integer id, @RequestBody Map<String, Integer> params){
+        int markTypeId = params.get("markTypeId");
+        int noMarks = params.get("noMarks");
+        return ResponseEntity.ok(subjectService.addMarkTypeToSubject(id, markTypeId, noMarks));
     }
 }

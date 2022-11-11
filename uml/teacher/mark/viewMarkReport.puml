@@ -1,0 +1,49 @@
+@startuml
+Actor Teacher
+participant CustomExceptionHandler
+participant MarkManageController
+participant HttpSession
+participant TeacherService
+participant MarkService
+participant MarkRepository
+database MySQL
+
+autonumber 1.0
+activate Teacher
+Teacher -> MarkManageController: View mark report
+activate MarkManageController
+MarkManageController -> HttpSession: Get logged in account
+activate HttpSession
+HttpSession --> MarkManageController: return account
+deactivate HttpSession
+MarkManageController -> TeacherService: check teacher assigned classroom
+activate TeacherService
+alt Teacher is not assigned that classroom
+    TeacherService -> CustomExceptionHandler: throw ActionNotAllowedException
+    deactivate TeacherService
+    activate CustomExceptionHandler
+    CustomExceptionHandler -> Teacher: display error
+    deactivate CustomExceptionHandler
+else Teacher is assigned that classroom
+    MarkManageController -> MarkService: get mark report
+    activate MarkService
+    MarkService -> MarkRepository: get data
+    activate MarkRepository
+    MarkRepository -> MySQL: select
+    activate MySQL
+    MySQL --> MarkRepository: return response
+    deactivate MySQL
+    MarkRepository --> MarkService: return data
+    deactivate MarkRepository
+    MarkService --> MarkManageController: return mark report dto
+    deactivate MarkService
+    MarkManageController --> Teacher: return mark report dto
+    deactivate MarkManageController
+    deactivate Teacher
+end
+autonumber 1.1
+
+
+
+
+@enduml

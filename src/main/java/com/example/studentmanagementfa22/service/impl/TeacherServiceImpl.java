@@ -4,21 +4,33 @@ import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.*;
+import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
+import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.utility.IGenericMapper;
 import com.example.studentmanagementfa22.utility.PagingHelper;
 import com.example.studentmanagementfa22.utility.TeacherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,8 +73,7 @@ public class TeacherServiceImpl implements TeacherService {
         if (optionalTeacher.isEmpty()) {
             throw new NoSuchElementException("Can not find teacher with id = " + id);
         }
-        Teacher teacher = optionalTeacher.get();
-        return teacher;
+        return optionalTeacher.get();
     }
 
     @Override
@@ -71,8 +82,7 @@ public class TeacherServiceImpl implements TeacherService {
         if (optionalTeacher.isEmpty()) {
             throw new NoSuchElementException("Can not find teacher with id = " + accountId);
         }
-        Teacher teacher = optionalTeacher.get();
-        return teacher;
+        return optionalTeacher.get();
     }
 
     @Override
@@ -109,7 +119,7 @@ public class TeacherServiceImpl implements TeacherService {
             throw new NoSuchElementException("No teacher have been assigned to this classroom");
         }
         if(loggInTeacherId != classroomTeacher.get().getId()) {
-            throw  new IllegalArgumentException("You are not the teacher of this classroom");
+            throw new ActionNotAllowedException("You are not the teacher of this classroom");
         }
     }
 
@@ -123,10 +133,13 @@ public class TeacherServiceImpl implements TeacherService {
         if (classroom.isEmpty()){
             throw new NoSuchElementException("Classroom not exist");
         }
-        Teacher teacher = getTeacherByAccountId(teacherAccountId);
+        Optional<Teacher> teacher = teacherRepository.findTeacherByAccountId(teacherAccountId);
+        if (teacher.isEmpty()) {
+            throw  new NoSuchElementException("Teacher not found");
+        }
         studentService.checkStudentJoinedClass(student.get().getId(), classId);
-        studentService.checkStudentTeacher(student.get().getId(), teacher.getId());
-        checkTeacherAssignedClass(teacher.getId(),classId);
+        studentService.checkStudentTeacher(student.get().getId(), teacher.get().getId());
+        checkTeacherAssignedClass(teacher.get().getId(),classId);
     }
 
     @Override
