@@ -7,7 +7,9 @@ participant CustomSuccessHandler
 participant StudentController
 participant MarkService
 participant MarkRepository
+participant StudentService
 participant StudentRepository
+participant MarkMapper
 database MySQL
 
 autonumber 1.0
@@ -30,14 +32,36 @@ deactivate CustomSuccessHandler
 autonumber 2.0
 StudentController -> MarkService: get list of mark by subject
 activate MarkService
-MarkService -> StudentRepository: get Student by account ID
-StudentRepository --> MarkService: return student
-MarkService -> MySQL: SELECT by student_id, subject_id
+MarkService -> StudentService: get Student by account ID
+activate StudentService
+StudentService -> StudentRepository: get student
+activate StudentRepository
+StudentRepository --> MySQL: SELECT
 activate MySQL
-MySQL --> MarkService: return response
+MySQL --> StudentRepository: return response
 deactivate MySQL
-MarkService --> StudentController: return list of Mark
+StudentRepository --> StudentService: return student
+deactivate StudentRepository
+StudentService --> MarkService: return student
+break Student not found
+StudentService --> MarkService: redirect login
+deactivate StudentService
+end
+autonumber 3.0
+MarkService -> MarkRepository: get List of Mark
+activate MarkRepository
+MarkRepository -> MySQL: SELECT
+activate MySQL
+MySQL --> MarkRepository: return response
+deactivate MySQL
+MarkRepository --> MarkService: return list of Mark
+deactivate MarkRepository
+MarkService -> MarkMapper: map to markDTK
+activate MarkMapper
+MarkMapper --> MarkService: return list of MarkDTO
+deactivate MarkMapper
+MarkService --> StudentController: return list of MarkDTO
 deactivate MarkService
-StudentController --> Student: return list of Mark
+StudentController --> Student: return list of MarkDTO
 deactivate StudentController
 @enduml
