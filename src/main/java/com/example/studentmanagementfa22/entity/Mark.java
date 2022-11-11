@@ -2,21 +2,17 @@ package com.example.studentmanagementfa22.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.OptBoolean;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
+import lombok.*;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,9 +31,6 @@ public class Mark {
 
     @OneToOne
     private  MarkType markType;
-
-    @Column(name ="mark_item")
-    private String markItem;
 
     @Column(name = "grade")
     @Min(value = 0, message = "Minimum grade is 0")

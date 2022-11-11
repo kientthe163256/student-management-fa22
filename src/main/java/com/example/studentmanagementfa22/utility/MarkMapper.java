@@ -5,5 +5,5 @@ import com.example.studentmanagementfa22.entity.Mark;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface MarkMapper extends  IGenericMapper<Mark, MarkDTO> {
+public interface MarkMapper extends IGenericMapper<Mark, MarkDTO> {
 }

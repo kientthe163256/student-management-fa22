@@ -14,13 +14,15 @@ public interface TeacherService {
 
     Teacher getById(int id);
 
+    Teacher getTeacherByAccountId(int accountId);
+
     TeacherDTO getTeacherDTOById(int teacherId);
 
     void deleteTeacher(Integer teacherId);
 
-    boolean checkTeacherAssignedClass( Integer teacherId, Integer classroomId);
+    void checkTeacherAssignedClass( Integer teacherId, Integer classroomId);
 
-    boolean checkTeacherClassroomStudent(Integer teacherAccountId, Integer classId,Integer studentId);
+    void checkTeacherClassroomStudent(Integer teacherAccountId, Integer classId,Integer studentId);
 
     Pagination<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort);
 }

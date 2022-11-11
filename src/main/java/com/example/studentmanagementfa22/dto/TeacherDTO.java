@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class TeacherDTO {
     private Integer id;
     private AccountDTO account;
+
 }

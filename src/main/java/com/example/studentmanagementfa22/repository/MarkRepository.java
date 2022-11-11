@@ -18,7 +18,7 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
             "AND subject_id = :subject_id AND deleted = false", nativeQuery = true)
     List<Mark> getMarkbySubject(@Param("student_id") int  studentId, @Param("subject_id")  int subjectId);
 
-    @Query(value = "SELECT distinct m.id, m.subject_id, m.student_id, m.mark_item, m.grade, m.weight, m.create_date, m.modify_date, m.delete_date, m.deleted FROM student_management_fa22.mark m\n" +
+    @Query(value = "SELECT distinct m.id, m.subject_id, m.student_id, m.mark_type_id, m.grade, m.create_date, m.modify_date, m.delete_date, m.deleted FROM student_management_fa22.mark m\n" +
             "JOIN student_management_fa22.student_classroom sc\n" +
             "ON m.student_id = sc.student_id\n" +
             "JOIN student_management_fa22.classroom c\n" +
@@ -38,9 +38,9 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO mark (grade, marktype_id, mark_item, student_id, subject_id, create_date) VALUES (?1, ?2, ?3, ?4, ?5,  CURRENT_TIMESTAMP)",
+    @Query(value = "INSERT INTO mark (grade, marktype_id, student_id, subject_id, create_date) VALUES (?1, ?2, ?3, ?4,  CURRENT_TIMESTAMP)",
             nativeQuery = true)
-    void addMark(double grade, double markTypeId, String markItem, int studentId, int subjectId);
+    void addMark(double grade, double markTypeId, int studentId, int subjectId);
 
     @Modifying
     @Transactional

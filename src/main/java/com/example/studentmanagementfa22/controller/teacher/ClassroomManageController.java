@@ -56,7 +56,7 @@ public class ClassroomManageController {
         List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(classID, account.getId(), pageNumber, pageSize, sort)  ;
         return ResponseEntity.ok(studentDTOList);
     }
-    @PostMapping("/{classId}/students/{studentId}/marks/{markTypeId")
+    @PostMapping("/{classId}/students/{studentId}/marks/{markTypeId}")
     @Operation(summary = "Add Mark ", description = "Teacher can add student mark ")
     public ResponseEntity<?> addStudentMark(@PathVariable(name = "classId") Integer classId,
                                             @PathVariable(name = "studentId") Integer studentId,

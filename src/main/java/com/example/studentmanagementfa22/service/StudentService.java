@@ -12,5 +12,5 @@ public interface StudentService {
 
     boolean checkStudentJoinedClass(Integer id, Integer classId);
 
-    boolean checkStudentTeacher(Integer student, Integer teacherId);
+    void checkStudentTeacher(Integer student, Integer teacherId);
 }

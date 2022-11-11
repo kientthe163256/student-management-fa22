@@ -8,8 +8,6 @@ import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.StudentService;
-import com.example.studentmanagementfa22.service.TeacherService;
-import com.example.studentmanagementfa22.utility.IGenericMapper;
 import com.example.studentmanagementfa22.utility.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -93,10 +91,9 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public boolean checkStudentTeacher(Integer studentId, Integer teacherId) {
+    public void checkStudentTeacher(Integer studentId, Integer teacherId) {
         if(studentRepository.getStudentbyTeacher(studentId,teacherId).isEmpty()) {
             throw  new IllegalArgumentException("You are not the teacher of this student");
         }
-        return true;
     }
 }

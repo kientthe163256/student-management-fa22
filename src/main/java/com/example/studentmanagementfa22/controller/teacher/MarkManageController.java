@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.controller.teacher;
 
 import com.example.studentmanagementfa22.dto.MarkDTO;
+import com.example.studentmanagementfa22.dto.ResponseDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.service.MarkService;
@@ -32,10 +33,10 @@ public class MarkManageController {
     }
     @Operation(summary = "Delete mark", description = "Delete mark of Student by mark id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMark(@PathVariable(name="id") Integer markId) {
+    public ResponseEntity<?> deleteMark(@PathVariable(name="id") Integer markId) {
         Account account = (Account) session.getAttribute("account");
         markService.deleteMark(markId, account.getId());
-        return ResponseEntity.ok("Mark deleted successfully");
+        return ResponseEntity.ok(new ResponseDTO<>("Mark deleted successfully", 200));
     }
 
 
