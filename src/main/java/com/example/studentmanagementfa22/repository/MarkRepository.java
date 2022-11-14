@@ -18,7 +18,7 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
             "AND subject_id = :subject_id AND deleted = false", nativeQuery = true)
     List<Mark> getMarkbySubject(@Param("student_id") int  studentId, @Param("subject_id")  int subjectId);
 
-    @Query(value = "SELECT distinct m.id, m.subject_id, m.student_id, m.mark_item, m.grade, m.weight, m.create_date, m.modify_date, m.delete_date, m.deleted FROM student_management_fa22.mark m\n" +
+    @Query(value = "SELECT distinct m.id, m.subject_id, m.student_id, m.grade, m.mark_type_id, m.create_date, m.modify_date, m.delete_date, m.deleted FROM student_management_fa22.mark m\n" +
             "JOIN student_management_fa22.student_classroom sc\n" +
             "ON m.student_id = sc.student_id\n" +
             "JOIN student_management_fa22.classroom c\n" +

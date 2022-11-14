@@ -134,10 +134,10 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void registerClassroom(int classId, int accountId) throws Exception {
+    public void registerClassroom(int classId, int accountId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classId);
         if (optionalClassroom.isEmpty()) {
-            throw new NoSuchElementException("Class not found");
+            throw new NoSuchElementException("Class not found with id " + classId);
         }
         Classroom classroom = optionalClassroom.get();
 
@@ -147,7 +147,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             markService.addStudentSubjectMark(student.getId(), classroom.getSubject().getId());
             classroomRepository.updateNoStudentOfClass(classId);
         } else {
-            throw new Exception("You have already registered for this subject");
+            throw new IllegalArgumentException("You have already registered for this subject");
         }
     }
 

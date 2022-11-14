@@ -42,11 +42,8 @@ public class ClassroomController {
     @Operation(summary = "Regiter a classroom", description = "Student can only register for a classroom per subject")
     public ResponseEntity<?> registerClassroom(@RequestParam int classId ) {
         Account account = (Account) session.getAttribute("account");
-        try {
             classroomService.registerClassroom(classId, account.getId());
-        } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+
         return ResponseEntity.ok(new ResponseDTO<>("Registered classroom successfully", 201));
     }
 
