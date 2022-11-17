@@ -55,7 +55,7 @@ public class LoggingAspect {
         return objectProceed;
     }
 
-    @AfterReturning("execution(* com.example.studentmanagementfa22.config.CustomSuccessHandler.*(..))")
+    @AfterReturning("execution(* com.example.studentmanagementfa22.config.security.CustomSuccessHandler.*(..))")
     public void afterLogin(){
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         logger.info(currentUser + " logged in");

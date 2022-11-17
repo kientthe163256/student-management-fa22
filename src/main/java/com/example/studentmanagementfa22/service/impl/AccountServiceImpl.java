@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -76,19 +77,20 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void registerNewAccount(Account account) throws ElementAlreadyExistException {
+    public AccountDTO registerNewAccount(Account account, String roleName) {
         Account existAccount = accountRepository.findByUsername(account.getUsername());
         if (existAccount != null) {
             throw new ElementAlreadyExistException("There is already an account with that username!");
         }
         //Add a new account
         account.setEnabled(true);
-        account.setRoleId(roleService.findByRoleName("ROLE_STUDENT").getId());
+        account.setRoleId(roleService.findByRoleName(roleName).getId());
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         Date today = new Date();
         account.setCreateDate(today);
         account.setModifyDate(today);
-        accountRepository.save(account);
+        Account registeredAccount = accountRepository.save(account);
+        return mapper.mapToDTO(registeredAccount);
     }
 
     @Override
@@ -97,9 +99,7 @@ public class AccountServiceImpl implements AccountService {
         if (optionalAccount.isEmpty()) {
             throw new NoSuchElementException("Can not find account with id = " + id);
         }
-        Account account = optionalAccount.get();
-        return account;
-
+        return optionalAccount.get();
     }
 
     @Override
@@ -144,11 +144,11 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
+    @Transactional
     public void disableAccount(Integer accountId) {
         Account account = getById(accountId);
-        if (!account.isEnabled()){
-            throw new InvalidInputException("Account is already disabled");
-        }
-        accountRepository.disableAccount(accountId);
+        account.setEnabled(false);
+        account.setDeleteDate(new Date());
+        accountRepository.save(account);
     }
 }

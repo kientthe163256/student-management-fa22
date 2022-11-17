@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.config;
+package com.example.studentmanagementfa22.config.security;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

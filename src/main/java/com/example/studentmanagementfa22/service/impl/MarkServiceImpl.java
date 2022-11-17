@@ -121,7 +121,7 @@ public class MarkServiceImpl implements MarkService {
         report.setFair(markRepository.getNoStudentsInRange(classId, 5, 7.99));
         report.setPoor(markRepository.getNoStudentsInRange(classId, 0, 4.99));
         return report;
-    }
+    }//case when
 
     @Override
     public void addStudentSubjectMark(Integer studentId, Integer subjectId) {

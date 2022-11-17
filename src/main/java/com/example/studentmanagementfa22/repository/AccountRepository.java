@@ -15,9 +15,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     Account findByUsername(String username);
     Optional<Account> findById(Integer id);
 
-    @Modifying
-    @Query(value = "UPDATE account set enabled = 0, delete_date = curdate() where id = :accountId", nativeQuery = true)
-    Integer disableAccount(@Param("accountId") Integer accountId);//return account
     @Query(value = "SELECT a.id, a.create_date, a.delete_date, a.modify_date, a.enabled, a.first_name, a.last_name, a.dob, a.password, a.role_id, a.username\n" +
             "FROM student_management_fa22.account a\n" +
             "JOIN student_management_fa22.student AS s\n" +

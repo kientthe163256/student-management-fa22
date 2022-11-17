@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.config;
+package com.example.studentmanagementfa22.config.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

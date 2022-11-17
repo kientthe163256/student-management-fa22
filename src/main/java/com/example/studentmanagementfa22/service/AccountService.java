@@ -19,7 +19,7 @@ public interface AccountService extends UserDetailsService {
 
     Account findAccountByUsername(String username);
 
-    void registerNewAccount(Account account) throws ElementAlreadyExistException;
+    AccountDTO registerNewAccount(Account account, String roleName);
 
     Account getById(int id);
 

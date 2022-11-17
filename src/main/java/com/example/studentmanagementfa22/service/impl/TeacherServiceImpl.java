@@ -9,28 +9,19 @@ import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortF
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
-import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.service.TeacherService;
-import com.example.studentmanagementfa22.utility.IGenericMapper;
 import com.example.studentmanagementfa22.utility.PagingHelper;
 import com.example.studentmanagementfa22.utility.TeacherMapper;
+import com.example.studentmanagementfa22.utility.TranslationCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.Tuple;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,7 +62,7 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher getById(int id) {
         Optional<Teacher> optionalTeacher = teacherRepository.findById(id);
         if (optionalTeacher.isEmpty()) {
-            throw new NoSuchElementException("Can not find teacher with id = " + id);
+            throw new NoSuchElementException(TranslationCode.TEACHER404);
         }
         return optionalTeacher.get();
     }
@@ -144,16 +135,16 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public TeacherDTO getTeacherDTOById(int teacherId) {
-        Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);
-        if (optionalTeacher.isPresent()) {
-            Teacher teacher = optionalTeacher.get();
-            return mapper.mapToDTO(teacher);
-        }
-        return null;
+        Teacher teacher = getById(teacherId);
+        return mapper.mapToDTO(teacher);
     }
 
     @Override
+    @Transactional
     public void deleteTeacher(Integer teacherId) {
-        teacherRepository.deleteTeacher(teacherId);
+        Teacher teacher = getById(teacherId);
+        teacher.setDeleted(true);
+        teacher.setDeleteDate(new Date());
+        teacherRepository.save(teacher);
     }
 }

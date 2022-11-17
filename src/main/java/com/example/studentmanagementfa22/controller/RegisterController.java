@@ -26,7 +26,7 @@ public class RegisterController {
     @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content(mediaType = "String"))
     @PostMapping("/register/student")
     public ResponseEntity<?> registerStudent(@Valid @RequestBody Account account) {
-        accountService.registerNewAccount(account);
+        accountService.registerNewAccount(account, "ROLE_STUDENT");
         studentService.addStudentWithNewAccount(account);
 
         return new ResponseEntity("Account created successfully", HttpStatus.CREATED);

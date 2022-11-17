@@ -1,14 +1,12 @@
 package com.example.studentmanagementfa22.controller.teacher;
 
 import com.example.studentmanagementfa22.dto.MarkDTO;
-import com.example.studentmanagementfa22.dto.ResponseDTO;
+import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.entity.Teacher;
-import com.example.studentmanagementfa22.repository.MarkRepository;
 import com.example.studentmanagementfa22.service.MarkService;
 import com.example.studentmanagementfa22.service.TeacherService;
-import com.example.studentmanagementfa22.utility.MarkMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +42,8 @@ public class MarkManageController {
     public ResponseEntity<?> deleteMark(@PathVariable(name="id") Integer markId) {
         Account account = (Account) session.getAttribute("account");
         markService.deleteMark(markId, account.getId());
-        return ResponseEntity.ok(new ResponseDTO<>("Mark deleted successfully", 200));
+//        return ResponseEntity.ok(new ErrorResponseDTO<>("Mark deleted successfully", 200));
+        return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
     }
 
     @Operation(summary = "View report", description = "Teacher can view mark report of a class by class id")

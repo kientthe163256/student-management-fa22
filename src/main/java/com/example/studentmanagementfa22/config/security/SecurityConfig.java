@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.config;
+package com.example.studentmanagementfa22.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

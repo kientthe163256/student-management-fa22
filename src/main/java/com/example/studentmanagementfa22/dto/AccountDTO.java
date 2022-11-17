@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -19,12 +20,12 @@ public class AccountDTO {
 
     private String username;
 
-    @NotBlank(message = "Firstname cannot be blank")
+    @NotBlank
     private String firstName;
 
-    @NotBlank(message = "Lastname cannot be blank")
+    @NotBlank
     private String lastName;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", lenient = OptBoolean.FALSE)
+    @NotNull
     private Date dob;
 }

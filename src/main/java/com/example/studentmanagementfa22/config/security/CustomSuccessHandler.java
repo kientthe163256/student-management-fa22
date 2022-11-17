@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.config;
+package com.example.studentmanagementfa22.config.security;
 
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Role;

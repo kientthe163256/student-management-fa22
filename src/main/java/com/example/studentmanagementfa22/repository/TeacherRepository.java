@@ -16,11 +16,6 @@ import java.util.Optional;
 
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, Integer>, JpaSpecificationExecutor<Teacher> {
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE teacher set deleted = 1, delete_date = curdate() where id = :teacherId", nativeQuery = true)
-    void deleteTeacher(@Param("teacherId") Integer teacherId);
-
     Optional<Teacher> findTeacherByAccountId(int accountID);
     @Query(value = "SELECT t.* FROM student_management_fa22.teacher t\n" +
             "join student_management_fa22.classroom c\n" +

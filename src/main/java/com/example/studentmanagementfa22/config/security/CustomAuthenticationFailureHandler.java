@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.config;
+package com.example.studentmanagementfa22.config.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;

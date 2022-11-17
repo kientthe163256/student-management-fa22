@@ -1,10 +1,7 @@
 package com.example.studentmanagementfa22.controller.admin;
 
-import com.example.studentmanagementfa22.dto.MarkTypeDTO;
-import com.example.studentmanagementfa22.dto.ResponseDTO;
+import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.dto.SubjectDTO;
-import com.example.studentmanagementfa22.entity.MarkType;
-import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.repository.SubjectRepository;
 import com.example.studentmanagementfa22.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,7 +51,8 @@ public class SubjectController {
     @PostMapping()
     public ResponseEntity<?> addNewSubject(@Valid @RequestBody SubjectDTO subjectDTO){
         subjectService.addNewSubject(subjectDTO);
-        return new ResponseEntity<>(new ResponseDTO<>("Subject added successfully",201), HttpStatus.CREATED);
+//        return new ResponseEntity<>(new ErrorResponseDTO<>("Subject added successfully",201), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
     }
 
     @Operation(summary = "Delete subject", description = "Delete subject by id")
@@ -64,7 +62,8 @@ public class SubjectController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSubject(@PathVariable Integer id){
         subjectService.deleteSubject(id);
-        return ResponseEntity.ok(new ResponseDTO<>("Subject deleted successfully", 200));
+//        return ResponseEntity.ok(new ErrorResponseDTO<>("Subject deleted successfully", 200));
+        return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
     }
 
     @Operation(summary = "Update subject", description = "Update subject by id")
@@ -78,10 +77,10 @@ public class SubjectController {
         return ResponseEntity.ok(editedSubject);
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<?> addAssessmentOfSubject(@PathVariable Integer id, @RequestBody Map<String, Integer> params){
+    @PostMapping("/{subjectId}")
+    public ResponseEntity<?> addAssessmentOfSubject(@PathVariable Integer subjectId, @RequestBody Map<String, Integer> params){
         int markTypeId = params.get("markTypeId");
         int noMarks = params.get("noMarks");
-        return ResponseEntity.ok(subjectService.addMarkTypeToSubject(id, markTypeId, noMarks));
+        return ResponseEntity.ok(subjectService.addMarkTypeToSubject(subjectId, markTypeId, noMarks));
     }
 }

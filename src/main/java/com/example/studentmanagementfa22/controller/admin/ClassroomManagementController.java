@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.controller.admin;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.service.ClassroomService;
@@ -10,13 +11,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/admin/classrooms")
@@ -30,7 +29,8 @@ public class ClassroomManagementController {
     @PostMapping()
     public ResponseEntity<?> addNewClassroom(@Valid @RequestBody Classroom classroom){
         classroomService.addNewClassroom(classroom);
-        return new ResponseEntity("Classroom added successfully", HttpStatus.CREATED);
+//        return new ResponseEntity(new ErrorResponseDTO<>("Classroom added successfully", 201), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
     }
 
     @Operation(summary = "View classroom list", description = "Returns list of classroom dto")
@@ -43,7 +43,8 @@ public class ClassroomManagementController {
             @RequestParam(required = false, defaultValue = "5") int pageSize,
             @RequestParam(required = false, defaultValue = "id,ASC") String sort){
         if (pageNumber <= 0) {
-            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
+//            return new ResponseEntity<>(new ErrorResponseDTO<>("Invalid page number", 400), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
         }
         Pagination<ClassroomDTO> classroomPage = classroomService.getAllClassroomsPaging(pageNumber, pageSize, sort);
         return ResponseEntity.ok(classroomPage);
@@ -86,6 +87,7 @@ public class ClassroomManagementController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteClassroom(@PathVariable Integer id){
         classroomService.deleteClassroom(id);
-        return new ResponseEntity("Classroom deleted successfully", HttpStatus.OK);
+//        return new ResponseEntity(new ErrorResponseDTO<>("Classroom deleted successfully", 200), HttpStatus.OK);
+        return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
     }
 }
