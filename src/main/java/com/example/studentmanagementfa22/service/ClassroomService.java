@@ -23,7 +23,7 @@ public interface ClassroomService {
 
     Page<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId);
 
-    void registerClassroom(int classId, int accountId) throws Exception;
+    void registerClassroom(int classId, int accountId) ;
 
     ClassroomDTO assignClassroom(Integer teacherId, Integer classId);
 

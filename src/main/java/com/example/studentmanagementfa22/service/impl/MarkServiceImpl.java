@@ -125,7 +125,6 @@ public class MarkServiceImpl implements MarkService {
 
     @Override
     public void addStudentSubjectMark(Integer studentId, Integer subjectId) {
-      //  int numberOfMarks = subjectRepository.numberOfSubjectMarks(subjectId);
         Subject subject = subjectService.getById(subjectId);
         List<Integer> listOfMarkTypes = markTypeRepository.listOfMarkTypesBySubject(subject.getId());
         for(int markTypeId : listOfMarkTypes) {
