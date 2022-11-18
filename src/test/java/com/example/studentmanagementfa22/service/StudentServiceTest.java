@@ -53,51 +53,7 @@ public class StudentServiceTest {
 
     @InjectMocks
     private StudentServiceImpl studentService;
-//    @MockitoSettings( strictness = Strictness.WARN)
 
-//    @Test
-//    public void getListofStudentByCriteria() {
-//        //Createa Mock data
-//        Account mockAccount = Account.builder()
-//                .id(3)
-//                .roleId(2)
-//                .build();
-//
-//        Teacher mockTeacher = Teacher.builder()
-//                .id(2)
-//                .account(mockAccount)
-//                .build();
-//        Optional<Teacher> mockOptionalTeacher = Optional.of(mockTeacher);
-//        Classroom mockClassroom = Classroom.builder()
-//                .id(2)
-//                .teacherId(2)
-//                .build();
-//        Account studentAcc1 = Account.builder().id(1).username("student1").build();
-//        Account studentAcc2 = Account.builder().id(2).username("student2").build();
-//        StudentDTO studentDTO1 = StudentDTO.builder().id(3).accountId(studentAcc1.getId()).build();
-//        StudentDTO studentDTO2 = StudentDTO.builder().id(4).accountId(studentAcc2.getId()).build();
-//        List<StudentDTO> mockStudentDTOList = new ArrayList<>();
-//        mockStudentDTOList.add(studentDTO1);
-//        mockStudentDTOList.add(studentDTO2);
-//        List<Account> studentAccountList = new ArrayList<>();
-//        studentAccountList.add(studentAcc1);
-//        studentAccountList.add(studentAcc2);
-//        Page<Account> mockPageStudentAccount = new PageImpl<>(studentAccountList);
-//        Sort sortObject = Sort.by(Sort.Direction.DESC,"id");
-//        PageRequest pageRequest = PageRequest.of(1, 5, sortObject);
-//        //define repository behavior
-//        when(teacherRepository.findTeacherByAccountId(mockAccount.getId())).thenReturn(mockOptionalTeacher);
-//        when(accountRepository.findStudentAccountsByClassroomandTeacher(mockOptionalTeacher.get().getId(), mockClassroom.getId(), pageRequest)).thenReturn(mockPageStudentAccount);
-//        when(mapper.mapToDTO(studentAcc1)).thenReturn(studentDTO1);
-//        when(mapper.mapToDTO(studentAcc2)).thenReturn(studentDTO2);
-//     //   when(mockPageStudentAccount.stream().map(account -> mapper.mapToDTO(account)).collect(Collectors.toList())).thenReturn(mockStudentDTOList);
-//        // call Service
-//        List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(2,3,1,5,"id,DESC" );
-//        //Assert result
-//        assertEquals(2, studentDTOList.size());
-//        assertTrue(studentDTOList.get(0).getId() > studentDTOList.get(1).getId(), "Sorted by ID descending");
-//
-//    }
     @Test
     public void checkStudentJoinedClass() {
         Classroom mockClassroom = Classroom.builder().id(2).build();
@@ -191,13 +147,13 @@ public class StudentServiceTest {
     }
 
     @Test
-    public void getStudentsByClassroomandTeacher() {
+    public void getStudentsByClassroomAndTeacher() {
         Account mockAccount = Account.builder().id(3).roleId(2).build();
         Teacher mockTeacher = Teacher.builder().id(2).account(mockAccount).build();
         Account mockStudentAccount = Account.builder().id(1).username("HE163256").password("123456").roleId(3).firstName("mock").lastName("Student account").build();
         AccountDTO accountStudentDTO = AccountDTO.builder().id(1).username("HE163256").firstName("mock").lastName("Student account").build();
         Student mockStudent = Student.builder().id(6).academicSession(2022).account(mockStudentAccount).build();
-        StudentDTO studentDTO = StudentDTO.builder().id(6).academicSession(2022).account(accountStudentDTO).build();
+        StudentDTO studentDTO = StudentDTO.builder().id(6).academicSession(2022).firstName("mock").account(accountStudentDTO).build();
         int pageNumber = 1;
         int pageSize = 5;
         String rawSort = "account_id,desc";
@@ -205,14 +161,13 @@ public class StudentServiceTest {
         PageRequest pageRequest = PageRequest.of(0, pageSize, sort);
         Page<Account> accountPage = new PageImpl<>(List.of(mockStudentAccount));
         when(teacherRepository.findTeacherByAccountId(mockTeacher.getAccount().getId())).thenReturn(Optional.of(mockTeacher));
-        when(accountRepository.findStudentAccountsByClassroomandTeacher(mockTeacher.getId(), 1,pageRequest)).thenReturn(accountPage);
+        when(accountRepository.findStudentAccountsByClassroomandTeacher(1,mockTeacher.getId(), pageRequest)).thenReturn(accountPage);
         when(studentRepository.findStudentByAccountId(mockStudent.getAccount().getId())).thenReturn(Optional.of(mockStudent));
         when(mapper.mapToDTO(mockStudent)).thenReturn(studentDTO);
 
-        Page<Account> accounts = accountRepository.findStudentAccountsByClassroomandTeacher(mockTeacher.getId(), 1,pageRequest);
-                List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(1, mockTeacher.getAccount().getId(), 1,5, rawSort);
+        List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(1, mockTeacher.getAccount().getId(), 1,5, rawSort);
         assertEquals(mockStudentAccount.getFirstName(), studentDTOList.get(0).getFirstName());
         verify(studentRepository, times(1)).findStudentByAccountId(mockStudent.getAccount().getId());
-
+        verify(accountRepository, times(1)).findStudentAccountsByClassroomandTeacher(1,2, pageRequest);
     }
 }
