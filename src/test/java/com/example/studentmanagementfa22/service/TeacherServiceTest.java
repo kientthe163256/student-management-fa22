@@ -1,7 +1,6 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
-import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
@@ -110,7 +109,6 @@ public class TeacherServiceTest {
     @Test
     public void checkClassNotAssignedTeacher() {
         Teacher mockTeacher = Teacher.builder().id(2).build();
-        Optional<Teacher> mockOptionalTeacher = Optional.of(mockTeacher);
         Classroom mockClassroom = Classroom.builder().id(2).teacher(mockTeacher).build();
 
         when(teacherRepository.findTeacherByClassroomId(mockClassroom.getId())).thenReturn(Optional.empty());
@@ -210,6 +208,9 @@ public class TeacherServiceTest {
         doNothing().when(studentService).checkStudentJoinedClass(4,1);
         doNothing().when(mockTeacherService).checkTeacherAssignedClass(1,1);
         teacherService.checkTeacherClassroomStudent(2,1,4);
+        assertThrows(NoSuchElementException.class, () ->  teacherService.checkTeacherClassroomStudent(1000,1,4));
+        assertThrows(NoSuchElementException.class, () ->  teacherService.checkTeacherClassroomStudent(2,1,1000));
+
         verify(studentService).checkStudentTeacher(4,1);
         verify(studentService).checkStudentJoinedClass(4,1);
     }

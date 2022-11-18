@@ -99,7 +99,7 @@ public class MarkServiceTest {
         when(classroomRepository.findById(3)).thenReturn(Optional.of(classroom));
         when(markRepository.getMarkbySubject(mockStudent.getId(), mockSubject.getId())).thenReturn(mockMarkList);
         when(markMapper.mapToDTO(mockMark)).thenReturn(mockMarkDTO);
-
+        assertThrows(NoSuchElementException.class, () -> markService.getMarksByClassroomStudent(mockTeacher.getId(), 1000,mockStudent.getId()));
         List<MarkDTO> markList = markService.getMarksByClassroomStudent(mockTeacher.getId(), classroom.getId(),mockStudent.getId());
         assertEquals(markList.size(), mockMarkList.size());
         verify(markRepository, times(1)).getMarkbySubject(1,1);
@@ -111,14 +111,8 @@ public class MarkServiceTest {
         Subject mockSubject = Subject.builder().id(1).build();
         Account mockAccount = Account.builder().id(2).roleId(2).build();
         Teacher mockTeacher = Teacher.builder().id(1).account(mockAccount).build();
-        Mark mockMark = Mark.builder()
-                .id(1)
-                .student(mockStudent)
-                .subject(mockSubject)
-                .grade(7.0)
-                .deleted(false)
-                .build();
-        Optional<Teacher> optionalTeacher = Optional.of(mockTeacher);
+        Mark mockMark = Mark.builder().id(1).student(mockStudent).subject(mockSubject).grade(7.0).deleted(false).build();
+
         Optional<Mark> optionalMark = Optional.of(mockMark);
         when(teacherService.getTeacherByAccountId(mockAccount.getId())).thenReturn(mockTeacher);
         doAnswer((Answer<Void>) invocation -> {
@@ -130,6 +124,7 @@ public class MarkServiceTest {
             return  null;
         }).when(markRepository).deleteMark(1);
         markService.deleteMark(1, 2);
+        assertThrows(NoSuchElementException.class, () -> markService.deleteMark(1000, 2));
         assertTrue(mockMark.isDeleted());
         verify(markRepository, times(1)).getMarkByIDandTeacherID(1,1);
     }
@@ -148,7 +143,7 @@ public class MarkServiceTest {
         Optional<Mark> optionalMark = Optional.of(unupdatedMark);
         Account mockAccount = Account.builder().id(teacherAccountId).roleId(2).build();
         Teacher mockTeacher = Teacher.builder().id(1).account(mockAccount).build();
-        Optional<Teacher> optionalTeacher = Optional.of(mockTeacher);
+
         MarkDTO markDTO = MarkDTO.builder().id(markID).grade(7).markType(mockMarkTypeDTO).build();
 
         when(teacherService.getTeacherByAccountId(mockAccount.getId())).thenReturn(mockTeacher);
@@ -164,7 +159,7 @@ public class MarkServiceTest {
 
         MarkDTO updateMarkDTO = markService.editStudentMark(markID, updatedMark, teacherAccountId);
 
-   //     assertEquals(updateMarkDTO.getGrade(), updatedMark.getGrade());
+        assertThrows(NoSuchElementException.class, () -> markService.editStudentMark(1000, unupdatedMark, 2));
         verify(markRepository, times(1)).getMarkByIDandTeacherID(1,5);
     }
 

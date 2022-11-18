@@ -10,7 +10,6 @@ import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.StudentServiceImpl;
-import com.example.studentmanagementfa22.utility.IGenericMapper;
 import com.example.studentmanagementfa22.utility.StudentMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +25,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,14 +62,31 @@ public class StudentServiceTest {
         studentService.checkStudentJoinedClass(mockStudent.getId(), mockClassroom.getId());
         verify(studentRepository, times(1)).getStudentClassroom(9,2);
     }
+    @Test
+    public void checkStudentNotJoinedClass() {
+        Classroom mockClassroom = Classroom.builder().id(2).build();
+        Student mockStudent = Student.builder().id(9).build();
+        when(studentRepository.getStudentClassroom(mockStudent.getId(),mockClassroom.getId())).thenReturn(0);
+        assertThrows(IllegalArgumentException.class, () -> studentService.checkStudentJoinedClass(mockStudent.getId(), mockClassroom.getId()));
+        verify(studentRepository, times(1)).getStudentClassroom(9,2);
+    }
 
     @Test
-    public void checkStudentTeacher() {
+    public void checkStudentTeacherTrue() {
         Student mockStudent = Student.builder().id(9).build();
         Teacher mockTeacher = Teacher.builder().id(4).build();
         Optional<Student> optionalStudent = Optional.of(mockStudent);
         when(studentRepository.getStudentbyTeacher(mockStudent.getId(), mockTeacher.getId())).thenReturn(optionalStudent);
         studentService.checkStudentTeacher(mockStudent.getId(), mockTeacher.getId());
+        verify(studentRepository, times(1)).getStudentbyTeacher(9,4);
+    }
+    @Test
+    public void checkStudentTeacherFalse() {
+        Student mockStudent = Student.builder().id(9).build();
+        Teacher mockTeacher = Teacher.builder().id(4).build();
+        when(studentRepository.getStudentbyTeacher(mockStudent.getId(), mockTeacher.getId())).thenReturn(Optional.empty());
+        assertThrows(IllegalArgumentException.class, () -> studentService.checkStudentTeacher(mockStudent.getId(), mockTeacher.getId()));
+
         verify(studentRepository, times(1)).getStudentbyTeacher(9,4);
     }
 
@@ -80,6 +97,7 @@ public class StudentServiceTest {
 
         when(studentRepository.findStudentByAccountId(1)).thenReturn(Optional.of(mockStudent));
         Student testStudent = studentService.getStudentByAccountId(1);
+        assertThrows(NoSuchElementException.class, () -> studentService.getStudentByAccountId(1000));
 
         assertEquals(testStudent.getAccount().getId(), mockAccount.getId());
     }
@@ -153,7 +171,6 @@ public class StudentServiceTest {
         AccountDTO accountStudentDTO = AccountDTO.builder().id(1).username("HE163256").firstName("mock").lastName("Student account").build();
         Student mockStudent = Student.builder().id(6).academicSession(2022).account(mockStudentAccount).build();
         StudentDTO studentDTO = StudentDTO.builder().id(6).academicSession(2022).firstName("mock").account(accountStudentDTO).build();
-        int pageNumber = 1;
         int pageSize = 5;
         String rawSort = "account_id,desc";
         Sort sort = Sort.by("id").descending();
@@ -166,6 +183,10 @@ public class StudentServiceTest {
 
         List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(1, mockTeacher.getAccount().getId(), 1,5, rawSort);
         assertEquals(mockStudentAccount.getFirstName(), studentDTOList.get(0).getFirstName());
+        assertThrows(IllegalArgumentException.class, () -> studentService.getStudentsByClassroomandTeacher(1,mockTeacher.getAccount().getId(), 1,5, "id+desc"));
+        assertThrows(NoSuchElementException.class, () -> studentService.getStudentsByClassroomandTeacher(1,1000, 1,5, rawSort));
+        assertThrows(IllegalArgumentException.class, () -> studentService.getStudentsByClassroomandTeacher(1,mockTeacher.getAccount().getId(), 1,5, "tt,desc"));
+
         verify(studentRepository, times(1)).findStudentByAccountId(mockStudent.getAccount().getId());
         verify(accountRepository, times(1)).findStudentAccountsByClassroomandTeacher(1,2, pageRequest);
     }

@@ -63,6 +63,7 @@ public class ClassroomServiceTest {
         when(classroomMapper.mapToDTO(mockClassroom)).thenReturn(mockClassroomDTO);
         List<ClassroomDTO> classroomDTO = classroomService.getAllRegisteredClass(1, mockStudent.getId());
         Assert.notNull(classroomDTO);
+        assertThrows(IllegalArgumentException.class, () -> classroomService.getAllRegisteredClass(-1, mockStudent.getId()));
         verify(classroomRepository, times(1)).findAllRegisteredClass(pageRequest, 6);
     }
     @Test
@@ -88,6 +89,7 @@ public class ClassroomServiceTest {
         }).when(markService).addStudentSubjectMark(6,1);
 
         classroomService.registerClassroom(mockClassroom.getId(), mockAccount.getId());
+        assertThrows(NoSuchElementException.class, () -> classroomService.registerClassroom(-1, mockAccount.getId()));
 
         verify(classroomRepository, times(1)).updateNoStudentOfClass(5);
         verify(classroomRepository, times(1)).findById(5);
@@ -106,10 +108,8 @@ public class ClassroomServiceTest {
         when(studentService.getStudentByAccountId(1)).thenReturn(mockStudent);
         when(classroomRepository.numOfSubjectClassByStudent(1, 6)).thenReturn(1);
 
+        assertThrows(IllegalArgumentException.class, () -> classroomService.registerClassroom(mockClassroom.getId(), mockAccount.getId()));
 
-        Exception exception = assertThrows(Exception.class, () -> {
-            classroomService.registerClassroom(mockClassroom.getId(), mockStudent.getId() );
-        });
     }
 
     @Test
@@ -141,7 +141,6 @@ public class ClassroomServiceTest {
         List<ClassroomDTO> mockClassroomDTOList = new ArrayList<>();
         mockClassroomDTOList.add(classroomDTO1);
 
-        int pageNumber = 1;
         int pageSize = 5;
         String rawSort = "classroomName,desc";
         Sort sort = Sort.by("classroom_name").descending();
@@ -154,6 +153,9 @@ public class ClassroomServiceTest {
         Pagination<ClassroomDTO> pagination = classroomService.getAllTeachingClassrooms(mockAccount.getId(), 1, pageSize, rawSort);
 
         //assert the result
+        assertThrows(NoSuchElementException.class, () -> classroomService.getAllTeachingClassrooms(1000, 1, pageSize, rawSort));
+        assertThrows(NoSuchElementException.class, () -> classroomService.getAllTeachingClassrooms(1000, 1, pageSize, "tt,desc"));
+
         assertEquals(classroom.getClassroomName(), pagination.getData().get(0).getClassroomName());
         verify(classroomRepository, times(1)).findClassroomsByTeacherId(mockTeacher.getId(), pageRequest);
     }

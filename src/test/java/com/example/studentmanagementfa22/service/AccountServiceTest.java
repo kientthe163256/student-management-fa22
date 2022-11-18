@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
+import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
@@ -272,5 +273,14 @@ public class AccountServiceTest {
         List<AccountDTO> accountDTOS = accountService.getAccountDTOList(pageNumber);
         assertEquals(account.getFirstName(), accountDTOS.get(0).getFirstName());
         verify(accountRepository, times(1)).findAll(any(Pageable.class));
+    }
+
+    @Test
+    public void editInformation() {
+        Account account = Account.builder().id(1).firstName("mock").lastName("acc").dob(null).modifyDate(null).build();
+        StudentDTO student = StudentDTO.builder().firstName("mock").lastName("studentDTO").dob(null).build();
+        when(accountRepository.save(any(Account.class))).thenReturn(account);
+        accountService.editInformation(account, student);
+        verify(accountRepository, times(1)).save(account);
     }
 }

@@ -118,9 +118,7 @@ public class SubjectServiceTest {
 
         when(subjectRepository.findById(NON_EXIST_ID)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> {
-            subjectService.updateSubject(editedObject);
-        });
+        assertThrows(NoSuchElementException.class, () -> subjectService.updateSubject(editedObject));
         verify(subjectRepository).findById(NON_EXIST_ID);
     }
 
@@ -270,6 +268,17 @@ public class SubjectServiceTest {
         assertEquals(subject.getSubjectName(), actualSubject.getSubjectName());
         assertEquals(subject.getNumberOfCredit(), actualSubject.getNumberOfCredit());
 
+        verify(subjectRepository).findAll(pageRequest);
+    }
+
+    @Test
+    public void getAllSubject() {
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        Subject subject = mockSubject();
+        List<Subject> subjectList = List.of(subject);
+        Page<Subject> subjectPage = new PageImpl<>(subjectList);
+        when(subjectRepository.findAll(pageRequest)).thenReturn(subjectPage);
+        Page<Subject> testSubjectPage = subjectService.getAllSubject(1);
         verify(subjectRepository).findAll(pageRequest);
     }
 }
