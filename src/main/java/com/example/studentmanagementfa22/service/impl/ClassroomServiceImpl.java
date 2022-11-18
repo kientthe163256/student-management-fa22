@@ -68,7 +68,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public Pagination<ClassroomDTO> getAllTeachingClassrooms(int accountID,int pageNumber, int pageSize, String sort) {
+    public Pagination<ClassroomDTO> getAllTeachingClassrooms(int accountID, int pageNumber, int pageSize, String sort) {
         Optional<Teacher> teacher = teacherRepository.findTeacherByAccountId(accountID);
         if (teacher.isEmpty()){
             throw new NoSuchElementException("teacher not found");
@@ -176,7 +176,9 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (classroom.getCurrentNoStudent() > 0){
             throw new ActionNotAllowedException("Can not delete because there is still student in classroom");
         }
-        classroomRepository.deleteClassroom(classId);
+        classroom.setDeleted(true);
+        classroom.setDeleteDate(new Date());
+        classroomRepository.save(classroom);
     }
 
     @Override
