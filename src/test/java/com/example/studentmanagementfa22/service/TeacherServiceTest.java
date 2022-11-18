@@ -7,6 +7,7 @@ import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.TeacherServiceImpl;
@@ -98,20 +99,29 @@ public class TeacherServiceTest {
         assertThrows(NoSuchElementException.class, () -> teacherService.getById(nonExistId));
         verify(teacherRepository).findById(nonExistId);
     }
-
     @Test
-    public void checkTeacherAssignedClass() {
+    public void checkClassNotAssignedTeacher() {
         Teacher mockTeacher = Teacher.builder().id(2).build();
         Optional<Teacher> mockOptionalTeacher = Optional.of(mockTeacher);
         Classroom mockClassroom = Classroom.builder().id(2).teacher(mockTeacher).build();
 
-        when(teacherRepository.findTeacherByClassroomId(mockClassroom.getId())).thenReturn(mockOptionalTeacher);
-
-   //     boolean check = teacherService.checkTeacherAssignedClass(mockTeacher.getId(), mockClassroom.getId());
-
-//        assertTrue(check, "Teacher is assigned to class");
+        when(teacherRepository.findTeacherByClassroomId(mockClassroom.getId())).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> {
+            teacherService.checkTeacherAssignedClass(mockTeacher.getId(), mockClassroom.getId());
+        });
         verify(teacherRepository, times(1)).findTeacherByClassroomId(2);
     }
+    @Test
+    public void checkTeacherAssignedClass() {
+        Teacher mockTeacher1 = Teacher.builder().id(2).build();
+        Teacher mockTeacher2 = Teacher.builder().id(4).build();
+        Classroom mockClassroom = Classroom.builder().id(2).teacher(mockTeacher1).build();
+        when(teacherRepository.findTeacherByClassroomId(mockClassroom.getId())).thenReturn(Optional.of(mockTeacher1));
+        assertThrows(ActionNotAllowedException.class, () -> {
+            teacherService.checkTeacherAssignedClass(mockTeacher2.getId(), mockClassroom.getId());
+        });
+    }
+
 
     @Test
     public void addTeacherWithNewAccount(){

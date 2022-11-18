@@ -15,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ClassroomServiceTest {
     @Mock
     private ClassroomRepository classroomRepository;
@@ -57,16 +60,13 @@ public class ClassroomServiceTest {
         Classroom mockClassroom = Classroom.builder().id(5).classroomName("mock class").currentNoStudent(10).build();
         ClassroomDTO mockClassroomDTO = ClassroomDTO.builder().id(5).classroomName("mock class").currentNoStudent(10).build();
         Student mockStudent = Student.builder().id(6).build();
-        int pageNumber = 1;
-        PageRequest pageRequest = PageRequest.of( 1, 5);
-        List<Classroom> classroomList = new ArrayList<>();
-        classroomList.add(mockClassroom);
-        Page<Classroom> mockPageClassroom = new PageImpl<>(classroomList);
+        PageRequest pageRequest = PageRequest.of( 0, 5);
+        Page<Classroom> mockPageClassroom = new PageImpl<>(List.of(mockClassroom));
         when(classroomRepository.findAllRegisteredClass(pageRequest, mockStudent.getId())).thenReturn(mockPageClassroom);
         when(classroomMapper.mapToDTO(mockClassroom)).thenReturn(mockClassroomDTO);
-        //     doReturn(1).when(mockPageClassroom.getTotalPages());
-        List<ClassroomDTO> classroomDTO = classroomService.getAllRegisteredClass(pageRequest.getPageNumber(), mockStudent.getId());
+        List<ClassroomDTO> classroomDTO = classroomService.getAllRegisteredClass(1, mockStudent.getId());
         Assert.notNull(classroomDTO);
+        verify(classroomRepository, times(1)).findAllRegisteredClass(pageRequest, 6);
     }
     @Test
     public void registerClassroomSuccessful() throws Exception {
@@ -125,49 +125,42 @@ public class ClassroomServiceTest {
         List<Classroom> classroomList = new ArrayList<>();
         classroomList.add(mockClassroom);
         Page<Classroom> mockPageClassroom = new PageImpl<>(classroomList);
-        PageRequest pageRequest = PageRequest.of(1, 5);
+        PageRequest pageRequest = PageRequest.of(0, 5);
         // 2. define behavior of Repository, Mapper
         when(classroomRepository.findAllAvailClassroom(pageRequest, 1)).thenReturn(mockPageClassroom);
         // 3.call service method
         Page<ClassroomDTO> classroomDTOPage = classroomService.getAllAvailClassroom(1, 1);
         //4 assert result
         assertNotNull(classroomDTOPage);
+        verify(classroomRepository, times(1)).findAllAvailClassroom(pageRequest, 1);
     }
 
-//    @Test
-//    public void getTeachingClassrooms() {
-//        Account mockAccount = Account.builder()
-//                .username("TC000000")
-//                .id(8)
-//                .firstName("Mock")
-//                .lastName("TeacherAcc")
-//                .build();
-//        Teacher mockTeacher = Teacher.builder()
-//                .id(3)
-////                .accountId(8)
-//                .build();
-//        Optional<Teacher> mockOptionalTeacher = Optional.of(mockTeacher);
-//        Classroom classroom1 = Classroom.builder().classroomName("SE1617").currentNoStudent(16).build();
-//        List<Classroom> mockClassroomList = new ArrayList<>();
-//        mockClassroomList.add(classroom1);
-//
-//        ClassroomDTO classroomDTO1 = ClassroomDTO.builder().classroomName("SE1617").currentNoStudent(16).build();
-//        List<ClassroomDTO> mockClassroomDTOList = new ArrayList<>();
-//        mockClassroomDTOList.add(classroomDTO1);
-//
-//        // define behavior of Repository
-//        when(teacherRepository.findTeacherByAccountId(mockAccount.getId())).thenReturn(mockOptionalTeacher);
-//        when(classroomRepository.findClassroomsByTeacherId(mockTeacher.getId())).thenReturn(mockClassroomList);
-//        when(classroomMapper.mapToDTO(classroom1)).thenReturn(classroomDTO1);
-//        // call service method
-//        List<ClassroomDTO> classroomDTOList = classroomService.getAllTeachingClassrooms(8, pageNumber, pageSize, sort);
-//
-//        //assert the result
-//
-//        assertEquals(classroomDTOList.size(), mockClassroomDTOList.size());
-//        assertEquals(classroomDTOList.get(0).getClassroomName(), mockClassroomDTOList.get(0).getClassroomName());
-//        assertEquals(classroomDTOList.get(0).getCurrentNoStudent(), mockClassroomDTOList.get(0).getCurrentNoStudent());
-//    }
+    @Test
+    public void getAllTeachingClassrooms() {
+        Account mockAccount = Account.builder().username("TC000000").id(8).firstName("Mock").lastName("TeacherAcc").build();
+        Teacher mockTeacher = Teacher.builder().id(3).account(mockAccount).build();
+        Classroom classroom = Classroom.builder().id(6).classroomName("SE1617").currentNoStudent(16).build();
+        ClassroomDTO classroomDTO1 = ClassroomDTO.builder().classroomName("SE1617").currentNoStudent(16).build();
+        List<ClassroomDTO> mockClassroomDTOList = new ArrayList<>();
+        mockClassroomDTOList.add(classroomDTO1);
+
+        int pageNumber = 1;
+        int pageSize = 5;
+        String rawSort = "classroomName,desc";
+        Sort sort = Sort.by("classroomName").descending();
+        PageRequest pageRequest = PageRequest.of(0, pageSize, sort);
+        Page<Classroom> classroomPage = new PageImpl<>(List.of(classroom));
+
+        when(teacherRepository.findTeacherByAccountId(mockTeacher.getAccount().getId())).thenReturn(Optional.of(mockTeacher));
+        when(classroomRepository.findClassroomsByTeacherId(mockTeacher.getId(), pageRequest)).thenReturn(classroomPage);
+        Page<Classroom> classroomPage2 = classroomRepository.findClassroomsByTeacherId(mockTeacher.getId(), pageRequest);
+        when(classroomMapper.mapToDTO(classroom)).thenReturn(mapToClassroomDTO(classroom));
+        Pagination<ClassroomDTO> pagination = classroomService.getAllTeachingClassrooms(mockAccount.getId(), 1, pageSize, rawSort);
+
+        //assert the result
+        assertEquals(classroom.getClassroomName(), pagination.getData().get(0).getClassroomName());
+        verify(classroomRepository).findClassroomsByTeacherId(mockTeacher.getId(), pageRequest);
+    }
 
     @Test
     public void assignClassroomWithNotExistTeacher() {

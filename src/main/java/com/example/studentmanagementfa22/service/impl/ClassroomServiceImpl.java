@@ -77,7 +77,6 @@ public class ClassroomServiceImpl implements ClassroomService {
         String criteria = (String) validatedSort.get("criteria");
         Sort.Direction direction = (Sort.Direction) validatedSort.get("direction");
 
-
         Sort sortObject;
         //Check if criteria is a ClassroomDTO attribute
         if (PagingHelper.objectContainsField(Classroom.class, criteria)) {
