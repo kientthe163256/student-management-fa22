@@ -21,7 +21,7 @@ public interface ClassroomService {
 
     Pagination<ClassroomDTO> getAllClassroomsPaging(int pageNumber, int pageSize, String sort);
 
-    Page<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId);
+    List<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId);
 
     void registerClassroom(int classId, int accountId) ;
 

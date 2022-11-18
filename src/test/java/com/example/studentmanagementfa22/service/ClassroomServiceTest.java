@@ -7,12 +7,15 @@ import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAll
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.ClassroomServiceImpl;
+import com.example.studentmanagementfa22.utility.ClassroomMapper;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ClassroomServiceTest {
     @Mock
     private ClassroomRepository classroomRepository;
@@ -44,14 +48,25 @@ public class ClassroomServiceTest {
     @Mock
     private  MarkService markService;
     @Mock
-    private IGenericMapper<Classroom, ClassroomDTO> classroomMapper;
+    private ClassroomMapper classroomMapper;
 
     @InjectMocks
     private ClassroomServiceImpl classroomService;
 
     @Test
     public void getAllRegisteredClass() {
-        Page<ClassroomDTO> classroomDTO = classroomService.getAllRegisteredClass(2, 1);
+        Classroom mockClassroom = Classroom.builder().id(5).classroomName("mock class").currentNoStudent(10).build();
+        ClassroomDTO mockClassroomDTO = ClassroomDTO.builder().id(5).classroomName("mock class").currentNoStudent(10).build();
+        Student mockStudent = Student.builder().id(6).build();
+        int pageNumber = 1;
+        PageRequest pageRequest = PageRequest.of( 1, 5);
+        List<Classroom> classroomList = new ArrayList<>();
+        classroomList.add(mockClassroom);
+        Page<Classroom> mockPageClassroom = new PageImpl<>(classroomList);
+        when(classroomRepository.findAllRegisteredClass(pageRequest, mockStudent.getId())).thenReturn(mockPageClassroom);
+        when(classroomMapper.mapToDTO(mockClassroom)).thenReturn(mockClassroomDTO);
+   //     doReturn(1).when(mockPageClassroom.getTotalPages());
+        List<ClassroomDTO> classroomDTO = classroomService.getAllRegisteredClass(pageRequest.getPageNumber(), mockStudent.getId());
         Assert.notNull(classroomDTO);
     }
     @Test

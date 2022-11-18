@@ -44,8 +44,6 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
-    @Autowired
-    private StudentMapper studentMapper;
 
     @GetMapping()
     public ResponseEntity<String> getHomePage(){
@@ -56,11 +54,7 @@ public class StudentController {
     @Operation(summary = "View information", description = "Student can view his personal information")
     public ResponseEntity<StudentDTO> displayInformation() {
         Account account = (Account) session.getAttribute("account");
-
-        Student student1 = studentService.getStudentByAccountId(account.getId());
-        StudentDTO studentDTO = new StudentDTO();
-        studentDTO.setAcademicSession(student1.getAcademicSession());
-        studentDTO.setId(student1.getId());
+        StudentDTO studentDTO = studentService.getStudentDTOByAccountId(account.getId());
         return ResponseEntity.ok(studentDTO);
     }
     @GetMapping("/subjectList")
@@ -82,16 +76,8 @@ public class StudentController {
     @Operation(summary = "List subject registered", description = "Display list of classroom that student has registered")
     public ResponseEntity<?> displaySubjectRegistered ( @RequestParam(required = false, defaultValue = "1") int pageNumber) {
         Account account = (Account) session.getAttribute("account");
-
         Student student = studentService.getStudentByAccountId(account.getId());
-        Page<ClassroomDTO> classroomDTOPage = classroomService.getAllRegisteredClass(pageNumber, student.getId());
-        if (classroomDTOPage.getTotalPages() < pageNumber) {
-            return new ResponseEntity<>("The last page is "+classroomDTOPage.getTotalPages(), HttpStatus.BAD_REQUEST);
-        }
-        if (pageNumber <= 0) {
-            return new ResponseEntity<>("Invalid page number", HttpStatus.BAD_REQUEST);
-        }
-        List<ClassroomDTO> classroomDTOList = classroomDTOPage.getContent();
+        List<ClassroomDTO> classroomDTOList  = classroomService.getAllRegisteredClass(pageNumber, student.getId());
         return ResponseEntity.ok(classroomDTOList);
     }
     @GetMapping("/mark/{subjectId}")

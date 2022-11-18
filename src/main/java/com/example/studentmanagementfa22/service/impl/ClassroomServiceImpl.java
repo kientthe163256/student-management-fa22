@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,10 +128,18 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public Page<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId) {
+    public List<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId) {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllRegisteredClass(pageRequest, studentId);
-        return classroomPage.map(classroom -> mapper.mapToDTO(classroom));
+        if (classroomPage.getTotalPages() < pageNumber) {
+            throw new IllegalArgumentException ("The last page is "+classroomPage.getTotalPages());
+        }
+        if (pageNumber <= 0) {
+            throw new IllegalArgumentException("Invalid page number");
+        }
+        Page<ClassroomDTO> classroomDTOPage = classroomPage.map(classroom -> mapper.mapToDTO(classroom));
+        List<ClassroomDTO> classroomDTOList = classroomDTOPage.getContent();
+        return classroomDTOList ;
     }
 
     @Override

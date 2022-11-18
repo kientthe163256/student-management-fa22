@@ -16,4 +16,6 @@ public interface StudentService {
     void checkStudentTeacher(Integer studentId, Integer teacherId);
 
     Student getStudentByAccountId(int accountId);
+
+    StudentDTO getStudentDTOByAccountId(Integer id);
 }

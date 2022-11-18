@@ -1,20 +1,22 @@
 package com.example.studentmanagementfa22.service;
 
+import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
-import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.entity.Classroom;
-import com.example.studentmanagementfa22.entity.Student;
-import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.StudentServiceImpl;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
+import com.example.studentmanagementfa22.utility.StudentMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.mockito.stubbing.Answer;
 
 import java.util.Date;
 import java.util.Optional;
@@ -23,12 +25,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class StudentServiceTest {
 
     @Mock
-    private IGenericMapper<Account, StudentDTO> mapper;
+    private StudentMapper mapper;
     @Mock
     private StudentRepository studentRepository;
+
+    @Mock
+    private AccountRepository accountRepository;
+
+    @Mock
+    private AccountService accountService;
+
+    @Mock
+    private  StudentServiceImpl mockStudentService;
 
     @InjectMocks
     private StudentServiceImpl studentService;
@@ -93,6 +105,7 @@ public class StudentServiceTest {
         Teacher mockTeacher = Teacher.builder().id(4).build();
         Optional<Student> optionalStudent = Optional.of(mockStudent);
         when(studentRepository.getStudentbyTeacher(mockStudent.getId(), mockTeacher.getId())).thenReturn(optionalStudent);
+        studentService.checkStudentTeacher(mockStudent.getId(), mockTeacher.getId());
         verify(studentRepository, times(1)).getStudentbyTeacher(9,4);
     }
 
@@ -106,4 +119,26 @@ public class StudentServiceTest {
 
         assertEquals(testStudent.getAccount().getId(), mockAccount.getId());
     }
+
+    @Test
+    public void getStudentDTObyAccountId() {
+        Account mockAccount = Account.builder().id(1).username("HE163256").password("123456").roleId(3).firstName("mock").lastName("Student account").build();
+        AccountDTO accountDTO = AccountDTO.builder().id(1).username("HE163256").firstName("mock").lastName("Student account").build();
+        Student mockStudent = Student.builder().id(6).academicSession(2022).account(mockAccount).build();
+        StudentDTO studentDTO = StudentDTO.builder().id(6).academicSession(2022).account(accountDTO).build();
+        when(studentRepository.findStudentByAccountId(1)).thenReturn(Optional.of(mockStudent));
+        when(mockStudentService.getStudentByAccountId(1)).thenReturn(mockStudent);
+        when(accountRepository.findById(1)).thenReturn(Optional.of(mockAccount));
+        when(accountService.getById(mockAccount.getId())).thenReturn(mockAccount);
+        when(mapper.mapToDTO(mockStudent)).thenReturn(studentDTO);
+
+        StudentDTO testStudent = studentService.getStudentDTOByAccountId(1);
+
+        assertEquals(testStudent.getAccount().getId(), mockAccount.getId());
+        verify(studentRepository, times(1)).findStudentByAccountId(1);
+        verify(accountService, times(1)).getById(1);
+
+    }
+
+
 }

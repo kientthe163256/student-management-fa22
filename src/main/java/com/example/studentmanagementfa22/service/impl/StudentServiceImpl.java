@@ -7,6 +7,7 @@ import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
+import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.utility.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private StudentMapper mapper;
@@ -103,5 +107,19 @@ public class StudentServiceImpl implements StudentService {
             throw new NoSuchElementException("Student does not exists");
         }
         return student.get();
+    }
+
+    @Override
+    public StudentDTO getStudentDTOByAccountId(Integer accountId) {
+        Student student = getStudentByAccountId(accountId);
+        Account account = accountService.getById(accountId);
+        String username = account.getUsername();
+        StudentDTO studentDTO = mapper.mapToDTO(student);
+        studentDTO.setUsername(username);
+        studentDTO.setPassword(account.getPassword());
+        studentDTO.setRoleId(account.getRoleId());
+        studentDTO.setFirstName(account.getFirstName());
+        studentDTO.setLastName(account.getLastName());
+        return studentDTO;
     }
 }
