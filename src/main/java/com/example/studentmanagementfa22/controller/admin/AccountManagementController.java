@@ -2,6 +2,7 @@ package com.example.studentmanagementfa22.controller.admin;
 
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
+import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.TeacherService;
@@ -29,9 +30,6 @@ public class AccountManagementController {
     @Autowired
     private TeacherService teacherService;
 
-    @Autowired
-    private AccountMapper accountMapper;
-
 
     @Operation(summary = "Register teacher account", description = "Admin add a new teacher account")
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "String"))
@@ -39,10 +37,8 @@ public class AccountManagementController {
     @PostMapping("/teacher")
     public ResponseEntity<?> addNewTeacher(@Valid @RequestBody Account account) {
         accountService.registerNewAccount(account, "ROLE_TEACHER");
-        teacherService.addTeacherWithNewAccount(account);
-
-//        return new ResponseEntity<>(new ErrorResponseDTO<>("Teacher added successfully", 201), HttpStatus.CREATED);
-        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.TEACHER201), HttpStatus.CREATED);
+        TeacherDTO registeredTeacher = teacherService.addTeacherWithNewAccount(account);
+        return new ResponseEntity<>(registeredTeacher, HttpStatus.CREATED);
     }
 
     @Operation(summary = "View account list", description = "Returns list of account dto")

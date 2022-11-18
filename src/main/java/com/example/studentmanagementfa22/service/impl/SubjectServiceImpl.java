@@ -39,37 +39,27 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public Page<Subject> getAllSubject(int pageNumber){
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
-        Page<Subject> subjectPage = subjectRepository.findAll(pageRequest);
-        return subjectPage;
+        return subjectRepository.findAll(pageRequest);
     }
 
     @Override
     public List<SubjectDTO> getSubjectDTOList(int pageNumber) {
         PageRequest pageRequest = PageRequest.of(pageNumber-1, 5);
         Page<Subject> subjectPage = subjectRepository.findAll(pageRequest);
-        List<SubjectDTO> subjectDTOList = subjectPage.stream().map(subject -> mapper.mapToDTO(subject)).toList();
-        return subjectDTOList;
-    }
-
-    @Override
-    public List<Subject> getSubjectList() {
-        return subjectRepository.findAll();
+        return subjectPage.stream().map(subject -> mapper.mapToDTO(subject)).toList();
     }
 
     @Override
     public Subject getById(int id) {
         Optional<Subject> optionalSubject = subjectRepository.findById(id);
-        if (optionalSubject.isEmpty()){
+        if (optionalSubject.isEmpty())
             throw new NoSuchElementException("Can not find subject with id = " + id);
-        }
-        Subject subject = optionalSubject.get();
-        return subject;
+        return optionalSubject.get();
     }
 
     @Override
     public Subject getByName(String subjectName) {
-        Subject subject = subjectRepository.findBySubjectName(subjectName);
-        return subject;
+        return subjectRepository.findBySubjectName(subjectName);
     }
 
     @Override
@@ -79,16 +69,16 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public void addNewSubject(SubjectDTO subjectDTO) {
+    public SubjectDTO addNewSubject(SubjectDTO subjectDTO) {
         Subject existedSubject = subjectRepository.findBySubjectName(subjectDTO.getSubjectName());
-        if (existedSubject != null){
+        if (existedSubject != null)
             throw new ElementAlreadyExistException("There is already a subject with given name");
-        }
         Subject subject = mapper.mapToEntity(subjectDTO);
         Date today = new Date();
         subject.setCreateDate(today);
         subject.setModifyDate(today);
-        subjectRepository.save(subject);
+        Subject savedSubject = subjectRepository.save(subject);
+        return mapper.mapToDTO(savedSubject);
     }
 
     @Override

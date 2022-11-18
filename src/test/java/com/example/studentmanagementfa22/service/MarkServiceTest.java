@@ -1,21 +1,14 @@
 package com.example.studentmanagementfa22.service;
 
 import com.example.studentmanagementfa22.dto.MarkDTO;
-
+import com.example.studentmanagementfa22.dto.MarkReportDTO;
 import com.example.studentmanagementfa22.dto.MarkTypeDTO;
 import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.MarkRepository;
 import com.example.studentmanagementfa22.repository.MarkTypeRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
-
 import com.example.studentmanagementfa22.service.impl.MarkServiceImpl;
-import com.example.studentmanagementfa22.utility.IGenericMapper;
 import com.example.studentmanagementfa22.utility.MarkMapper;
 import com.example.studentmanagementfa22.utility.MarkTypeMapper;
 import org.junit.jupiter.api.Test;
@@ -27,10 +20,10 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -224,5 +217,30 @@ public class MarkServiceTest {
         return markTypeDTO;
     }
 
+    @Test
+    public void getMarkReportWithNonExistId(){
+        int nonExistClassId = 100;
+        when(classroomRepository.findById(nonExistClassId)).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> markService.getMarkReportByClassId(nonExistClassId));
+        verify(classroomRepository, times(1)).findById(nonExistClassId);
+    }
 
+    @Test
+    public void getMarkReportSuccessfully(){
+        Classroom mockClass = Classroom.builder().id(1).currentNoStudent(30).build();
+        int classId = mockClass.getId();
+        double highest = 9.2;
+        int noGoodStudent = 3;
+        when(classroomRepository.findById(classId)).thenReturn(Optional.of(mockClass));
+        when(markRepository.getHighestScore(classId)).thenReturn(highest);
+        when(markRepository.getNoStudentsInRange(classId, 8, 8.99)).thenReturn(noGoodStudent);
+
+        MarkReportDTO markReportDTO = markService.getMarkReportByClassId(classId);
+
+        assertEquals(mockClass.getCurrentNoStudent(), markReportDTO.getTotal());
+        assertEquals(highest, markReportDTO.getHighest());
+        assertEquals(noGoodStudent, markReportDTO.getGood());
+
+        verify(classroomRepository, times(1)).findById(classId);
+    }
 }

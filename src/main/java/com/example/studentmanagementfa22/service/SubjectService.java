@@ -14,15 +14,13 @@ public interface SubjectService {
 
     List<SubjectDTO> getSubjectDTOList(int pageNumber);
 
-    List<Subject> getSubjectList();
-
     Subject getById(int id);
 
     Subject getByName(String subjectName);
 
     SubjectDTO getSubjectDTOByID(Integer id);
 
-    void addNewSubject(SubjectDTO subjectDTO);
+    SubjectDTO addNewSubject(SubjectDTO subjectDTO);
 
     void deleteSubject(Integer subjectId);
 

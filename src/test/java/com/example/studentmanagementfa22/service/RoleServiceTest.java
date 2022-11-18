@@ -1,48 +1,56 @@
 package com.example.studentmanagementfa22.service;
 
-import com.example.studentmanagementfa22.StudentManagementFa22Application;
 import com.example.studentmanagementfa22.entity.Role;
-import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.RoleRepository;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import com.example.studentmanagementfa22.service.impl.RoleServiceImpl;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-//@DataJpaTest
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes= StudentManagementFa22Application.class)
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 public class RoleServiceTest {
-    @Autowired
+    @Mock
     private RoleRepository roleRepository;
 
-    @Autowired
-    private RoleService roleService;
+    @InjectMocks
+    private RoleServiceImpl roleService;
 
-    @Autowired
-    private AccountRepository accountRepository;
-
+    private Role mockRole(){
+        return Role.builder()
+                .id(1)
+                .roleName("ROLE_STUDENT")
+                .build();
+    }
     @Test
-    public void getAllRoles(){
-        List<Role> roleList = roleRepository.findAll();
-        Assertions.assertNotNull(roleList);
+    public void findRoleById() {
+        Role role = mockRole();
+        int roleId = role.getId();
+        when(roleRepository.findById(roleId)).thenReturn(Optional.of(role));
+
+        Role actualRole = roleService.findRoleById(roleId);
+
+        assertEquals(role.getRoleName(), actualRole.getRoleName());
+        assertEquals(roleId, actualRole.getId());
+
+        verify(roleRepository).findById(roleId);
     }
 
     @Test
-    public void getRoleById(){
-        Optional<Role> optionalRole = roleRepository.findById(3);
-        Role role = optionalRole.get();
-        Assertions.assertNotNull(role);
-    }
+    public void findRoleByNotExistId(){
+        int notExistId = 100;
+        when(roleRepository.findById(notExistId)).thenReturn(Optional.empty());
 
-    @Test
-    public void getRoleById2(){
-        Role role = roleService.findRoleById(3);
-        Assertions.assertNotNull(role);
+        assertThrows(NoSuchElementException.class, () -> roleService.findRoleById(notExistId));
+
+        verify(roleRepository).findById(notExistId);
     }
 }

@@ -15,6 +15,7 @@ public class PagingHelper {
         if (!Pattern.matches("[A-Za-z]+,[A-Za-z]+", sort)){
             throw new IllegalArgumentException("Sort must be in format 'className,direction'. Ex: firstName,ASC");
         }
+
         //split raw input and get criteria
         String criteria = sort.split(",")[0].trim();
 

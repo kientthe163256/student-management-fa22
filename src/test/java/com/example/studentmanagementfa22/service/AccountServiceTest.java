@@ -13,6 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -49,7 +53,7 @@ public class AccountServiceTest {
     private static final String NEW_USERNAME = "HE169999";
     private static final String PASSWORD = "ValidPass1!";
     private Account createMockAccount(){
-        Account mockAccount = Account.builder()
+        return Account.builder()
                 .id(EXIST_ID)
                 .username(EXIST_USERNAME)
                 .password(myEncoder.encode(PASSWORD))
@@ -59,7 +63,13 @@ public class AccountServiceTest {
                 .roleId(3)
                 .dob(new Date())
                 .build();
-        return mockAccount;
+    }
+
+    private Account createDisabledAccount(){
+        return Account.builder()
+                .enabled(false)
+                .disableDate(new Date())
+                .build();
     }
 
     private Account save(AccountDTO accountDTO, Account account){
@@ -152,6 +162,10 @@ public class AccountServiceTest {
         assertThrows(NoSuchElementException.class, () -> {accountService.getAccountDTOById(100);});
     }
 
+    private Role getRoleStudent(){
+        return Role.builder().id(3).roleName(ROLE_STUDENT).build();
+    }
+
     @Test
     public void registerNewAccount() {
         Date dob = new Date(1000*60);
@@ -164,8 +178,8 @@ public class AccountServiceTest {
                 .dob(dob)
                 .build();
 
-        when(accountRepository.findByUsername(NEW_USERNAME)).thenReturn(null);
-        Role role = Role.builder().id(3).roleName(ROLE_STUDENT).build();
+        when(accountRepository.getByUsername(NEW_USERNAME)).thenReturn(null);
+        Role role = getRoleStudent();
         when(roleService.findByRoleName(ROLE_STUDENT)).thenReturn(role);
         when(passwordEncoder.encode(PASSWORD)).thenReturn(myEncoder.encode(PASSWORD));
         when(accountRepository.save(account)).thenReturn(account);
@@ -184,12 +198,57 @@ public class AccountServiceTest {
     @Test
     public void registerAccountWithExistUsername(){
         Account account = Account.builder().username(EXIST_USERNAME).build();
-        when(accountRepository.findByUsername(EXIST_USERNAME)).thenReturn(createMockAccount());
+        when(accountRepository.getByUsername(EXIST_USERNAME)).thenReturn(createMockAccount());
         assertThrows(ElementAlreadyExistException.class, () -> accountService.registerNewAccount(account, ROLE_STUDENT));
 
-        verify(accountRepository, times(1)).findByUsername(EXIST_USERNAME);
+        verify(accountRepository, times(1)).getByUsername(EXIST_USERNAME);
     }
 
+    @Test
+    public void loadByUsername(){
+        Account account = createMockAccount();
+        when(accountRepository.getByUsername(account.getUsername())).thenReturn(account);
+        Role roleStudent = getRoleStudent();
+        when(roleService.findRoleById(account.getRoleId())).thenReturn(roleStudent);
 
+        UserDetails userDetails = accountService.loadUserByUsername(account.getUsername());
 
+        assertEquals(account.getUsername(), userDetails.getUsername());
+        assertEquals(account.getPassword(), userDetails.getPassword());
+        assertTrue(userDetails.getAuthorities().contains(new SimpleGrantedAuthority(roleStudent.getRoleName())));
+        verify(accountRepository, times(1)).getByUsername(account.getUsername());
+    }
+
+    @Test
+    public void loadByUsernameNotExist(){
+        when(accountRepository.getByUsername(NEW_USERNAME)).thenReturn(null);
+        assertThrows(UsernameNotFoundException.class, () -> accountService.loadUserByUsername(NEW_USERNAME));
+        verify(accountRepository, times(1)).getByUsername(NEW_USERNAME);
+    }
+
+    @Test
+    public void loadByUsernameOfDisabledAccount(){
+        Account disabledAccount = createDisabledAccount();
+        when(accountRepository.getByUsername(disabledAccount.getUsername())).thenReturn(disabledAccount);
+        assertThrows(DisabledException.class, () -> accountService.loadUserByUsername(disabledAccount.getUsername()));
+        verify(accountRepository, times(1)).getByUsername(disabledAccount.getUsername());
+    }
+
+    @Test
+    public void findAccountByUsername(){
+        Account account = createMockAccount();
+        when(accountRepository.getByUsername(account.getUsername())).thenReturn(account);
+
+        Account actualAccount = accountService.findAccountByUsername(account.getUsername());
+        assertNotNull(actualAccount);
+        verify(accountRepository, times(1)).getByUsername(account.getUsername());
+    }
+
+    @Test
+    public void findAccountByUsernameNotExist(){
+        when(accountRepository.getByUsername(NEW_USERNAME)).thenReturn(null);
+
+        assertThrows(UsernameNotFoundException.class, () -> accountService.findAccountByUsername(NEW_USERNAME));
+        verify(accountRepository, times(1)).getByUsername(NEW_USERNAME);
+    }
 }

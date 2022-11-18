@@ -50,9 +50,9 @@ public class SubjectController {
     @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content(mediaType = "String"))
     @PostMapping()
     public ResponseEntity<?> addNewSubject(@Valid @RequestBody SubjectDTO subjectDTO){
-        subjectService.addNewSubject(subjectDTO);
+        SubjectDTO addedSubject = subjectService.addNewSubject(subjectDTO);
 //        return new ResponseEntity<>(new ErrorResponseDTO<>("Subject added successfully",201), HttpStatus.CREATED);
-        return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(addedSubject, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Delete subject", description = "Delete subject by id")

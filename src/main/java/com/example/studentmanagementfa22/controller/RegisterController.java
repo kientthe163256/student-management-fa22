@@ -1,5 +1,6 @@
 package com.example.studentmanagementfa22.controller;
 
+import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.StudentService;
@@ -27,8 +28,8 @@ public class RegisterController {
     @PostMapping("/register/student")
     public ResponseEntity<?> registerStudent(@Valid @RequestBody Account account) {
         accountService.registerNewAccount(account, "ROLE_STUDENT");
-        studentService.addStudentWithNewAccount(account);
+        StudentDTO registeredStudent = studentService.addStudentWithNewAccount(account);
 
-        return new ResponseEntity("Account created successfully", HttpStatus.CREATED);
+        return new ResponseEntity(registeredStudent, HttpStatus.CREATED);
     }
 }

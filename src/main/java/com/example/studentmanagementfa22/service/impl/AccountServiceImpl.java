@@ -5,7 +5,6 @@ import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
-import com.example.studentmanagementfa22.exception.customExceptions.InvalidInputException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
@@ -42,18 +41,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        Account optionalAccount = accountRepository.findByUsername(username);
-        if (optionalAccount == null) {
+        Account account = accountRepository.getByUsername(username);
+        if (account == null) {
             throw new UsernameNotFoundException("Username is not found!");
         }
-        Account validAccount = optionalAccount;
-        if (!validAccount.isEnabled()){
+        if (!account.isEnabled()){
             throw new DisabledException("Your account is disabled");
         }
-        UserDetails userDetails = new User(validAccount.getUsername(),
-                validAccount.getPassword(),
-                mapRoleToAuthorities(validAccount.getRoleId()));
-        return userDetails;
+        return new User(account.getUsername(),
+                account.getPassword(),
+                mapRoleToAuthorities(account.getRoleId()));
     }
 
     public Collection<? extends GrantedAuthority> mapRoleToAuthorities(Integer roleId) {
@@ -62,23 +59,23 @@ public class AccountServiceImpl implements AccountService {
         roleList.add(role.getRoleName());
 
         return roleList.stream()
-                .map(roleName -> new SimpleGrantedAuthority(roleName))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
 
     @Override
     public Account findAccountByUsername(String username) {
-        Account optionalAccount = accountRepository.findByUsername(username);
-        if (optionalAccount == null) {
+        Account account = accountRepository.getByUsername(username);
+        if (account == null) {
             throw new UsernameNotFoundException("Username is not found!");
         }
-        return optionalAccount;
+        return account;
     }
 
     @Override
     public AccountDTO registerNewAccount(Account account, String roleName) {
-        Account existAccount = accountRepository.findByUsername(account.getUsername());
+        Account existAccount = accountRepository.getByUsername(account.getUsername());
         if (existAccount != null) {
             throw new ElementAlreadyExistException("There is already an account with that username!");
         }
@@ -111,8 +108,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<AccountDTO> getAccountDTOList(int pageNumber) {
         Page<Account> accountPage = findAllAccount(pageNumber);
-        List<AccountDTO> accountDTOList = accountPage.map(account -> mapper.mapToDTO(account)).stream().toList();
-        return accountDTOList;
+        return accountPage.map(account -> mapper.mapToDTO(account)).stream().toList();
     }
 
     @Override

@@ -16,7 +16,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role findRoleById(int roleId) {
         Optional<Role> optionalRole = roleRepository.findById(roleId);
-        if (!optionalRole.isPresent()){
+        if (optionalRole.isEmpty()){
             throw new NoSuchElementException("There is no role with given id");
         }
         return optionalRole.get();

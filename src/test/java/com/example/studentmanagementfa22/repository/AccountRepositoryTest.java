@@ -21,19 +21,19 @@ public class AccountRepositoryTest {
     @Test
     public void saveAccount(){
 //        accountRepository.save(account);
-        Account optionalAccount = accountRepository.findByUsername("HE163256");
+        Account optionalAccount = accountRepository.getByUsername("HE163256");
         Assertions.assertNotNull(optionalAccount);
     }
 
     @Test
     public void findAccountWithExistUsername(){
-        Account account = accountRepository.findByUsername("HE163256");
+        Account account = accountRepository.getByUsername("HE163256");
         assertThat(account).isNotNull();
     }
 
     @Test
     public void findAccountWithUnknownUsername(){
-        Account account = accountRepository.findByUsername("HE163257");
+        Account account = accountRepository.getByUsername("HE163257");
         assertThat(account).isNull();
     }
 
