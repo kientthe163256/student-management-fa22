@@ -87,11 +87,10 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public boolean checkStudentJoinedClass(Integer studentId, Integer classId) {
+    public void checkStudentJoinedClass(Integer studentId, Integer classId) {
         if(studentRepository.getStudentClassroom(studentId,classId) == 0) {
             throw new IllegalArgumentException("Student does not join this class");
         }
-        return true;
     }
 
     @Override

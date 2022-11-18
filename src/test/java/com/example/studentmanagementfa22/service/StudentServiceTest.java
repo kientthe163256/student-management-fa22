@@ -59,8 +59,7 @@ public class StudentServiceTest {
         Classroom mockClassroom = Classroom.builder().id(2).build();
         Student mockStudent = Student.builder().id(9).build();
         when(studentRepository.getStudentClassroom(mockStudent.getId(),mockClassroom.getId())).thenReturn(1);
-        boolean check = studentService.checkStudentJoinedClass(mockStudent.getId(), mockClassroom.getId());
-        assertTrue(check, "Student joined class");
+        studentService.checkStudentJoinedClass(mockStudent.getId(), mockClassroom.getId());
         verify(studentRepository, times(1)).getStudentClassroom(9,2);
     }
 

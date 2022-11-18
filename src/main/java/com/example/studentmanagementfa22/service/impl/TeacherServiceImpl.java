@@ -116,10 +116,6 @@ public class TeacherServiceImpl implements TeacherService {
         if(student.isEmpty()) {
             throw new NoSuchElementException("Student ID not exists");
         }
-        Optional<Classroom> classroom = classroomRepository.findById(classId);
-        if (classroom.isEmpty()){
-            throw new NoSuchElementException("Classroom not exist");
-        }
         Teacher teacher = getTeacherByAccountId(teacherAccountId);
 
         studentService.checkStudentJoinedClass(student.get().getId(), classId);

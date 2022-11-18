@@ -98,8 +98,11 @@ public class MarkServiceImpl implements MarkService {
 
     @Override
     public List<MarkDTO> getMarksByClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentId) {
-        teacherService.checkTeacherClassroomStudent(teacherAccountId, classId, studentId);
         Optional<Classroom> classroom = classroomRepository.findById(classId);
+        if(classroom.isEmpty()) {
+            throw new NoSuchElementException("Class not found");
+        }
+        teacherService.checkTeacherClassroomStudent(teacherAccountId, classId, studentId);
         List<Mark> markList = markRepository.getMarkbySubject( studentId, classroom.get().getSubject().getId());
         List<MarkDTO> markDTOList = markList.stream().map(mark ->markMapper.mapToDTO(mark)).collect(Collectors.toList());
         return markDTOList;

@@ -3,14 +3,12 @@ package com.example.studentmanagementfa22.service;
 import com.example.studentmanagementfa22.dto.AccountDTO;
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.TeacherDTO;
-import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.entity.Classroom;
-import com.example.studentmanagementfa22.entity.Pagination;
-import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
+import com.example.studentmanagementfa22.service.impl.StudentServiceImpl;
 import com.example.studentmanagementfa22.service.impl.TeacherServiceImpl;
 import com.example.studentmanagementfa22.utility.TeacherMapper;
 import org.junit.jupiter.api.Test;
@@ -18,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TeacherServiceTest {
     @Mock
     private TeacherRepository teacherRepository;
@@ -40,6 +41,12 @@ public class TeacherServiceTest {
     private StudentRepository studentRepository;
     @Mock
     private TeacherMapper teacherMapper;
+
+    @Mock
+    private StudentServiceImpl studentService;
+
+    @Mock
+    private  TeacherServiceImpl mockTeacherService;
 
     @InjectMocks
     private TeacherServiceImpl teacherService;
@@ -188,5 +195,22 @@ public class TeacherServiceTest {
         int nonExistId = 100;
         assertThrows(NoSuchElementException.class, () -> teacherService.deleteTeacher(nonExistId));
         verify(teacherRepository).findById(nonExistId);
+    }
+
+    @Test
+    public void checkTeacherClassroomStudent() {
+        Account account = Account.builder().id(2).roleId(2).build();
+        Teacher teacher = Teacher.builder().id(1).account(account).build();
+        Student student = Student.builder().id(4).build();
+        when(studentRepository.findById(4)).thenReturn(Optional.of(student));
+        when(teacherRepository.findTeacherByAccountId(2)).thenReturn(Optional.of(teacher));
+        when(teacherRepository.findTeacherByClassroomId(1)).thenReturn(Optional.of(teacher));
+        when(mockTeacherService.getTeacherByAccountId(teacher.getAccount().getId())).thenReturn(teacher);
+        doNothing().when(studentService).checkStudentTeacher(4, 1);
+        doNothing().when(studentService).checkStudentJoinedClass(4,1);
+        doNothing().when(mockTeacherService).checkTeacherAssignedClass(1,1);
+        teacherService.checkTeacherClassroomStudent(2,1,4);
+        verify(studentService).checkStudentTeacher(4,1);
+        verify(studentService).checkStudentJoinedClass(4,1);
     }
 }
