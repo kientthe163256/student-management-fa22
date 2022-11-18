@@ -7,7 +7,7 @@ import com.example.studentmanagementfa22.entity.Student;
 import java.util.List;
 
 public interface StudentService {
-    void addStudentWithNewAccount(Account account);
+    StudentDTO addStudentWithNewAccount(Account account);
 
     List<StudentDTO> getStudentsByClassroomandTeacher(Integer classID, Integer accountID, int pageNumber, int pageSize, String sort);
 

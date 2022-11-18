@@ -43,19 +43,15 @@ public class TeacherServiceImpl implements TeacherService {
 
 
     @Override
-    public void addTeacherWithNewAccount(Account account) {
+    public TeacherDTO addTeacherWithNewAccount(Account account) {
         Date today = new Date();
         Teacher teacher = Teacher.builder()
                 .account(account)
                 .createDate(today)
                 .modifyDate(today)
                 .build();
-        teacherRepository.save(teacher);
-    }
-
-    @Override
-    public List<Teacher> findAllTeachers() {
-        return teacherRepository.findAll();
+        Teacher savedTeacher = teacherRepository.save(teacher);
+        return mapper.mapToDTO(savedTeacher);
     }
 
     @Override

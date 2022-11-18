@@ -10,6 +10,7 @@ import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.StudentServiceImpl;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
+import com.example.studentmanagementfa22.utility.StudentMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class StudentServiceTest {
 
     @Mock
-    private IGenericMapper<Account, StudentDTO> mapper;
+    private StudentMapper mapper;
     @Mock
     private StudentRepository studentRepository;
 
@@ -105,5 +106,47 @@ public class StudentServiceTest {
         Student testStudent = studentService.getStudentByAccountId(1);
 
         assertEquals(testStudent.getAccount().getId(), mockAccount.getId());
+    }
+
+    private Account createMockAccount(){
+        return Account.builder()
+                .username("HE163256")
+                .firstName("Trung")
+                .lastName("Kien")
+                .build();
+    }
+
+    private Student createMockStudent(){
+        Account account = createMockAccount();
+        Date today = new Date();
+        return Student.builder()
+                .id(1)
+                .academicSession(16)
+                .account(account)
+                .createDate(today)
+                .modifyDate(today)
+                .build();
+    }
+
+    private StudentDTO mapToStudentDTO(Student student){
+        StudentDTO studentDTO = new StudentDTO();
+        studentDTO.setId(student.getId());
+        studentDTO.setAcademicSession(student.getAcademicSession());
+        return studentDTO;
+    }
+
+    @Test
+    public void addStudentWithNewAccount(){
+        Account account = createMockAccount();
+        Student student = createMockStudent();
+
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
+        when(mapper.mapToDTO(student)).thenReturn(mapToStudentDTO(student));
+
+        StudentDTO actualStudent = studentService.addStudentWithNewAccount(account);
+        assertEquals(student.getId(), actualStudent.getId());
+        assertEquals(student.getAcademicSession(), actualStudent.getAcademicSession());
+
+        verify(studentRepository).save(any(Student.class));
     }
 }

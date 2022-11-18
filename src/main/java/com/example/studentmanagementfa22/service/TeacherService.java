@@ -8,9 +8,7 @@ import com.example.studentmanagementfa22.entity.Teacher;
 import java.util.List;
 
 public interface TeacherService {
-    void addTeacherWithNewAccount(Account account);
-
-    List<Teacher> findAllTeachers();
+    TeacherDTO addTeacherWithNewAccount(Account account);
 
     Teacher getById(int id);
 

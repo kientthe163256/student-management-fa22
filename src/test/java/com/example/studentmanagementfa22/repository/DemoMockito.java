@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22;
+package com.example.studentmanagementfa22.repository;
 
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.repository.AccountRepository;
@@ -32,7 +32,7 @@ public class DemoMockito {
                 .build();
 
         // 2. define behavior of Repository
-        when(accountRepository.findByUsername("HE163256")).thenReturn(mockAccount);
+        when(accountRepository.getByUsername("HE163256")).thenReturn(mockAccount);
 
         // 3. call service method
         Account actualAccount = accountService.findAccountByUsername("HE163256");
@@ -41,6 +41,6 @@ public class DemoMockito {
         assertThat(actualAccount).isEqualTo(mockAccount);
 
         // 4.1 ensure repository is called
-        verify(accountRepository).findByUsername("HE163256");
+        verify(accountRepository).getByUsername("HE163256");
     }
 }

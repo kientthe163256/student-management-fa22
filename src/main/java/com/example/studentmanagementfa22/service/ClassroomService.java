@@ -9,11 +9,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface ClassroomService {
-    void addNewClassroom(Classroom classroom) throws ElementAlreadyExistException;
-
-    boolean classroomExisted(String classroomName);
-
-    List<ClassroomDTO> getAllClassrooms();
+    ClassroomDTO addNewClassroom(Classroom classroom);
 
     Pagination<ClassroomDTO> getAllTeachingClassrooms(int accountID, int pageNumber, int pageSize, String sort);
 
@@ -28,8 +24,6 @@ public interface ClassroomService {
     ClassroomDTO assignClassroom(Integer teacherId, Integer classId);
 
     Classroom getById(Integer classId);
-
-    List<Classroom> getBySubjectId(Integer subjectId);
 
     ClassroomDTO updateClassroom(Classroom classroom, Integer classId);
 

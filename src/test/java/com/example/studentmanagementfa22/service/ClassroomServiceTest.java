@@ -4,10 +4,12 @@ import com.example.studentmanagementfa22.dto.ClassroomDTO;
 
 import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
+import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
+import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.ClassroomServiceImpl;
-import com.example.studentmanagementfa22.utility.IGenericMapper;
+import com.example.studentmanagementfa22.utility.ClassroomMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +19,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -44,7 +47,7 @@ public class ClassroomServiceTest {
     @Mock
     private  MarkService markService;
     @Mock
-    private IGenericMapper<Classroom, ClassroomDTO> classroomMapper;
+    private ClassroomMapper classroomMapper;
 
     @InjectMocks
     private ClassroomServiceImpl classroomService;
@@ -172,14 +175,9 @@ public class ClassroomServiceTest {
     public void assignClassroomWithNotExistClassId() {
         Integer classId = 100;
         Integer teacherId = 1;
-        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+        assertThrows(NoSuchElementException.class, () -> {
             classroomService.assignClassroom(teacherId, classId);
         });
-
-        String expectedMessage = "Class not found";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
@@ -197,17 +195,23 @@ public class ClassroomServiceTest {
 
         when(teacherService.getById(teacherId)).thenReturn(mockTeacher);
         doReturn(optionalClassroom).when(classroomRepository).findById(classId);
-        doAnswer((Answer<Integer>) invocation -> {
+        doAnswer((Answer<Classroom>) invocation -> {
             mockClassroom.setTeacher(mockTeacher);
-            return 1;
+            return mockClassroom;
         }).when(classroomRepository).save(mockClassroom);
+        when(classroomMapper.mapToDTO(mockClassroom)).thenReturn(mapToClassroomDTO(mockClassroom));
 
         ClassroomDTO savedClass = classroomService.assignClassroom(teacherId, classId);
 
-        assertEquals(savedClass.getTeacher().getId(), teacherId);
+        assertEquals(teacherId, mockClassroom.getTeacher().getId());
 
         verify(classroomRepository, times(1)).save(mockClassroom);
         verify(classroomRepository, times(1)).findById(classId);
+    }
+
+    private Classroom saveClassroom(Classroom currentClass, Classroom savingClass){
+        currentClass.setClassroomName(savingClass.getClassroomName());
+        return currentClass;
     }
 
     @Test
@@ -222,30 +226,25 @@ public class ClassroomServiceTest {
                 .id(classId)
                 .classroomName(newClassName)
                 .build();
-        ClassroomDTO editedClassroomDTO = ClassroomDTO.builder()
-                .id(classId)
-                .classroomName(newClassName)
-                .build();
 
-        doReturn(Optional.of(mockClassroom)).when(classroomRepository).findById(classId);
-
-        doAnswer((Answer<Void>) invocation -> {
-            mockClassroom.setClassroomName(newClassName);
-            return null;
-        }).when(classroomRepository).save(mockClassroom);
-
-        doAnswer((Answer<ClassroomDTO>) invocation -> {
-            ClassroomDTO classroomDTO = ClassroomDTO.builder()
-                    .id(mockClassroom.getId())
-                    .classroomName(mockClassroom.getClassroomName())
-                    .build();
-            return classroomDTO;
-        }).when(classroomMapper).mapToDTO(mockClassroom);
+        when(classroomRepository.findById(classId)).thenReturn(Optional.of(mockClassroom));
+        when(classroomRepository.save(mockClassroom)).thenReturn(saveClassroom(mockClassroom, editClass));
+       when(classroomMapper.mapToDTO(mockClassroom)).thenReturn(mapToClassroomDTO(mockClassroom));
 
         ClassroomDTO actualClass = classroomService.updateClassroom(editClass, classId);
-        assertEquals(actualClass.getClassroomName(), editedClassroomDTO.getClassroomName());
+        assertEquals(editClass.getClassroomName(), actualClass.getClassroomName());
 
         verify(classroomRepository).save(mockClassroom);
+    }
+
+    private ClassroomDTO mapToClassroomDTO(Classroom classroom){
+        return ClassroomDTO.builder()
+                .id(classroom.getId())
+                .classroomName(classroom.getClassroomName())
+                .noStudent(classroom.getNoStudent())
+                .createDate(classroom.getCreateDate())
+                .classType(classroom.getClassType())
+                .build();
     }
 
     @Test
@@ -258,10 +257,68 @@ public class ClassroomServiceTest {
                 .build();
 
         when(classroomRepository.findById(classId)).thenReturn(Optional.of(mockClassroom));
-        Exception exception = assertThrows(ActionNotAllowedException.class, () -> {
+        assertThrows(ActionNotAllowedException.class, () -> {
             classroomService.deleteClassroom(classId);
         });
 
         verify(classroomRepository).findById(classId);
+    }
+
+    private Classroom createMockClassroom(){
+        Teacher teacher = Teacher.builder()
+                .id(1)
+                .build();
+        return Classroom.builder()
+                .id(5)
+                .classroomName("SE1615")
+                .noStudent(30)
+                .classType(ClassType.SESSION)
+                .teacher(teacher)
+                .build();
+    }
+
+    @Test
+    public void addNewClassroomWithExistName(){
+        Classroom classroom = createMockClassroom();
+        when(classroomRepository.findByClassroomName(classroom.getClassroomName())).thenReturn(classroom);
+        assertThrows(ElementAlreadyExistException.class, () -> classroomService.addNewClassroom(classroom));
+        verify(classroomRepository, times(1)).findByClassroomName(classroom.getClassroomName());
+    }
+
+    @Test
+    public void addNewClassroomSuccessfully(){
+        Classroom classroom = createMockClassroom();
+        when(classroomRepository.findByClassroomName(classroom.getClassroomName())).thenReturn(null).thenReturn(classroom);
+        when(classroomMapper.mapToDTO(classroom)).thenReturn(mapToClassroomDTO(classroom));
+
+        ClassroomDTO addedClass = classroomService.addNewClassroom(classroom);
+        assertNotNull(addedClass);
+        verify(classroomRepository, times(2)).findByClassroomName(classroom.getClassroomName());
+    }
+
+    @Test
+    public void getAllClassroomsPaging(){
+        int pageNumber = 1;
+        int pageSize = 5;
+        String rawSort = "classroomName,desc";
+        Sort sort = Sort.by("classroomName").descending();
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize, sort);
+        Classroom classroom = createMockClassroom();
+        Page<Classroom> classroomPage = new PageImpl<>(List.of(classroom));
+        when(classroomRepository.findAll(pageRequest)).thenReturn(classroomPage);
+        when(classroomMapper.mapToDTO(classroom)).thenReturn(mapToClassroomDTO(classroom));
+        Pagination<ClassroomDTO> pagination = classroomService.getAllClassroomsPaging(pageNumber, pageSize, rawSort);
+
+        assertEquals(classroom.getClassroomName(), pagination.getData().get(0).getClassroomName());
+        verify(classroomRepository).findAll(pageRequest);
+    }
+
+    @Test
+    public void getAllClassroomsPagingWithInvalidSortField(){
+        int pageNumber = 1;
+        int pageSize = 5;
+        String rawSort = "classroomAlias,desc";
+
+        assertThrows(InvalidSortFieldException.class, () -> classroomService.getAllClassroomsPaging(pageNumber, pageSize, rawSort));
     }
 }

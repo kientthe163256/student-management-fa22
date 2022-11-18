@@ -35,7 +35,7 @@ public class StudentServiceImpl implements StudentService {
     private StudentMapper mapper;
 
     @Override
-    public void addStudentWithNewAccount(Account account) {
+    public StudentDTO addStudentWithNewAccount(Account account) {
         Date today = new Date();
         //Add a new student with registered account
         Student student = Student.builder()
@@ -44,7 +44,8 @@ public class StudentServiceImpl implements StudentService {
                 .createDate(today)
                 .modifyDate(today)
                 .build();
-        studentRepository.save(student);
+        Student savedStudent = studentRepository.save(student);
+        return mapper.mapToDTO(savedStudent);
     }
     private static final List<String> CRITERIA =  Arrays.asList("first_name", "last_name", "account_id", "dob", "username", "academicSession");
     @Override
