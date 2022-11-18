@@ -24,10 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -147,7 +144,7 @@ public class ClassroomServiceTest {
         int pageNumber = 1;
         int pageSize = 5;
         String rawSort = "classroomName,desc";
-        Sort sort = Sort.by("classroomName").descending();
+        Sort sort = Sort.by("classroom_name").descending();
         PageRequest pageRequest = PageRequest.of(0, pageSize, sort);
         Page<Classroom> classroomPage = new PageImpl<>(List.of(classroom));
 
@@ -268,6 +265,30 @@ public class ClassroomServiceTest {
         verify(classroomRepository).findById(classId);
     }
 
+    private Classroom deleteClassroom(Classroom classroom){
+        classroom.setDeleted(true);
+        classroom.setDeleteDate(new Date());
+        return classroom;
+    }
+
+    @Test
+    public void deleteClassroomSuccessfully(){
+        Integer classId = 5;
+        Classroom mockClassroom = Classroom.builder()
+                .id(classId)
+                .classroomName("mock class")
+                .currentNoStudent(0)
+                .build();
+
+        when(classroomRepository.findById(classId)).thenReturn(Optional.of(mockClassroom));
+        when(classroomRepository.save(mockClassroom)).thenReturn(deleteClassroom(mockClassroom));
+        classroomService.deleteClassroom(classId);
+
+        assertTrue(mockClassroom.isDeleted());
+
+        verify(classroomRepository).findById(classId);
+    }
+
     private Classroom createMockClassroom(){
         Teacher teacher = Teacher.builder()
                 .id(1)
@@ -290,8 +311,23 @@ public class ClassroomServiceTest {
     }
 
     @Test
-    public void addNewClassroomSuccessfully(){
+    public void addNewSessionClassroom(){
         Classroom classroom = createMockClassroom();
+        when(classroomRepository.findByClassroomName(classroom.getClassroomName())).thenReturn(null).thenReturn(classroom);
+        when(classroomMapper.mapToDTO(classroom)).thenReturn(mapToClassroomDTO(classroom));
+
+        ClassroomDTO addedClass = classroomService.addNewClassroom(classroom);
+        assertNotNull(addedClass);
+        verify(classroomRepository, times(2)).findByClassroomName(classroom.getClassroomName());
+    }
+
+    @Test
+    public void addNewSubjectClassroom(){
+        Classroom classroom = createMockClassroom();
+        classroom.setClassType(ClassType.SUBJECT);
+        Subject subject = Subject.builder().id(1).build();
+        classroom.setSubject(subject);
+
         when(classroomRepository.findByClassroomName(classroom.getClassroomName())).thenReturn(null).thenReturn(classroom);
         when(classroomMapper.mapToDTO(classroom)).thenReturn(mapToClassroomDTO(classroom));
 

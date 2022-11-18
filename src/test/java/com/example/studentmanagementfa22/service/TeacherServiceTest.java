@@ -8,6 +8,7 @@ import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
+import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.TeacherServiceImpl;
@@ -152,6 +153,15 @@ public class TeacherServiceTest {
 
         assertEquals(teacher.getAccount().getFirstName(), pagination.getData().get(0).getAccount().getFirstName());
         verify(teacherRepository).findAll(pageRequest);
+    }
+
+    @Test
+    public void getAllTeacherPagingInvalidSortField(){
+        int pageNumber = 1;
+        int pageSize = 5;
+        String rawSort = "notExistField,desc";
+
+        assertThrows(InvalidSortFieldException.class, () -> teacherService.getAllTeacherPaging(pageNumber, pageSize, rawSort));
     }
 
     private Teacher deleteTeacher(Teacher teacher){

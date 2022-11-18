@@ -53,4 +53,14 @@ public class RoleServiceTest {
 
         verify(roleRepository).findById(notExistId);
     }
+
+    @Test
+    public void findByRoleName(){
+        String roleName = "ROLE_STUDENT";
+        when(roleRepository.findByRoleName(roleName)).thenReturn(mockRole());
+
+        Role actualRole = roleService.findByRoleName(roleName);
+        assertEquals(roleName, actualRole.getRoleName());
+        verify(roleRepository).findByRoleName(roleName);
+    }
 }
