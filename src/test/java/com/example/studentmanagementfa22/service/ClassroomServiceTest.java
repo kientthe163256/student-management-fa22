@@ -147,19 +147,18 @@ public class ClassroomServiceTest {
         int pageNumber = 1;
         int pageSize = 5;
         String rawSort = "classroomName,desc";
-        Sort sort = Sort.by("classroomName").descending();
+        Sort sort = Sort.by("classroom_name").descending();
         PageRequest pageRequest = PageRequest.of(0, pageSize, sort);
         Page<Classroom> classroomPage = new PageImpl<>(List.of(classroom));
 
         when(teacherRepository.findTeacherByAccountId(mockTeacher.getAccount().getId())).thenReturn(Optional.of(mockTeacher));
         when(classroomRepository.findClassroomsByTeacherId(mockTeacher.getId(), pageRequest)).thenReturn(classroomPage);
-        Page<Classroom> classroomPage2 = classroomRepository.findClassroomsByTeacherId(mockTeacher.getId(), pageRequest);
         when(classroomMapper.mapToDTO(classroom)).thenReturn(mapToClassroomDTO(classroom));
         Pagination<ClassroomDTO> pagination = classroomService.getAllTeachingClassrooms(mockAccount.getId(), 1, pageSize, rawSort);
 
         //assert the result
         assertEquals(classroom.getClassroomName(), pagination.getData().get(0).getClassroomName());
-        verify(classroomRepository).findClassroomsByTeacherId(mockTeacher.getId(), pageRequest);
+        verify(classroomRepository, times(1)).findClassroomsByTeacherId(mockTeacher.getId(), pageRequest);
     }
 
     @Test
