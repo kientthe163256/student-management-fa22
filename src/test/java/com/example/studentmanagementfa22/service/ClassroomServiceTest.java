@@ -54,7 +54,18 @@ public class ClassroomServiceTest {
 
     @Test
     public void getAllRegisteredClass() {
-        Page<ClassroomDTO> classroomDTO = classroomService.getAllRegisteredClass(2, 1);
+        Classroom mockClassroom = Classroom.builder().id(5).classroomName("mock class").currentNoStudent(10).build();
+        ClassroomDTO mockClassroomDTO = ClassroomDTO.builder().id(5).classroomName("mock class").currentNoStudent(10).build();
+        Student mockStudent = Student.builder().id(6).build();
+        int pageNumber = 1;
+        PageRequest pageRequest = PageRequest.of( 1, 5);
+        List<Classroom> classroomList = new ArrayList<>();
+        classroomList.add(mockClassroom);
+        Page<Classroom> mockPageClassroom = new PageImpl<>(classroomList);
+        when(classroomRepository.findAllRegisteredClass(pageRequest, mockStudent.getId())).thenReturn(mockPageClassroom);
+        when(classroomMapper.mapToDTO(mockClassroom)).thenReturn(mockClassroomDTO);
+        //     doReturn(1).when(mockPageClassroom.getTotalPages());
+        List<ClassroomDTO> classroomDTO = classroomService.getAllRegisteredClass(pageRequest.getPageNumber(), mockStudent.getId());
         Assert.notNull(classroomDTO);
     }
     @Test

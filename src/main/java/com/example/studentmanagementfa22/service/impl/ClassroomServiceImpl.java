@@ -107,10 +107,18 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public Page<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId) {
+    public List<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId) {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllRegisteredClass(pageRequest, studentId);
-        return classroomPage.map(classroom -> classroomMapper.mapToDTO(classroom));
+        if (classroomPage.getTotalPages() < pageNumber) {
+            throw new IllegalArgumentException ("The last page is "+classroomPage.getTotalPages());
+        }
+        if (pageNumber <= 0) {
+            throw new IllegalArgumentException("Invalid page number");
+        }
+        Page<ClassroomDTO> classroomDTOPage = classroomPage.map(classroom -> classroomMapper.mapToDTO(classroom));
+        List<ClassroomDTO> classroomDTOList = classroomDTOPage.getContent();
+        return classroomDTOList ;
     }
 
     @Override
