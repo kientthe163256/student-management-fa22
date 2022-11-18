@@ -100,14 +100,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Page<Account> findAllAccount(int pageNumber) {
-        PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
-        return accountRepository.findAll(pageRequest);
-    }
-
-    @Override
     public List<AccountDTO> getAccountDTOList(int pageNumber) {
-        Page<Account> accountPage = findAllAccount(pageNumber);
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
+        Page<Account> accountPage = accountRepository.findAll(pageRequest);
         return accountPage.map(account -> mapper.mapToDTO(account)).stream().toList();
     }
 

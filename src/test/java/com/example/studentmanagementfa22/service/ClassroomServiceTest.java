@@ -360,4 +360,15 @@ public class ClassroomServiceTest {
 
         assertThrows(InvalidSortFieldException.class, () -> classroomService.getAllClassroomsPaging(pageNumber, pageSize, rawSort));
     }
+
+    @Test
+    public void getClassDTOById(){
+        Classroom classroom = createMockClassroom();
+        when(classroomRepository.findById(classroom.getId())).thenReturn(Optional.of(classroom));
+        when(classroomMapper.mapToDTO(classroom)).thenReturn(mapToClassroomDTO(classroom));
+
+        ClassroomDTO classroomDTO = classroomService.getClassDTOById(classroom.getId());
+
+        assertEquals(classroom.getClassroomName(), classroomDTO.getClassroomName());
+    }
 }

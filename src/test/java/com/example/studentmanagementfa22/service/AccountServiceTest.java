@@ -13,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -52,7 +56,8 @@ public class AccountServiceTest {
     private static final String ROLE_STUDENT = "ROLE_STUDENT";
     private static final String NEW_USERNAME = "HE169999";
     private static final String PASSWORD = "ValidPass1!";
-    private Account createMockAccount(){
+
+    private Account createMockAccount() {
         return Account.builder()
                 .id(EXIST_ID)
                 .username(EXIST_USERNAME)
@@ -65,21 +70,21 @@ public class AccountServiceTest {
                 .build();
     }
 
-    private Account createDisabledAccount(){
+    private Account createDisabledAccount() {
         return Account.builder()
                 .enabled(false)
                 .disableDate(new Date())
                 .build();
     }
 
-    private Account save(AccountDTO accountDTO, Account account){
+    private Account save(AccountDTO accountDTO, Account account) {
         account.setFirstName(accountDTO.getFirstName());
         account.setLastName(accountDTO.getLastName());
         account.setDob(accountDTO.getDob());
         return account;
     }
 
-    private AccountDTO mapToAccountDTO(Account account){
+    private AccountDTO mapToAccountDTO(Account account) {
         return AccountDTO.builder()
                 .id(account.getId())
                 .username(account.getUsername())
@@ -91,7 +96,7 @@ public class AccountServiceTest {
 
     @Test
     public void whenUpdateValidAccountThenSuccess() {
-        Date editedDob = new Date(1000*60);
+        Date editedDob = new Date(1000 * 60);
         String editedFirstName = "Minh";
         String editedLastName = "Duc";
 
@@ -117,7 +122,7 @@ public class AccountServiceTest {
 
 
     @Test
-    public void disableAccount(){
+    public void disableAccount() {
         Account account = createMockAccount();
         when(accountRepository.findById(EXIST_ID)).thenReturn(Optional.of(account));
         Date disableDate = new Date();
@@ -159,16 +164,18 @@ public class AccountServiceTest {
         Optional<Account> optionalAccount = Optional.empty();
         when(accountRepository.findById(100)).thenReturn(optionalAccount);
 
-        assertThrows(NoSuchElementException.class, () -> {accountService.getAccountDTOById(100);});
+        assertThrows(NoSuchElementException.class, () -> {
+            accountService.getAccountDTOById(100);
+        });
     }
 
-    private Role getRoleStudent(){
+    private Role getRoleStudent() {
         return Role.builder().id(3).roleName(ROLE_STUDENT).build();
     }
 
     @Test
     public void registerNewAccount() {
-        Date dob = new Date(1000*60);
+        Date dob = new Date(1000 * 60);
         Date today = new Date();
         Account account = Account.builder()
                 .username(NEW_USERNAME)
@@ -196,7 +203,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void registerAccountWithExistUsername(){
+    public void registerAccountWithExistUsername() {
         Account account = Account.builder().username(EXIST_USERNAME).build();
         when(accountRepository.getByUsername(EXIST_USERNAME)).thenReturn(createMockAccount());
         assertThrows(ElementAlreadyExistException.class, () -> accountService.registerNewAccount(account, ROLE_STUDENT));
@@ -205,7 +212,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void loadByUsername(){
+    public void loadByUsername() {
         Account account = createMockAccount();
         when(accountRepository.getByUsername(account.getUsername())).thenReturn(account);
         Role roleStudent = getRoleStudent();
@@ -220,14 +227,14 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void loadByUsernameNotExist(){
+    public void loadByUsernameNotExist() {
         when(accountRepository.getByUsername(NEW_USERNAME)).thenReturn(null);
         assertThrows(UsernameNotFoundException.class, () -> accountService.loadUserByUsername(NEW_USERNAME));
         verify(accountRepository, times(1)).getByUsername(NEW_USERNAME);
     }
 
     @Test
-    public void loadByUsernameOfDisabledAccount(){
+    public void loadByUsernameOfDisabledAccount() {
         Account disabledAccount = createDisabledAccount();
         when(accountRepository.getByUsername(disabledAccount.getUsername())).thenReturn(disabledAccount);
         assertThrows(DisabledException.class, () -> accountService.loadUserByUsername(disabledAccount.getUsername()));
@@ -235,7 +242,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void findAccountByUsername(){
+    public void findAccountByUsername() {
         Account account = createMockAccount();
         when(accountRepository.getByUsername(account.getUsername())).thenReturn(account);
 
@@ -245,10 +252,25 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void findAccountByUsernameNotExist(){
+    public void findAccountByUsernameNotExist() {
         when(accountRepository.getByUsername(NEW_USERNAME)).thenReturn(null);
 
         assertThrows(UsernameNotFoundException.class, () -> accountService.findAccountByUsername(NEW_USERNAME));
         verify(accountRepository, times(1)).getByUsername(NEW_USERNAME);
+    }
+
+    @Test
+    public void getAccountDTOList() {
+        int pageNumber = 1;
+        Account account = createMockAccount();
+        List<Account> accountList = List.of(account);
+        Page<Account> accountPage = new PageImpl<>(accountList);
+
+        when(accountRepository.findAll(any(Pageable.class))).thenReturn(accountPage);
+        when(mapper.mapToDTO(account)).thenReturn(mapToAccountDTO(account));
+
+        List<AccountDTO> accountDTOS = accountService.getAccountDTOList(pageNumber);
+        assertEquals(account.getFirstName(), accountDTOS.get(0).getFirstName());
+        verify(accountRepository, times(1)).findAll(any(Pageable.class));
     }
 }

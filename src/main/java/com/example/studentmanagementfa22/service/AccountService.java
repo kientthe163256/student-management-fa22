@@ -23,8 +23,6 @@ public interface AccountService extends UserDetailsService {
 
     Account getById(int id);
 
-    Page<Account> findAllAccount(int pageNumber);
-
     List<AccountDTO> getAccountDTOList(int pageNumber);
 
     AccountDTO getAccountDTOById(int accountId);
