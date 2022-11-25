@@ -13,7 +13,7 @@ public class TranslationService {
     private static ResourceBundleMessageSource messageSource;
 
     public TranslationService(@Qualifier("Messages") ResourceBundleMessageSource messageSource){
-        this.messageSource = messageSource;
+        TranslationService.messageSource = messageSource;
     }
 
     public static String toLocale(String code){

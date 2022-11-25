@@ -139,7 +139,7 @@ public class AccountServiceImpl implements AccountService {
     public void disableAccount(Integer accountId) {
         Account account = getById(accountId);
         account.setEnabled(false);
-        account.setDeleteDate(new Date());
+        account.setDisableDate(new Date());
         accountRepository.save(account);
     }
 }

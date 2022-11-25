@@ -5,7 +5,8 @@ participant MarkManageController
 participant HttpSession
 participant TeacherService
 participant MarkService
-participant MarkRepository
+participant StudentReportService
+participant StudentReportRepository
 database MySQL
 
 autonumber 1.0
@@ -27,14 +28,14 @@ alt Teacher is not assigned that classroom
 else Teacher is assigned that classroom
     MarkManageController -> MarkService: get mark report
     activate MarkService
-    MarkService -> MarkRepository: get data
-    activate MarkRepository
-    MarkRepository -> MySQL: select
+    MarkService -> StudentReportRepository: get data
+    activate StudentReportRepository
+    StudentReportRepository -> MySQL: select
     activate MySQL
-    MySQL --> MarkRepository: return response
+    MySQL --> StudentReportRepository: return response
     deactivate MySQL
-    MarkRepository --> MarkService: return data
-    deactivate MarkRepository
+    StudentReportRepository --> MarkService: return student report list
+    deactivate StudentReportRepository
     MarkService --> MarkManageController: return mark report dto
     deactivate MarkService
     MarkManageController --> Teacher: return mark report dto

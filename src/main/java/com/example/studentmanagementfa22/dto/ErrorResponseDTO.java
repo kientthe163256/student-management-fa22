@@ -14,15 +14,20 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 public class ErrorResponseDTO {
-    private List<String> messages;
+    private String message;
     private String errorCode;
 
-    public ErrorResponseDTO(String errorCode) {
-        this.errorCode = errorCode;
-        String translatedMessage = TranslationService.toLocale(errorCode);
-        messages = new ArrayList<>();
-        messages.add(translatedMessage);
+    public ErrorResponseDTO(String... errorCodes) {
+        StringBuilder codeBuilder = new StringBuilder();
+        StringBuilder messageBuilder = new StringBuilder();
+        String space = " ";
+
+        for (String code : errorCodes){
+            codeBuilder.append(code).append(space);
+            messageBuilder.append(TranslationService.toLocale(code)).append(space);
+        }
+        this.errorCode = codeBuilder.toString().strip();
+        this.message = messageBuilder.toString().strip();
     }
 }

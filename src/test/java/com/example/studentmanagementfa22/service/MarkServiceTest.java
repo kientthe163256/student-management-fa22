@@ -4,10 +4,7 @@ import com.example.studentmanagementfa22.dto.MarkDTO;
 import com.example.studentmanagementfa22.dto.MarkReportDTO;
 import com.example.studentmanagementfa22.dto.MarkTypeDTO;
 import com.example.studentmanagementfa22.entity.*;
-import com.example.studentmanagementfa22.repository.ClassroomRepository;
-import com.example.studentmanagementfa22.repository.MarkRepository;
-import com.example.studentmanagementfa22.repository.MarkTypeRepository;
-import com.example.studentmanagementfa22.repository.StudentRepository;
+import com.example.studentmanagementfa22.repository.*;
 import com.example.studentmanagementfa22.service.impl.MarkServiceImpl;
 import com.example.studentmanagementfa22.utility.MarkMapper;
 import com.example.studentmanagementfa22.utility.MarkTypeMapper;
@@ -48,12 +45,14 @@ public class MarkServiceTest {
     @Mock
     private SubjectService subjectService;
 
-
     @Mock
     private MarkMapper markMapper;
 
     @Mock
     private MarkTypeMapper markTypeMapper;
+
+    @Mock
+    private StudentReportRepository reportRepository;
 
     @InjectMocks
     private MarkServiceImpl markService;
@@ -222,19 +221,22 @@ public class MarkServiceTest {
 
     @Test
     public void getMarkReportSuccessfully(){
-        Classroom mockClass = Classroom.builder().id(1).currentNoStudent(30).build();
+        Classroom mockClass = Classroom.builder().id(1).currentNoStudent(3).build();
         int classId = mockClass.getId();
-        double highest = 9.2;
-        int noGoodStudent = 3;
+        StudentReport report1 = new StudentReport(1, 6.3);
+        StudentReport report2 = new StudentReport(2, 6.4);
+        StudentReport report3 = new StudentReport(7, 6.4);
+        List<StudentReport> reports = List.of(report1, report2, report3);
+        List<StudentReport> lowest = List.of(report1);
+
+
         when(classroomRepository.findById(classId)).thenReturn(Optional.of(mockClass));
-        when(markRepository.getHighestScore(classId)).thenReturn(highest);
-        when(markRepository.getNoStudentsInRange(classId, 8, 8.99)).thenReturn(noGoodStudent);
+        when(reportRepository.getReportsByClassId(classId)).thenReturn(reports);
 
         MarkReportDTO markReportDTO = markService.getMarkReportByClassId(classId);
 
         assertEquals(mockClass.getCurrentNoStudent(), markReportDTO.getTotal());
-        assertEquals(highest, markReportDTO.getHighest());
-        assertEquals(noGoodStudent, markReportDTO.getGood());
+        assertEquals(lowest, markReportDTO.getLowest());
 
         verify(classroomRepository, times(1)).findById(classId);
     }

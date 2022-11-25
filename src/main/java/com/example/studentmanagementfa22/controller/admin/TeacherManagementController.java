@@ -58,8 +58,7 @@ public class TeacherManagementController {
         Teacher teacher = teacherService.getById(id);
         teacherService.deleteTeacher(teacher.getId());
         accountService.disableAccount(teacher.getAccount().getId());
-//        return ResponseEntity.ok(new ErrorResponseDTO<>("Teacher deleted successfully", 200));
-        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.TEACHER_DELETED_200), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.TEACHER, TranslationCode.DELETED), HttpStatus.BAD_REQUEST);
     }
 
 }

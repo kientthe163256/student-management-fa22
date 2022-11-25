@@ -58,7 +58,7 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher getById(int id) {
         Optional<Teacher> optionalTeacher = teacherRepository.findById(id);
         if (optionalTeacher.isEmpty()) {
-            throw new NoSuchElementException(TranslationCode.TEACHER404);
+            throw new NoSuchElementException(TranslationCode.TEACHER);
         }
         return optionalTeacher.get();
     }
@@ -67,7 +67,7 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher getTeacherByAccountId(int accountId) {
         Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountId);
         if (optionalTeacher.isEmpty()) {
-            throw new NoSuchElementException("Can not find teacher with id = " + accountId);
+            throw new NoSuchElementException(TranslationCode.TEACHER);
         }
         return optionalTeacher.get();
     }

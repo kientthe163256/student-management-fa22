@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.exception;
 
 import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
+import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.service.TranslationService;
 import com.example.studentmanagementfa22.utility.TranslationCode;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -18,11 +20,10 @@ import java.util.NoSuchElementException;
 public class CustomExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<?> handleNoSuchElement(NoSuchElementException exception) {
-        String code = exception.getMessage();
-        String message = TranslationService.toLocale(exception.getMessage());
-        List<String> errorList = new ArrayList<>();
-        errorList.add(message);
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(errorList, code);
+        String fieldCode = exception.getMessage();
+        String notFoundCode = TranslationCode.NOT_FOUND;
+
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(fieldCode, notFoundCode);
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
     }
 
@@ -43,17 +44,19 @@ public class CustomExceptionHandler {
 //    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        List<String> errors = new ArrayList<>();
+    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        List<ErrorResponseDTO> responseDTOS = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String field = ((FieldError) error).getField();
             String validationCode = error.getCode();
             assert validationCode != null;
-            String code = TranslationCode.getTranslationCode(validationCode, field);
 
-            errors.add(TranslationService.toLocale(code));
+            String fieldErrorCode = TranslationCode.getTranslationCode(field);
+            String validationErrorCode = TranslationCode.getTranslationCode(validationCode);
+
+            responseDTOS.add(new ErrorResponseDTO(fieldErrorCode, validationErrorCode));
         });
-        return new ResponseEntity<>(new ErrorResponseDTO(errors, "fields400"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(responseDTOS, HttpStatus.BAD_REQUEST);
     }
 
 //    @ExceptionHandler(ConstraintViolationException.class)

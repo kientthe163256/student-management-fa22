@@ -83,8 +83,7 @@ public class AccountManagementController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> disableAccount(@PathVariable Integer id){
         accountService.disableAccount(id);
-//        return ResponseEntity.ok(new ErrorResponseDTO<>("Account disabled successfully", 200));
-        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.TEACHER_DELETED_200), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.ACCOUNT, TranslationCode.DELETED), HttpStatus.BAD_REQUEST);
     }
 }
 

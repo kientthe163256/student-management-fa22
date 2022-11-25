@@ -52,7 +52,6 @@ public class Account {
     private String lastName;
 
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", lenient = OptBoolean.FALSE)
     @NotNull(message = "Dob can not be empty")
     private Date dob;
 

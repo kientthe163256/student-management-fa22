@@ -120,8 +120,29 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.7.0</version>
+        </dependency>
 
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>auth0</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>auth0-spring-security-api</artifactId>
+            <version>1.0.0-rc.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp -->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+        </dependency>
 
 
 

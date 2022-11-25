@@ -7,6 +7,7 @@ import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.repository.*;
 import com.example.studentmanagementfa22.service.*;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
+import com.example.studentmanagementfa22.utility.TranslationCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;
@@ -35,8 +36,9 @@ public class MarkServiceImpl implements MarkService {
 
     @Autowired
     private StudentService studentService;
+
     @Autowired
-    private StudentRepository studentRepository;
+    private StudentReportRepository reportRepository;
 
     @Autowired
     private SubjectRepository subjectRepository;
@@ -112,19 +114,21 @@ public class MarkServiceImpl implements MarkService {
     public MarkReportDTO getMarkReportByClassId(int classId) {
         Optional<Classroom> classroom = classroomRepository.findById(classId);
         if (classroom.isEmpty()){
-            throw new NoSuchElementException("Classroom not found");
+            throw new NoSuchElementException(TranslationCode.CLASSROOM);
         }
         MarkReportDTO report = new MarkReportDTO();
         report.setTotal(classroom.get().getCurrentNoStudent());
-        report.setHighest(markRepository.getHighestScore(classId));
-        report.setLowest(markRepository.getLowestScore(classId));
-        report.setAverage(markRepository.getAverageScore(classId));
-        report.setExcellent(markRepository.getNoStudentsInRange(classId, 9, 10));
-        report.setGood(markRepository.getNoStudentsInRange(classId, 8, 8.99));
-        report.setFair(markRepository.getNoStudentsInRange(classId, 5, 7.99));
-        report.setPoor(markRepository.getNoStudentsInRange(classId, 0, 4.99));
+
+        List<StudentReport> studentReports = reportRepository.getReportsByClassId(classId);
+        report.setHighest(StudentReportService.getTopReports(studentReports, "highest"));
+        report.setLowest(StudentReportService.getTopReports(studentReports, "lowest"));
+
+        report.setExcellent(StudentReportService.getReportsInRange(studentReports, 9, 10));
+        report.setGood(StudentReportService.getReportsInRange(studentReports, 8, 8.99));
+        report.setFair(StudentReportService.getReportsInRange(studentReports, 5, 7.99));
+        report.setFailed(StudentReportService.getReportsInRange(studentReports, 0, 4.99));
         return report;
-    }//case when
+    }
 
     @Override
     public void addStudentSubjectMark(Integer studentId, Integer subjectId) {
