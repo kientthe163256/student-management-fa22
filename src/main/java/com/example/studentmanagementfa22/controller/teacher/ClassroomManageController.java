@@ -69,19 +69,16 @@ public class ClassroomManageController {
                                            @PathVariable(name = "id") Integer classId) {
         Account account = (Account) session.getAttribute("account");
         teacherService.removeStudentClassroom(account.getId(), studentId, classId);
-//        return new ResponseEntity<>(new ErrorResponseDTO("Remove student successfully", "200"), HttpStatus.OK);
-        return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.STUDENT, TranslationCode.DELETED), HttpStatus.OK);
     }
-//    @PostMapping("/{classId}/students/{studentId}/marks/{markTypeId}")
-//    @Operation(summary = "Add Mark ", description = "Teacher can add student mark ")
-//    public ResponseEntity<?> addStudentMark(@PathVariable(name = "classId") Integer classId,
-//                                            @PathVariable(name = "studentId") Integer studentId,
-//                                            @PathVariable(name = "markTypeId") Integer markTypeId,
-//                                            @Valid @RequestBody Mark newMark) {
-//        Account account = (Account) session.getAttribute("account");
-//        MarkDTO mark = markService.addStudentMark(newMark, account.getId(), classId, studentId, markTypeId);
-//        return new ResponseEntity<>(mark, HttpStatus.OK);
-//    }
+    @PostMapping("/{classId}/students/{studentId}")
+    @Operation(summary = "Add Student ", description = "Teacher can add student to session class ")
+    public ResponseEntity<?> addStudentToSessionClass(@PathVariable(name = "classId") Integer classId,
+                                            @PathVariable(name = "studentId") Integer studentId) {
+        Account account = (Account) session.getAttribute("account");
+        teacherService.addStudentToSessionClass( account.getId(), classId, studentId);
+        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.STUDENT, TranslationCode.ADDED), HttpStatus.OK);
+    }
 
 
 

@@ -10,6 +10,7 @@ import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.utility.StudentMapper;
+import com.example.studentmanagementfa22.utility.TranslationCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -90,13 +91,15 @@ public class StudentServiceImpl implements StudentService {
     public void checkStudentJoinedClass(Integer studentId, Integer classId) {
         if(studentRepository.getStudentClassroom(studentId,classId) == 0) {
             throw new IllegalArgumentException("Student does not join this class");
+//            throw new NoSuchElementException(TranslationCode.STUDENT);
         }
     }
 
     @Override
     public void checkStudentTeacher(Integer studentId, Integer teacherId) {
         if(studentRepository.getStudentbyTeacher(studentId,teacherId).isEmpty()) {
-            throw  new IllegalArgumentException("You are not the teacher of this student");
+//            throw new NoSuchElementException(TranslationCode.STUDENT);
+           throw  new IllegalArgumentException("You are not the teacher of this student");
         }
     }
 

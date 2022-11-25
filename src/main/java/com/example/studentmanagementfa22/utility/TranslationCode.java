@@ -12,6 +12,8 @@ public class TranslationCode {
     public static final String CLASSROOM = "classroom";
     public static final String ACCOUNT = "account";
 
+    public static final String STUDENT = "student";
+
     //2. fields of target object
     public static final String FIRSTNAME = "first.name";
     public static final String LASTNAME = "last.name";
@@ -20,7 +22,11 @@ public class TranslationCode {
     //3. status
     public static final String NOT_FOUND = "not.found";
     public static final String DELETED = "deleted";
+    public static final String ADDED = "added";
+    public static final String ADD_ACTION = "add.action";
+    public static final String JOINED = "joined";
 
+    public static final String EXCEEDED_AMOUNT = "exceed.amount";
 
 
 
@@ -39,6 +45,10 @@ public class TranslationCode {
 
     //6. access denied
     public static final String ACCESS_DENIED = "access.denied";
+
+    //7. Authorize
+    public static final String NOTAUTHORIZE_CLASSROOM = "notAuthorize.classroom";
+
 
 
     public static String getTranslationCode(String validationCode){
