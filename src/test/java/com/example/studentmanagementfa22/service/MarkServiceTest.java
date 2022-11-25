@@ -164,7 +164,7 @@ public class MarkServiceTest {
     }
 
     @Test
-    public void addMark() {
+    public void addMarkNotExist() {
         Student mockStudent = Student.builder().id(9).build();
         Subject mockSubject = Subject.builder().id(8).subjectName("mock subject").build();
         MarkType markType1 = MarkType.builder().id(1).name("mock mark type 1").build();
@@ -173,7 +173,8 @@ public class MarkServiceTest {
         listOfMarkTypesId.add(markType1.getId());
         listOfMarkTypesId.add(markType2.getId());
 
-
+        List<Mark> mockMarkList  = new ArrayList<>();
+        when(markRepository.getMarkbyStudentSubject(mockStudent.getId(), mockSubject.getId())).thenReturn(mockMarkList);
         when(subjectService.getById(8)).thenReturn(mockSubject);
         when(markTypeRepository.listOfMarkTypesBySubject(8)).thenReturn(listOfMarkTypesId);
         when(markTypeRepository.numberOfSubjectMarksTypes(8, 1)).thenReturn(1);
@@ -193,6 +194,40 @@ public class MarkServiceTest {
         verify(markRepository, times(1)).addStudentSubjectMark(mockStudent.getId(), mockSubject.getId(), markType1.getId());
     }
 
+    @Test
+    public void addMarkExisted() {
+        Student mockStudent = Student.builder().id(9).build();
+        Subject mockSubject = Subject.builder().id(8).subjectName("mock subject").build();
+        MarkType markType1 = MarkType.builder().id(1).name("mock mark type 1").build();
+        MarkType markType2 = MarkType.builder().id(2).name("mock mark type 2").build();
+        List<Integer> listOfMarkTypesId = new ArrayList<>();
+        listOfMarkTypesId.add(markType1.getId());
+        listOfMarkTypesId.add(markType2.getId());
+        Mark mockMark = Mark.builder().id(1).student(mockStudent).grade(7.0).build();
+        List<Mark> mockMarkList  = new ArrayList<>();
+        mockMarkList.add(mockMark);
+        when(markRepository.getMarkbyStudentSubject(mockStudent.getId(), mockSubject.getId())).thenReturn(mockMarkList);
+        when(subjectService.getById(8)).thenReturn(mockSubject);
+        when(markTypeRepository.listOfMarkTypesBySubject(8)).thenReturn(listOfMarkTypesId);
+        when(markTypeRepository.numberOfSubjectMarksTypes(8, 1)).thenReturn(1);
+        when(markTypeRepository.numberOfSubjectMarksTypes(9, 2)).thenReturn(2);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(markRepository).restoreStudentSubjectMark(9,8);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(markRepository).addStudentSubjectMark(9,8,1);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(markRepository).addStudentSubjectMark(9,8,2);
+
+        markService.addStudentSubjectMark(mockStudent.getId(), mockSubject.getId());
+
+        verify(markRepository, times(1)).restoreStudentSubjectMark(mockStudent.getId(), mockSubject.getId());
+        verify(markTypeRepository, times(0)).listOfMarkTypesBySubject( mockSubject.getId());
+
+
+    }
     private MarkDTO mockUpdate(Mark currentMark, MarkDTO markDTO){
         markDTO.setId(currentMark.getId());
         markDTO.setGrade(currentMark.getGrade());

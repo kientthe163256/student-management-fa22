@@ -92,4 +92,18 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
     @Query(value = "INSERT INTO mark ( student_id, subject_id, mark_type_id, create_date) VALUES (?1, ?2, ?3,  CURRENT_TIMESTAMP)",
             nativeQuery = true)
     void addStudentSubjectMark(Integer studentId, Integer subjectId, int markTypeId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE mark set deleted = 1, delete_date = CURRENT_TIMESTAMP() where student_id = ?1 AND subject_id = ?2", nativeQuery = true)
+    void deleteMarkByStudentSubject(Integer studentId, Integer subjectId);
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE mark set deleted = 0, modify_date = CURRENT_TIMESTAMP() where student_id = ?1 AND subject_id = ?2", nativeQuery = true)
+    void restoreStudentSubjectMark(Integer studentId, Integer subjectId);
+
+    @Query(value = "SELECT * FROM student_management_fa22.mark\n" +
+            "Where student_id = ?1\n" +
+            "AND subject_id = ?2", nativeQuery = true)
+    List<Mark> getMarkbyStudentSubject(Integer studentId, Integer subjectId);
 }

@@ -128,12 +128,18 @@ public class MarkServiceImpl implements MarkService {
 
     @Override
     public void addStudentSubjectMark(Integer studentId, Integer subjectId) {
-        Subject subject = subjectService.getById(subjectId);
-        List<Integer> listOfMarkTypes = markTypeRepository.listOfMarkTypesBySubject(subject.getId());
-        for(int markTypeId : listOfMarkTypes) {
-            int numberOfMarksTypes = markTypeRepository.numberOfSubjectMarksTypes(subject.getId(), markTypeId);
-            for (int i = 0; i < numberOfMarksTypes; i++) {
-                markRepository.addStudentSubjectMark(studentId,subject.getId(),markTypeId);
+        List<Mark> markList = markRepository.getMarkbyStudentSubject(studentId, subjectId);
+        if (markList.size() > 0) {
+            markRepository.restoreStudentSubjectMark(studentId, subjectId);
+        }
+        else {
+            Subject subject = subjectService.getById(subjectId);
+            List<Integer> listOfMarkTypes = markTypeRepository.listOfMarkTypesBySubject(subject.getId());
+            for (int markTypeId : listOfMarkTypes) {
+                int numberOfMarksTypes = markTypeRepository.numberOfSubjectMarksTypes(subject.getId(), markTypeId);
+                for (int i = 0; i < numberOfMarksTypes; i++) {
+                    markRepository.addStudentSubjectMark(studentId, subject.getId(), markTypeId);
+                }
             }
         }
     }

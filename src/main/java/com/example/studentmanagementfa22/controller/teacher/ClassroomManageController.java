@@ -1,13 +1,17 @@
 package com.example.studentmanagementfa22.controller.teacher;
 
 import com.example.studentmanagementfa22.dto.ClassroomDTO;
+import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.dto.MarkDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.entity.Pagination;
+import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.StudentService;
+import com.example.studentmanagementfa22.service.TeacherService;
+import com.example.studentmanagementfa22.utility.TranslationCode;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +33,9 @@ public class ClassroomManageController {
 
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private TeacherService teacherService;
     @Autowired
     private HttpSession session;
 
@@ -55,6 +62,15 @@ public class ClassroomManageController {
         Account account = (Account) session.getAttribute("account");
         List<StudentDTO> studentDTOList = studentService.getStudentsByClassroomandTeacher(classID, account.getId(), pageNumber, pageSize, sort)  ;
         return ResponseEntity.ok(studentDTOList);
+    }
+
+    @DeleteMapping("{id}/students/{studentId}")
+    public ResponseEntity<?> deleteTeacher(@PathVariable(name = "studentId") Integer studentId,
+                                           @PathVariable(name = "id") Integer classId) {
+        Account account = (Account) session.getAttribute("account");
+        teacherService.removeStudentClassroom(account.getId(), studentId, classId);
+//        return new ResponseEntity<>(new ErrorResponseDTO("Remove student successfully", "200"), HttpStatus.OK);
+        return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
     }
 //    @PostMapping("/{classId}/students/{studentId}/marks/{markTypeId}")
 //    @Operation(summary = "Add Mark ", description = "Teacher can add student mark ")

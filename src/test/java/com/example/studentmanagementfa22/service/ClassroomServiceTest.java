@@ -83,7 +83,7 @@ public class ClassroomServiceTest {
         doAnswer((Answer<Void>) invocation -> {
             mockClassroom.setCurrentNoStudent(11);
             return null;
-        }).when(classroomRepository).updateNoStudentOfClass(5);
+        }).when(classroomRepository).updateNoStudentOfClass(1 ,5);
         doAnswer((Answer<Void>) invocation -> {
             return null;
         }).when(markService).addStudentSubjectMark(6,1);
@@ -91,10 +91,10 @@ public class ClassroomServiceTest {
         classroomService.registerClassroom(mockClassroom.getId(), mockAccount.getId());
         assertThrows(NoSuchElementException.class, () -> classroomService.registerClassroom(-1, mockAccount.getId()));
 
-        verify(classroomRepository, times(1)).updateNoStudentOfClass(5);
         verify(classroomRepository, times(1)).findById(5);
         verify(classroomRepository, times(1)).numOfSubjectClassByStudent(1, 6);
         verify(classroomRepository, times(1)).registerClassroom(6,5);
+
     }
     @Test
     public void registerClassroomFail() throws Exception {
