@@ -124,6 +124,10 @@ public class TeacherServiceImpl implements TeacherService {
         if (classroom.isEmpty()) {
             throw new NoSuchElementException(TranslationCode.CLASSROOM);
         }
+        Optional<Student> student = studentRepository.findById(studentId);
+        if(student.isEmpty()) {
+            throw new NoSuchElementException(TranslationCode.STUDENT);
+        }
         Teacher  teacher = getTeacherByAccountId(teacherAccountId);
         checkTeacherAssignedClass(teacher.getId(), classId);
         if(studentRepository.getStudentClassroom(studentId,classId) == 1) {

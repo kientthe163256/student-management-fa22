@@ -5,6 +5,7 @@ participant CustomSuccessHandler
 participant ClassroomManageController
 participant TeacherService
 participant ClassroomRepository
+participant StudentRepository
 participant TeacherRepository
 participant MarkRepository
 database MySQL
@@ -40,45 +41,55 @@ break classroom not found
 ClassroomRepository --> TeacherService: return error message
 end
 deactivate ClassroomRepository
+
+TeacherService -> StudentRepository: get student
+activate StudentRepository
+StudentRepository -> MySQL: SELECT
+ activate MySQL
+MySQL --> StudentRepository: return response
+deactivate MySQL
+StudentRepository --> TeacherService: return student
+break student not found
+StudentRepository --> TeacherService: return error message
+end
+deactivate StudentRepository
+
+TeacherService --> TeacherService: get teacher
 break Teacher not authorized
 TeacherService --> TeacherService: return error message
 end
-autonumber 3.0
 
-TeacherService -> TeacherRepository: delete student classroom
- activate TeacherRepository
-TeacherRepository -> MySQL: Delete
-  activate MySQL
-MySQL --> TeacherRepository: return response
-deactivate MySQL
-TeacherRepository --> TeacherService: return response
-deactivate TeacherRepository
+break Student joined class
+StudentRepository --> TeacherService: return error message
+activate StudentRepository
+end
+deactivate StudentRepository
 
-autonumber 4.0
-TeacherService -> ClassroomRepository: update number of student
-activate ClassroomRepository
-ClassroomRepository -> MySQL: Update
-activate MySQL
-MySQL --> ClassroomRepository: return response
-deactivate MySQL
-ClassroomRepository --> TeacherService: return response
-deactivate ClassroomRepository
-alt SUBJECT Classroom
- TeacherService -> MarkRepository: update number of marks
- activate MarkRepository
- MarkRepository -> MySQL: Update
- activate MySQL
- MySQL --> MarkRepository: return response
- deactivate MySQL
- MarkRepository --> TeacherService: return response
- deactivate MarkRepository
- deactivate ClassroomRepository
-  TeacherService --> ClassroomManageController: return response
-  ClassroomManageController --> Teacher: return response
-else
-    TeacherService --> ClassroomManageController: return response
-    deactivate TeacherService
-    ClassroomManageController --> Teacher: return response
+break Full Student
+TeacherService --> TeacherService: exceed number
 end
 
+alt SESSION Classroom
+    TeacherService -> ClassroomRepository: register classroom
+  activate ClassroomRepository
+  ClassroomRepository -> MySQL: Insert
+  activate MySQL
+  MySQL --> ClassroomRepository: return response
+  deactivate MySQL
+  ClassroomRepository --> TeacherService: return response
+
+ TeacherService -> ClassroomRepository: update number of student
+ ClassroomRepository -> MySQL: Update
+ activate MySQL
+ MySQL --> ClassroomRepository: return response
+ deactivate MySQL
+ ClassroomRepository --> TeacherService: return response
+ deactivate ClassroomRepository
+ TeacherService --> ClassroomManageController: return response
+ ClassroomManageController --> Teacher: return response
+else
+TeacherService --> ClassroomManageController: return response
+deactivate TeacherService
+ClassroomManageController --> Teacher: return response
+end
 @enduml

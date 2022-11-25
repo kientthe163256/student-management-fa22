@@ -255,6 +255,30 @@ public class TeacherServiceTest {
         verify(classroomRepository, times(1)).updateNoStudentOfClass(19,10);
         verify(teacherRepository, times(1)).deleteStudentClassroom(4,10);
         verify(markRepository, times(1)).deleteMarkByStudentSubject(4,1);
+    }
+
+    @Test
+    public void addStudentSessionCLass() {
+        Account account = Account.builder().id(2).roleId(2).build();
+        Teacher teacher = Teacher.builder().id(1).account(account).build();
+        Subject subject = Subject.builder().id(1).subjectName("mock subject").build();
+        Classroom classroom = Classroom.builder().id(10).classroomName("mock class").subject(subject).teacher(teacher).currentNoStudent(20).noStudent(30).classType(ClassType.SESSION).build();
+        Student student = Student.builder().id(4).build();
+        when(studentRepository.findById(4)).thenReturn(Optional.of(student));
+        when(teacherRepository.findTeacherByAccountId(2)).thenReturn(Optional.of(teacher));
+        when(teacherRepository.findTeacherByClassroomId(10)).thenReturn(Optional.of(teacher));
+        when(classroomRepository.findById(10)).thenReturn(Optional.of(classroom));
+        when(studentRepository.getStudentClassroom(4,10)).thenReturn(0);
+        doNothing().when(classroomRepository).registerClassroom(4, 10);
+        doNothing().when(classroomRepository).updateNoStudentOfClass(21, 10);
+
+        teacherService.addStudentToSessionClass(teacher.getAccount().getId(), classroom.getId(), student.getId());
+        assertThrows(NoSuchElementException.class, () -> teacherService.addStudentToSessionClass(teacher.getAccount().getId(), 1000, student.getId()));
+
+        verify(classroomRepository, times(1)).findById(10);
+        verify(studentRepository, times(1)).getStudentClassroom(4,10);
+        verify(classroomRepository, times(1)).registerClassroom(4, 10);
+        verify(classroomRepository, times(1)).updateNoStudentOfClass(21, 10);
 
     }
 }
