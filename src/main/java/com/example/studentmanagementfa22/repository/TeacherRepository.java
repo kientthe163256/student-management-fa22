@@ -22,5 +22,9 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer>, JpaS
             "on t.id = c.teacher_id\n" +
             "where c.id = ?1",nativeQuery = true)
     Optional<Teacher> findTeacherByClassroomId(int classroomId);
-
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM student_management_fa22.student_classroom\n" +
+            "WHERE student_id = ?1 AND classroom_id = ?2", nativeQuery = true)
+    void deleteStudentClassroom(Integer studentId, Integer classId);
 }

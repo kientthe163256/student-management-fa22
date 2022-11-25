@@ -7,6 +7,7 @@ import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
+import com.example.studentmanagementfa22.repository.MarkRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.StudentService;
@@ -38,6 +39,8 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private ClassroomRepository classroomRepository;
 
+    @Autowired
+    private MarkRepository markRepository;
     @Autowired
     private StudentRepository studentRepository;
 
@@ -97,6 +100,21 @@ public class TeacherServiceImpl implements TeacherService {
         //get first, previous, next, last, total
         Map<String, Integer> fields = PagingHelper.getPaginationFields(teacherPage, pageNumber);
         return new Pagination<>(teacherDTOList, fields.get("first"), fields.get("previous"), fields.get("next"), fields.get("last"), fields.get("total"));
+    }
+
+    @Override
+    @Transactional
+    public void removeStudentClassroom(Integer teacherAccountId, Integer studentId, Integer classId) {
+        Optional<Classroom> classroom = classroomRepository.findById(classId);
+        if (classroom.isEmpty()) {
+            throw new NoSuchElementException("No classroom have been found");
+        }
+        checkTeacherClassroomStudent(teacherAccountId, classId, studentId);
+        teacherRepository.deleteStudentClassroom(studentId, classId);
+        classroomRepository.updateNoStudentOfClass(classroom.get().getCurrentNoStudent() - 1, classId);
+        if(classroom.get().getClassType().equals(ClassType.SUBJECT)) {
+            markRepository.deleteMarkByStudentSubject(studentId, classroom.get().getSubject().getId());
+        }
     }
 
     @Override

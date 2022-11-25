@@ -23,4 +23,6 @@ public interface TeacherService {
     void checkTeacherClassroomStudent(Integer teacherAccountId, Integer classId,Integer studentId);
 
     Pagination<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort);
+
+    void removeStudentClassroom(Integer teacherAccountId, Integer studentId, Integer classId);
 }

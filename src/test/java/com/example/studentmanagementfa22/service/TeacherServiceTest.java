@@ -5,6 +5,8 @@ import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
+import com.example.studentmanagementfa22.repository.ClassroomRepository;
+import com.example.studentmanagementfa22.repository.MarkRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.StudentServiceImpl;
@@ -17,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +40,13 @@ public class TeacherServiceTest {
     private TeacherRepository teacherRepository;
 
     @Mock
+    private ClassroomRepository classroomRepository;
+
+    @Mock
     private StudentRepository studentRepository;
+
+    @Mock
+    private MarkRepository markRepository;
     @Mock
     private TeacherMapper teacherMapper;
 
@@ -213,5 +222,39 @@ public class TeacherServiceTest {
 
         verify(studentService).checkStudentTeacher(4,1);
         verify(studentService).checkStudentJoinedClass(4,1);
+    }
+
+    @Test
+    public void removeStudentSubjectClassroom() {
+        Account account = Account.builder().id(2).roleId(2).build();
+        Teacher teacher = Teacher.builder().id(1).account(account).build();
+        Subject subject = Subject.builder().id(1).subjectName("mock subject").build();
+        Classroom classroom = Classroom.builder().id(10).classroomName("mock class").subject(subject).teacher(teacher).currentNoStudent(20).classType(ClassType.SUBJECT).build();
+        Student student = Student.builder().id(4).build();
+        when(studentRepository.findById(4)).thenReturn(Optional.of(student));
+        when(teacherRepository.findTeacherByAccountId(2)).thenReturn(Optional.of(teacher));
+        when(teacherRepository.findTeacherByClassroomId(10)).thenReturn(Optional.of(teacher));
+        when(classroomRepository.findById(10)).thenReturn(Optional.of(classroom));
+        doNothing().when(mockTeacherService).checkTeacherClassroomStudent(teacher.getAccount().getId(),10, 4);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(teacherRepository).deleteStudentClassroom(4,10);
+        doAnswer((Answer<Void>) invocation -> {
+            classroom.setCurrentNoStudent(19);
+            return null;
+        }).when(classroomRepository).updateNoStudentOfClass(19,10);
+        doAnswer((Answer<Void>) invocation -> {
+            return null;
+        }).when(markRepository).deleteMarkByStudentSubject(4,1);
+
+        teacherService.removeStudentClassroom(teacher.getAccount().getId() ,student.getId(), classroom.getId());
+
+        assertThrows(NoSuchElementException.class, () -> teacherService.removeStudentClassroom(teacher.getAccount().getId() ,student.getId(), 1000));
+
+        verify(classroomRepository, times(1)).findById(10);
+        verify(classroomRepository, times(1)).updateNoStudentOfClass(19,10);
+        verify(teacherRepository, times(1)).deleteStudentClassroom(4,10);
+        verify(markRepository, times(1)).deleteMarkByStudentSubject(4,1);
+
     }
 }

@@ -133,7 +133,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (classroomRepository.numOfSubjectClassByStudent(classroom.getSubject().getId(), student.getId()) == 0) {
             classroomRepository.registerClassroom(student.getId(), classId);
             markService.addStudentSubjectMark(student.getId(), classroom.getSubject().getId());
-            classroomRepository.updateNoStudentOfClass(classId);
+            classroomRepository.updateNoStudentOfClass(classroom.getCurrentNoStudent() + 1, classId);
         } else {
             throw new IllegalArgumentException("You have already registered for this subject");
         }

@@ -59,10 +59,10 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
             nativeQuery = true)
     void addSubjectClassroom(String className, int noStudent, String classType, int subjectId);
 
-    @Query (value = "UPDATE classroom SET current_no_student = current_no_student + 1 where id = ?1", nativeQuery = true)
+    @Query (value = "UPDATE classroom SET  modify_date = CURRENT_TIMESTAMP() , current_no_student = ?1 where id = ?2", nativeQuery = true)
     @Modifying
     @Transactional
-    void updateNoStudentOfClass(@Param("id") int classId);
+    void updateNoStudentOfClass(int noStudentOfClass, int classId);
     @Query(value = "SELECT id, classroom_name, current_no_student, no_student, deleted,class_type, teacher_id, subject_id, create_date, modify_date, delete_date\n" +
             "FROM student_management_fa22.classroom cla\n" +
             "INNER JOIN student_management_fa22.student_classroom stuclass\n" +
