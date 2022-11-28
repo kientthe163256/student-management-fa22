@@ -25,4 +25,6 @@ public interface TeacherService {
     Pagination<TeacherDTO> getAllTeacherPaging(int pageNumber, int pageSize, String sort);
 
     void removeStudentClassroom(Integer teacherAccountId, Integer studentId, Integer classId);
+
+    void addStudentToSessionClass(Integer teacherAccountId, Integer classId, Integer studentId);
 }

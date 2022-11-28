@@ -1,0 +1,84 @@
+@startuml
+Actor Teacher
+participant SecurityConfig
+participant CustomSuccessHandler
+participant ClassroomManageController
+participant TeacherService
+participant ClassroomRepository
+participant TeacherRepository
+participant MarkRepository
+database MySQL
+
+autonumber 1.0
+Teacher -> SecurityConfig: login account
+
+activate Teacher
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Teacher: redirect login
+end
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+activate CustomSuccessHandler
+CustomSuccessHandler -> ClassroomManageController: dispatch user account
+activate ClassroomManageController
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+ClassroomManageController -> TeacherService : remove student classroom
+activate TeacherService
+TeacherService -> ClassroomRepository: get classroom
+activate ClassroomRepository
+ClassroomRepository -> MySQL: SELECT
+ activate MySQL
+MySQL --> ClassroomRepository: return response
+deactivate MySQL
+ClassroomRepository --> TeacherService: return classroom
+break classroom not found
+ClassroomRepository --> TeacherService: return error message
+end
+deactivate ClassroomRepository
+break Teacher not authorized
+TeacherService --> TeacherService: return error message
+end
+autonumber 3.0
+
+TeacherService -> TeacherRepository: delete student classroom
+ activate TeacherRepository
+TeacherRepository -> MySQL: Delete
+  activate MySQL
+MySQL --> TeacherRepository: return response
+deactivate MySQL
+TeacherRepository --> TeacherService: return response
+deactivate TeacherRepository
+
+autonumber 4.0
+TeacherService -> ClassroomRepository: update number of student
+activate ClassroomRepository
+ClassroomRepository -> MySQL: Update
+activate MySQL
+MySQL --> ClassroomRepository: return response
+deactivate MySQL
+ClassroomRepository --> TeacherService: return response
+deactivate ClassroomRepository
+alt SUBJECT Classroom
+ TeacherService -> MarkRepository: update number of marks
+ activate MarkRepository
+ MarkRepository -> MySQL: Update
+ activate MySQL
+ MySQL --> MarkRepository: return response
+ deactivate MySQL
+ MarkRepository --> TeacherService: return response
+ deactivate MarkRepository
+ deactivate ClassroomRepository
+  TeacherService --> ClassroomManageController: return response
+  ClassroomManageController --> Teacher: return response
+else
+    TeacherService --> ClassroomManageController: return response
+    deactivate TeacherService
+    ClassroomManageController --> Teacher: return response
+end
+
+@enduml

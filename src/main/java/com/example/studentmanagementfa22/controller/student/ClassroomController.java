@@ -4,6 +4,7 @@ import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.service.ClassroomService;
+import com.example.studentmanagementfa22.utility.TranslationCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -42,13 +43,8 @@ public class ClassroomController {
     @Operation(summary = "Regiter a classroom", description = "Student can only register for a classroom per subject")
     public ResponseEntity<?> registerClassroom(@RequestParam int classId ) {
         Account account = (Account) session.getAttribute("account");
-        try {
-            classroomService.registerClassroom(classId, account.getId());
-        } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-//        return ResponseEntity.ok(new ErrorResponseDTO<>("Registered classroom successfully", 201));
-        return new ResponseEntity<>(new ErrorResponseDTO(null, "400"), HttpStatus.BAD_REQUEST);
+        classroomService.registerClassroom(classId, account.getId());
+        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.CLASSROOM, TranslationCode.ADDED), HttpStatus.OK);
     }
 
 }

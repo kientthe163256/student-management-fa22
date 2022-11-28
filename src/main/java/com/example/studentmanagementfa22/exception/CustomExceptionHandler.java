@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.exception;
 
 import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
+import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
 import com.example.studentmanagementfa22.service.TranslationService;
 import com.example.studentmanagementfa22.utility.TranslationCode;
@@ -90,10 +91,14 @@ public class CustomExceptionHandler {
 //        return new ResponseEntity(new ErrorResponseDTO(ex.getMessage(), 403), HttpStatus.FORBIDDEN);
 //    }
 //
-//    @ExceptionHandler(ActionNotAllowedException.class)
-//    public ResponseEntity handleNotAllowed(ActionNotAllowedException ex) {
-//        return new ResponseEntity(new ErrorResponseDTO(ex.getMessage(), 403), HttpStatus.FORBIDDEN);
-//    }
+    @ExceptionHandler(ActionNotAllowedException.class)
+    public ResponseEntity handleNotAllowed(ActionNotAllowedException ex) {
+        String[] messages = ex.getMessages();
+
+
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(messages);
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
+    }
 //
 //    @ExceptionHandler(InvalidSortFieldException.class)
 //    public ResponseEntity handleInvalidSortField(InvalidSortFieldException ex) {

@@ -1,0 +1,95 @@
+@startuml
+Actor Teacher
+participant SecurityConfig
+participant CustomSuccessHandler
+participant ClassroomManageController
+participant TeacherService
+participant ClassroomRepository
+participant StudentRepository
+participant TeacherRepository
+participant MarkRepository
+database MySQL
+
+autonumber 1.0
+Teacher -> SecurityConfig: login account
+
+activate Teacher
+activate SecurityConfig
+autonumber 1.1
+SecurityConfig -> SecurityConfig: validate account
+break login error
+SecurityConfig --> Teacher: redirect login
+end
+SecurityConfig -> CustomSuccessHandler: set user account
+deactivate SecurityConfig
+activate CustomSuccessHandler
+CustomSuccessHandler -> ClassroomManageController: dispatch user account
+activate ClassroomManageController
+deactivate CustomSuccessHandler
+
+autonumber 2.0
+ClassroomManageController -> TeacherService : remove student classroom
+activate TeacherService
+TeacherService -> ClassroomRepository: get classroom
+activate ClassroomRepository
+ClassroomRepository -> MySQL: SELECT
+ activate MySQL
+MySQL --> ClassroomRepository: return response
+deactivate MySQL
+ClassroomRepository --> TeacherService: return classroom
+break classroom not found
+ClassroomRepository --> TeacherService: return error message
+end
+deactivate ClassroomRepository
+
+TeacherService -> StudentRepository: get student
+activate StudentRepository
+StudentRepository -> MySQL: SELECT
+ activate MySQL
+MySQL --> StudentRepository: return response
+deactivate MySQL
+StudentRepository --> TeacherService: return student
+break student not found
+StudentRepository --> TeacherService: return error message
+end
+deactivate StudentRepository
+
+TeacherService --> TeacherService: get teacher
+break Teacher not authorized
+TeacherService --> TeacherService: return error message
+end
+
+break Student joined class
+StudentRepository --> TeacherService: return error message
+activate StudentRepository
+end
+deactivate StudentRepository
+
+break Full Student
+TeacherService --> TeacherService: exceed number
+end
+
+alt SESSION Classroom
+    TeacherService -> ClassroomRepository: register classroom
+  activate ClassroomRepository
+  ClassroomRepository -> MySQL: Insert
+  activate MySQL
+  MySQL --> ClassroomRepository: return response
+  deactivate MySQL
+  ClassroomRepository --> TeacherService: return response
+
+ TeacherService -> ClassroomRepository: update number of student
+ ClassroomRepository -> MySQL: Update
+ activate MySQL
+ MySQL --> ClassroomRepository: return response
+ deactivate MySQL
+ ClassroomRepository --> TeacherService: return response
+ deactivate ClassroomRepository
+ TeacherService --> ClassroomManageController: return response
+ ClassroomManageController --> Teacher: return response
+else
+TeacherService --> ClassroomManageController: return response
+deactivate TeacherService
+ClassroomManageController --> Teacher: return response
+end
+@enduml
