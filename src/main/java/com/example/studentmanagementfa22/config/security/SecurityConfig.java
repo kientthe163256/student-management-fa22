@@ -1,5 +1,6 @@
 package com.example.studentmanagementfa22.config.security;
 
+import com.example.studentmanagementfa22.config.security.filters.CustomDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,7 +12,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.SessionManagementFilter;
-
 @EnableWebSecurity
 public class SecurityConfig {
     @Autowired
@@ -29,6 +29,7 @@ public class SecurityConfig {
     public AuthenticationFailureHandler authenticationFailureHandler() {
         return new CustomAuthenticationFailureHandler();
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -36,10 +37,13 @@ public class SecurityConfig {
                         .antMatchers("/student/**").hasRole("STUDENT")
                         .antMatchers("/teacher/**").hasRole("TEACHER")
                         .antMatchers("/admin/**").hasRole("ADMIN")
-                        .antMatchers("/register/**", "/").permitAll()
+//                        .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .antMatchers("/register/**", "/", "/login").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .csrf().disable()
                 .addFilterBefore(corsFilter(), SessionManagementFilter.class)
+                .apply(new CustomDSL()).and()
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -51,7 +55,8 @@ public class SecurityConfig {
                 .logout()
                     .logoutSuccessHandler(logoutSuccessHandler())
                     .permitAll()
-;
+                ;
+
         return http.build();
     }
 
