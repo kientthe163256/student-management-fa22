@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private RoleService roleService;
 
+
+    @Autowired
+    private HttpSession session;
     @Autowired
     private AccountMapper mapper;
 
@@ -48,6 +52,7 @@ public class AccountServiceImpl implements AccountService {
         if (!account.isEnabled()){
             throw new DisabledException("Your account is disabled");
         }
+        session.setAttribute("account", account);
         return new User(account.getUsername(),
                 account.getPassword(),
                 mapRoleToAuthorities(account.getRoleId()));

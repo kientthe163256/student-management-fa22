@@ -78,7 +78,6 @@ public class ClassroomManageController {
     }
 
 
-
     @GetMapping("/{id}/students/{studentID}/marks")
     @Operation(summary = "View Mark ", description = "Teacher can view student mark ")
     public ResponseEntity<?> displayStudentMark(@PathVariable(name = "id") Integer classId,
@@ -87,14 +86,7 @@ public class ClassroomManageController {
         List<MarkDTO> markList = markService.getMarksByClassroomStudent(account.getId(),classId , studentID);
         return ResponseEntity.ok(markList);
     }
-//
-//    @PostMapping("/{id}/students/{studentID}/mark")
-//    @Operation(summary = "View Mark ", description = "Teacher can view student mark ")
-//    public ResponseEntity<?> addStudentMark(@PathVariable Integer subjectId  ) {
-//        Account account = (Account) session.getAttribute("account");
-//        List<Mark> markList = markService.getMarksBySubject(account, subjectId);
-//        return ResponseEntity.ok(markList);
-//    }
+
 
 
 

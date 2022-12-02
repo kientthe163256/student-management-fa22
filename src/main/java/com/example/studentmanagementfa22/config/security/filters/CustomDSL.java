@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 public class CustomDSL extends AbstractHttpConfigurer<CustomDSL, HttpSecurity> {
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-        http.addFilterBefore(new JWTLoginFilter("/login", authenticationManager), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+//        http.addFilterBefore(new JWTLoginFilter("/login", authenticationManager), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

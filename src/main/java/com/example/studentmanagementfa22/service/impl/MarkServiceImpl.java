@@ -39,8 +39,6 @@ public class MarkServiceImpl implements MarkService {
     @Autowired
     private StudentReportRepository reportRepository;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
 
 
     @Override
@@ -56,7 +54,7 @@ public class MarkServiceImpl implements MarkService {
         Teacher teacher = teacherService.getTeacherByAccountId(accountID);
         Optional<Mark> optionalMark = markRepository.getMarkByIDandTeacherID(teacher.getId(), markID );
         if (optionalMark.isEmpty()) {
-            throw new NoSuchElementException("Mark not found");
+            throw new NoSuchElementException(MessageCode.MARK);
         }
         Mark mark = optionalMark.get();
         mark.setGrade(editMark.getGrade());
@@ -66,32 +64,13 @@ public class MarkServiceImpl implements MarkService {
         return markDTO;
     }
 
-//    @Override
-//    public MarkDTO addStudentMark(Mark mark, Integer accountId, Integer classId, Integer studentId, Integer markTypeId) {
-//        teacherService.checkTeacherClassroomStudent(accountId, classId, studentId);
-//        Optional<Student> student = studentRepository.findById(studentId);
-//        Optional<Classroom> classroom = classroomRepository.findById(classId);
-//        mark.setCreateDate(new Date());
-//        mark.setSubject(classroom.get().getSubject());
-//        mark.setId(mark.getId());
-//        Optional<MarkType> markType = markTypeRepository.findById(markTypeId);
-//        if (markType.isEmpty()) {
-//            throw new NoSuchElementException("No mark type found");
-//        }
-//        mark.setMarkType(markType.get());
-//        mark.setGrade(mark.getGrade());
-//        mark.setStudent(student.get());
-//        markRepository.addMark(mark.getGrade(), mark.getMarkType().getId(), mark.getStudent().getId(), mark.getSubject().getId());
-//        return markMapper.mapToDTO(mark);
-//    }
-
 
     @Override
     public void deleteMark(Integer markId, Integer teacherAccountId) {
         Teacher teacher = teacherService.getTeacherByAccountId(teacherAccountId);
         Optional<Mark> optionalMark = markRepository.getMarkByIDandTeacherID(teacher.getId(), markId );
         if (optionalMark.isEmpty()) {
-            throw new NoSuchElementException("Mark not found");
+            throw new NoSuchElementException(MessageCode.MARK);
         }
         studentService.checkStudentTeacher(optionalMark.get().getStudent().getId(), teacher.getId());
         markRepository.deleteMark(markId);
@@ -101,7 +80,7 @@ public class MarkServiceImpl implements MarkService {
     public List<MarkDTO> getMarksByClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentId) {
         Optional<Classroom> classroom = classroomRepository.findById(classId);
         if(classroom.isEmpty()) {
-            throw new NoSuchElementException("Class not found");
+            throw new NoSuchElementException(MessageCode.CLASSROOM);
         }
         teacherService.checkTeacherClassroomStudent(teacherAccountId, classId, studentId);
         List<Mark> markList = markRepository.getMarkbySubject( studentId, classroom.get().getSubject().getId());
