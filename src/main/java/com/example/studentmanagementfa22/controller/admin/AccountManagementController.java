@@ -6,8 +6,7 @@ import com.example.studentmanagementfa22.dto.TeacherDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.TeacherService;
-import com.example.studentmanagementfa22.utility.AccountMapper;
-import com.example.studentmanagementfa22.utility.TranslationCode;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -49,7 +48,7 @@ public class AccountManagementController {
     public ResponseEntity<?> displayAllAccount(@RequestParam(required = false, defaultValue = "1") int pageNumber) {
         if (pageNumber <= 0) {
 //            return new ResponseEntity<>(new ErrorResponseDTO<>("Invalid page number", 400), HttpStatus.BAD_REQUEST);
-            return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.PAGE400), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponseDTO(MessageCode.PAGE400), HttpStatus.BAD_REQUEST);
         }
         List<AccountDTO> accountList = accountService.getAccountDTOList(pageNumber);
         return ResponseEntity.ok(accountList);
@@ -83,7 +82,7 @@ public class AccountManagementController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> disableAccount(@PathVariable Integer id){
         accountService.disableAccount(id);
-        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.ACCOUNT, TranslationCode.DELETED), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponseDTO(MessageCode.ACCOUNT, MessageCode.DELETED), HttpStatus.BAD_REQUEST);
     }
 }
 

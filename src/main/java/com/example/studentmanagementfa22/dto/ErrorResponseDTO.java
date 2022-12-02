@@ -1,15 +1,9 @@
 package com.example.studentmanagementfa22.dto;
 
 import com.example.studentmanagementfa22.service.TranslationService;
-import com.example.studentmanagementfa22.utility.TranslationCode;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.validation.FieldError;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter

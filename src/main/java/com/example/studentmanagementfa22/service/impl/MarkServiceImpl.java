@@ -2,12 +2,11 @@ package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.MarkDTO;
 import com.example.studentmanagementfa22.dto.MarkReportDTO;
-import com.example.studentmanagementfa22.dto.MarkTypeDTO;
 import com.example.studentmanagementfa22.entity.*;
 import com.example.studentmanagementfa22.repository.*;
 import com.example.studentmanagementfa22.service.*;
 import com.example.studentmanagementfa22.utility.IGenericMapper;
-import com.example.studentmanagementfa22.utility.TranslationCode;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;
@@ -114,7 +113,7 @@ public class MarkServiceImpl implements MarkService {
     public MarkReportDTO getMarkReportByClassId(int classId) {
         Optional<Classroom> classroom = classroomRepository.findById(classId);
         if (classroom.isEmpty()){
-            throw new NoSuchElementException(TranslationCode.CLASSROOM);
+            throw new NoSuchElementException(MessageCode.CLASSROOM);
         }
         MarkReportDTO report = new MarkReportDTO();
         report.setTotal(classroom.get().getCurrentNoStudent());

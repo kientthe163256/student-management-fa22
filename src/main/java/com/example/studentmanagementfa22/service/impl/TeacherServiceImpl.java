@@ -14,7 +14,7 @@ import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.service.TeacherService;
 import com.example.studentmanagementfa22.utility.PagingHelper;
 import com.example.studentmanagementfa22.utility.TeacherMapper;
-import com.example.studentmanagementfa22.utility.TranslationCode;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,7 +61,7 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher getById(int id) {
         Optional<Teacher> optionalTeacher = teacherRepository.findById(id);
         if (optionalTeacher.isEmpty()) {
-            throw new NoSuchElementException(TranslationCode.TEACHER);
+            throw new NoSuchElementException(MessageCode.TEACHER);
         }
         return optionalTeacher.get();
     }
@@ -70,7 +70,7 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher getTeacherByAccountId(int accountId) {
         Optional<Teacher> optionalTeacher = teacherRepository.findTeacherByAccountId(accountId);
         if (optionalTeacher.isEmpty()) {
-            throw new NoSuchElementException(TranslationCode.TEACHER);
+            throw new NoSuchElementException(MessageCode.TEACHER);
         }
         return optionalTeacher.get();
     }
@@ -107,7 +107,7 @@ public class TeacherServiceImpl implements TeacherService {
     public void removeStudentClassroom(Integer teacherAccountId, Integer studentId, Integer classId) {
         Optional<Classroom> classroom = classroomRepository.findById(classId);
         if (classroom.isEmpty()) {
-            throw new NoSuchElementException(TranslationCode.CLASSROOM);
+            throw new NoSuchElementException(MessageCode.CLASSROOM);
         }
         checkTeacherClassroomStudent(teacherAccountId, classId, studentId);
         teacherRepository.deleteStudentClassroom(studentId, classId);
@@ -122,25 +122,25 @@ public class TeacherServiceImpl implements TeacherService {
     public void addStudentToSessionClass(Integer teacherAccountId, Integer classId, Integer studentId) {
         Optional<Classroom> classroom = classroomRepository.findById(classId);
         if (classroom.isEmpty()) {
-            throw new NoSuchElementException(TranslationCode.CLASSROOM);
+            throw new NoSuchElementException(MessageCode.CLASSROOM);
         }
         Optional<Student> student = studentRepository.findById(studentId);
         if(student.isEmpty()) {
-            throw new NoSuchElementException(TranslationCode.STUDENT);
+            throw new NoSuchElementException(MessageCode.STUDENT);
         }
         Teacher  teacher = getTeacherByAccountId(teacherAccountId);
         checkTeacherAssignedClass(teacher.getId(), classId);
         if(studentRepository.getStudentClassroom(studentId,classId) == 1) {
-            throw new ActionNotAllowedException(TranslationCode.STUDENT, TranslationCode.JOINED);
+            throw new ActionNotAllowedException(MessageCode.STUDENT, MessageCode.JOINED);
         }
         if (classroom.get().getCurrentNoStudent() + 1 > classroom.get().getNoStudent()) {
-            throw new ActionNotAllowedException(TranslationCode.STUDENT, TranslationCode.EXCEEDED_AMOUNT);
+            throw new ActionNotAllowedException(MessageCode.STUDENT, MessageCode.EXCEEDED_AMOUNT);
         }
         if (classroom.get().getClassType().equals(ClassType.SESSION)){
             classroomRepository.registerClassroom(studentId, classId);
             classroomRepository.updateNoStudentOfClass(classroom.get().getCurrentNoStudent() + 1 , classId);
         } else {
-            throw new ActionNotAllowedException(TranslationCode.ADD_ACTION, TranslationCode.NOTAUTHORIZE_CLASSROOM);
+            throw new ActionNotAllowedException(MessageCode.ADD_ACTION, MessageCode.NOTAUTHORIZE_CLASSROOM);
         }
     }
 
@@ -148,10 +148,10 @@ public class TeacherServiceImpl implements TeacherService {
     public void checkTeacherAssignedClass(Integer loggInTeacherId, Integer classroomId) {
         Optional<Teacher> classroomTeacher = teacherRepository.findTeacherByClassroomId(classroomId);
         if(classroomTeacher.isEmpty()) {
-            throw new NoSuchElementException(TranslationCode.TEACHER);
+            throw new NoSuchElementException(MessageCode.TEACHER);
         }
         if(loggInTeacherId != classroomTeacher.get().getId()) {
-            throw new ActionNotAllowedException(TranslationCode.TEACHER, TranslationCode.NOTAUTHORIZE_CLASSROOM);
+            throw new ActionNotAllowedException(MessageCode.TEACHER, MessageCode.NOTAUTHORIZE_CLASSROOM);
         }
     }
 
@@ -159,7 +159,7 @@ public class TeacherServiceImpl implements TeacherService {
     public void checkTeacherClassroomStudent(Integer teacherAccountId, Integer classId, Integer studentId) {
         Optional<Student> student = studentRepository.findById(studentId);
         if(student.isEmpty()) {
-            throw new NoSuchElementException(TranslationCode.STUDENT);
+            throw new NoSuchElementException(MessageCode.STUDENT);
         }
         Teacher teacher = getTeacherByAccountId(teacherAccountId);
 

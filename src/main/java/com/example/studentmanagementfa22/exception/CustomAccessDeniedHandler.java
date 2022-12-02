@@ -1,7 +1,7 @@
 package com.example.studentmanagementfa22.exception;
 
 import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
-import com.example.studentmanagementfa22.utility.TranslationCode;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setStatus(403);
         response.setContentType("application/json");
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(TranslationCode.ACCESS_DENIED);
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(MessageCode.ACCESS_DENIED);
         response.setCharacterEncoding("UTF-8");
         response.getWriter().println(errorResponseDTO);
     }

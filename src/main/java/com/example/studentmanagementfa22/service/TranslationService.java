@@ -3,12 +3,13 @@ package com.example.studentmanagementfa22.service;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 
 
-@Service
+@Component
 public class TranslationService {
     private static ResourceBundleMessageSource messageSource;
 

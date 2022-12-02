@@ -1,10 +1,13 @@
 package com.example.studentmanagementfa22.config.security;
 
-import com.example.studentmanagementfa22.config.security.filters.CustomDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,6 +22,11 @@ public class SecurityConfig {
 
     @Autowired
     private CustomSuccessHandler customSuccessHandler;
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
 
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
@@ -31,42 +39,33 @@ public class SecurityConfig {
     }
 
     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(auth -> auth       //lambda no need .and()
                         .antMatchers("/student/**").hasRole("STUDENT")
                         .antMatchers("/teacher/**").hasRole("TEACHER")
                         .antMatchers("/admin/**").hasRole("ADMIN")
-//                        .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .antMatchers("/register/**", "/", "/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()
-                .addFilterBefore(corsFilter(), SessionManagementFilter.class)
-                .apply(new CustomDSL()).and()
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .successHandler(customSuccessHandler)
-                        .permitAll()
-                        )
+//                .formLogin(form -> form
+//                        .loginPage("/login")
+//                        .usernameParameter("username")
+//                        .passwordParameter("password")
+////                        .successHandler(customSuccessHandler)
+//                        .permitAll()
+//                        )
                 .logout()
                     .logoutSuccessHandler(logoutSuccessHandler())
                     .permitAll()
                 ;
-
         return http.build();
-    }
-
-    @Bean
-    public CorsFilter corsFilter(){
-        return new CorsFilter();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

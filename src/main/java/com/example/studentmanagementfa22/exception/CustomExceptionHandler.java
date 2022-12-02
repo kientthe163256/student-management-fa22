@@ -2,9 +2,7 @@ package com.example.studentmanagementfa22.exception;
 
 import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
-import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortFieldException;
-import com.example.studentmanagementfa22.service.TranslationService;
-import com.example.studentmanagementfa22.utility.TranslationCode;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -22,7 +19,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<?> handleNoSuchElement(NoSuchElementException exception) {
         String fieldCode = exception.getMessage();
-        String notFoundCode = TranslationCode.NOT_FOUND;
+        String notFoundCode = MessageCode.NOT_FOUND;
 
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(fieldCode, notFoundCode);
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
@@ -52,8 +49,8 @@ public class CustomExceptionHandler {
             String validationCode = error.getCode();
             assert validationCode != null;
 
-            String fieldErrorCode = TranslationCode.getTranslationCode(field);
-            String validationErrorCode = TranslationCode.getTranslationCode(validationCode);
+            String fieldErrorCode = MessageCode.getTranslationCode(field);
+            String validationErrorCode = MessageCode.getTranslationCode(validationCode);
 
             responseDTOS.add(new ErrorResponseDTO(fieldErrorCode, validationErrorCode));
         });

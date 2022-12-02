@@ -4,7 +4,7 @@ import com.example.studentmanagementfa22.dto.ClassroomDTO;
 import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.service.ClassroomService;
-import com.example.studentmanagementfa22.utility.TranslationCode;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public class ClassroomController {
     public ResponseEntity<?> registerClassroom(@RequestParam int classId ) {
         Account account = (Account) session.getAttribute("account");
         classroomService.registerClassroom(classId, account.getId());
-        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.CLASSROOM, TranslationCode.ADDED), HttpStatus.OK);
+        return new ResponseEntity<>(new ErrorResponseDTO(MessageCode.CLASSROOM, MessageCode.ADDED), HttpStatus.OK);
     }
 
 }

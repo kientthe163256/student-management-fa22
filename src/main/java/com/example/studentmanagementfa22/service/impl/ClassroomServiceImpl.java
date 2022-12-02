@@ -10,8 +10,7 @@ import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.*;
 import com.example.studentmanagementfa22.utility.ClassroomMapper;
 import com.example.studentmanagementfa22.utility.PagingHelper;
-import com.example.studentmanagementfa22.utility.SubjectMapper;
-import com.example.studentmanagementfa22.utility.TranslationCode;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -126,7 +125,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void registerClassroom(int classId, int accountId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classId);
         if (optionalClassroom.isEmpty()) {
-            throw new NoSuchElementException(TranslationCode.CLASSROOM);
+            throw new NoSuchElementException(MessageCode.CLASSROOM);
         }
         Classroom classroom = optionalClassroom.get();
 

@@ -5,13 +5,11 @@ import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.dto.MarkDTO;
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
-import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.entity.Pagination;
-import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.service.TeacherService;
-import com.example.studentmanagementfa22.utility.TranslationCode;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.studentmanagementfa22.service.MarkService;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -69,7 +66,7 @@ public class ClassroomManageController {
                                            @PathVariable(name = "id") Integer classId) {
         Account account = (Account) session.getAttribute("account");
         teacherService.removeStudentClassroom(account.getId(), studentId, classId);
-        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.STUDENT, TranslationCode.DELETED), HttpStatus.OK);
+        return new ResponseEntity<>(new ErrorResponseDTO(MessageCode.STUDENT, MessageCode.DELETED), HttpStatus.OK);
     }
     @PostMapping("/{classId}/students/{studentId}")
     @Operation(summary = "Add Student ", description = "Teacher can add student to session class ")
@@ -77,7 +74,7 @@ public class ClassroomManageController {
                                             @PathVariable(name = "studentId") Integer studentId) {
         Account account = (Account) session.getAttribute("account");
         teacherService.addStudentToSessionClass( account.getId(), classId, studentId);
-        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.STUDENT, TranslationCode.ADDED), HttpStatus.OK);
+        return new ResponseEntity<>(new ErrorResponseDTO(MessageCode.STUDENT, MessageCode.ADDED), HttpStatus.OK);
     }
 
 

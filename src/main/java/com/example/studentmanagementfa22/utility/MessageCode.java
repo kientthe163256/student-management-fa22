@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 @NoArgsConstructor
-public class TranslationCode {
+public class MessageCode {
     //1. target object: teacher, classroom, student ...
     public static final String TEACHER = "teacher";
     public static final String CLASSROOM = "classroom";
@@ -52,7 +52,7 @@ public class TranslationCode {
 
 
     public static String getTranslationCode(String validationCode){
-        Field[] fields = TranslationCode.class.getFields();
+        Field[] fields = MessageCode.class.getFields();
         List<String> codes = Arrays.stream(fields).map(Field::getName).toList();
 
         String rawCode = validationCode.toUpperCase();
@@ -60,7 +60,7 @@ public class TranslationCode {
         if (index != -1){
             Field field = fields[index];
             try {
-                return (String) field.get(new TranslationCode());
+                return (String) field.get(new MessageCode());
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

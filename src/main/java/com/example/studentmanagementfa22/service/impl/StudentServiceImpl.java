@@ -10,7 +10,6 @@ import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.utility.StudentMapper;
-import com.example.studentmanagementfa22.utility.TranslationCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -6,7 +6,7 @@ import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.entity.Teacher;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.TeacherService;
-import com.example.studentmanagementfa22.utility.TranslationCode;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -58,7 +58,7 @@ public class TeacherManagementController {
         Teacher teacher = teacherService.getById(id);
         teacherService.deleteTeacher(teacher.getId());
         accountService.disableAccount(teacher.getAccount().getId());
-        return new ResponseEntity<>(new ErrorResponseDTO(TranslationCode.TEACHER, TranslationCode.DELETED), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponseDTO(MessageCode.TEACHER, MessageCode.DELETED), HttpStatus.BAD_REQUEST);
     }
 
 }
