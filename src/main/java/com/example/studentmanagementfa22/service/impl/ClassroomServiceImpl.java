@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -109,11 +110,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     public List<ClassroomDTO> getAllRegisteredClass(int pageNumber, int studentId) {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, 5);
         Page<Classroom> classroomPage = classroomRepository.findAllRegisteredClass(pageRequest, studentId);
-        if (classroomPage.getTotalPages() < pageNumber) {
-            throw new IllegalArgumentException ("The last page is "+classroomPage.getTotalPages());
-        }
-        if (pageNumber <= 0) {
-            throw new IllegalArgumentException("Invalid page number");
+        if (classroomPage.getTotalPages() < pageNumber || pageNumber <= 0) {
+            throw new NoSuchElementException(MessageCode.PAGE400);
         }
         Page<ClassroomDTO> classroomDTOPage = classroomPage.map(classroom -> classroomMapper.mapToDTO(classroom));
         List<ClassroomDTO> classroomDTOList = classroomDTOPage.getContent();

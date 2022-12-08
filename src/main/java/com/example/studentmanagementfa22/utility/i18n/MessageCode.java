@@ -13,6 +13,7 @@ public class MessageCode {
     public static final String ACCOUNT = "account";
 
     public static final String STUDENT = "student";
+    public static final String MARK = "mark";
 
     //2. fields of target object
     public static final String FIRSTNAME = "first.name";
@@ -48,6 +49,7 @@ public class MessageCode {
 
     //7. Authorize
     public static final String NOTAUTHORIZE_CLASSROOM = "notAuthorize.classroom";
+    public static final String NOTAUTHORIZE_STUDENT = "notAuthorize.student";
 
 
 

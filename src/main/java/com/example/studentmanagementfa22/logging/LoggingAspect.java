@@ -27,6 +27,7 @@ public class LoggingAspect {
     @AfterReturning("execution(* com.example.studentmanagementfa22.service.*.add*(..))")
     public void afterAdd(JoinPoint joinPoint){
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+
         List<Object> object = Arrays.stream(joinPoint.getArgs()).toList();
         logger.info(currentUser + " added " + object.get(0));
     }
@@ -55,7 +56,7 @@ public class LoggingAspect {
         return objectProceed;
     }
 
-    @AfterReturning("execution(* com.example.studentmanagementfa22.config.security.CustomSuccessHandler.*(..))")
+    @AfterReturning("execution(* com.example.studentmanagementfa22.config.security.filters.JWTLoginFilter.*(..))")
     public void afterLogin(){
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         logger.info(currentUser + " logged in");

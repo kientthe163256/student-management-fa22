@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +46,8 @@ public class AccountServiceTest {
     @Mock
     private AccountMapper mapper;
 
+    @Autowired
+    private HttpSession session;
     @Mock
     private PasswordEncoder passwordEncoder;
 
@@ -218,7 +222,7 @@ public class AccountServiceTest {
         when(accountRepository.getByUsername(account.getUsername())).thenReturn(account);
         Role roleStudent = getRoleStudent();
         when(roleService.findRoleById(account.getRoleId())).thenReturn(roleStudent);
-
+        session.setAttribute("account", account);
         UserDetails userDetails = accountService.loadUserByUsername(account.getUsername());
 
         assertEquals(account.getUsername(), userDetails.getUsername());

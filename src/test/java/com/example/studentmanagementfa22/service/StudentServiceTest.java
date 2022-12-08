@@ -6,6 +6,7 @@ import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Classroom;
 import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
@@ -67,7 +68,7 @@ public class StudentServiceTest {
         Classroom mockClassroom = Classroom.builder().id(2).build();
         Student mockStudent = Student.builder().id(9).build();
         when(studentRepository.getStudentClassroom(mockStudent.getId(),mockClassroom.getId())).thenReturn(0);
-        assertThrows(IllegalArgumentException.class, () -> studentService.checkStudentJoinedClass(mockStudent.getId(), mockClassroom.getId()));
+        assertThrows(NoSuchElementException.class, () -> studentService.checkStudentJoinedClass(mockStudent.getId(), mockClassroom.getId()));
         verify(studentRepository, times(1)).getStudentClassroom(9,2);
     }
 
@@ -85,7 +86,7 @@ public class StudentServiceTest {
         Student mockStudent = Student.builder().id(9).build();
         Teacher mockTeacher = Teacher.builder().id(4).build();
         when(studentRepository.getStudentbyTeacher(mockStudent.getId(), mockTeacher.getId())).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> studentService.checkStudentTeacher(mockStudent.getId(), mockTeacher.getId()));
+        assertThrows(ActionNotAllowedException.class, () -> studentService.checkStudentTeacher(mockStudent.getId(), mockTeacher.getId()));
 
         verify(studentRepository, times(1)).getStudentbyTeacher(9,4);
     }

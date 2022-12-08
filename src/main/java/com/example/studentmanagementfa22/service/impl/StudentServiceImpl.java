@@ -4,12 +4,14 @@ import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;
 import com.example.studentmanagementfa22.entity.Student;
 import com.example.studentmanagementfa22.entity.Teacher;
+import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.utility.mapper.StudentMapper;
+import com.example.studentmanagementfa22.utility.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -78,7 +80,7 @@ public class StudentServiceImpl implements StudentService {
         List<StudentDTO> studentDTOList = accounts.stream().map(account -> {
             Optional<Student> optionalStudent = studentRepository.findStudentByAccountId(account.getId());
             if (optionalStudent.isEmpty()) {
-                throw new NoSuchElementException("Student not found");
+                throw new NoSuchElementException(MessageCode.STUDENT);
             }
             StudentDTO studentDTO = mapper.mapToDTO(optionalStudent.get());
            return  studentDTO;
@@ -89,16 +91,14 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void checkStudentJoinedClass(Integer studentId, Integer classId) {
         if(studentRepository.getStudentClassroom(studentId,classId) == 0) {
-            throw new IllegalArgumentException("Student does not join this class");
-//            throw new NoSuchElementException(TranslationCode.STUDENT);
+            throw new NoSuchElementException(MessageCode.STUDENT);
         }
     }
 
     @Override
     public void checkStudentTeacher(Integer studentId, Integer teacherId) {
         if(studentRepository.getStudentbyTeacher(studentId,teacherId).isEmpty()) {
-//            throw new NoSuchElementException(TranslationCode.STUDENT);
-           throw  new IllegalArgumentException("You are not the teacher of this student");
+           throw  new ActionNotAllowedException(MessageCode.NOTAUTHORIZE_STUDENT);
         }
     }
 
@@ -106,7 +106,7 @@ public class StudentServiceImpl implements StudentService {
     public Student getStudentByAccountId(int accountId) {
         Optional<Student> student = studentRepository.findStudentByAccountId(accountId);
         if (student.isEmpty()) {
-            throw new NoSuchElementException("Student does not exists");
+            throw new NoSuchElementException(MessageCode.STUDENT);
         }
         return student.get();
     }
