@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.utility;
 
 
+import com.example.studentmanagementfa22.utility.i18n.MessageCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

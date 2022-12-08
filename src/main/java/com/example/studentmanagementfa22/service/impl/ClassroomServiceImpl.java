@@ -8,9 +8,9 @@ import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortF
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.*;
-import com.example.studentmanagementfa22.utility.ClassroomMapper;
-import com.example.studentmanagementfa22.utility.PagingHelper;
-import com.example.studentmanagementfa22.utility.MessageCode;
+import com.example.studentmanagementfa22.utility.mapper.ClassroomMapper;
+import com.example.studentmanagementfa22.utility.paging.PagingHelper;
+import com.example.studentmanagementfa22.utility.i18n.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

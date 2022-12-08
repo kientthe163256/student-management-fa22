@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.utility;
+package com.example.studentmanagementfa22.utility.paging;
 
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidInputException;
 import org.springframework.data.domain.Page;

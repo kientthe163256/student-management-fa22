@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.utility;
+package com.example.studentmanagementfa22.utility.mapper;
 
 
 public interface IGenericMapper<S, DTO>{

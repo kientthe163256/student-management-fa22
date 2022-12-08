@@ -1,6 +1,7 @@
 package com.example.studentmanagementfa22.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -10,23 +11,22 @@ import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
+@NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private Account account;
+
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(getRoleNameById(account.getRoleId())));
     }
 
     private String getRoleNameById(int roleId){
-        switch (roleId){
-            case 1:
-                return "ROLE_ADMIN";
-            case 2:
-                return "ROLE_TEACHER";
-            case 3:
-                return "ROLE_STUDENT";
-        }
-        return null;
+        return switch (roleId) {
+            case 1 -> "ROLE_ADMIN";
+            case 2 -> "ROLE_TEACHER";
+            case 3 -> "ROLE_STUDENT";
+            default -> null;
+        };
     }
 
     @Override

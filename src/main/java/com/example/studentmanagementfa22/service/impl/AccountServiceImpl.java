@@ -8,7 +8,7 @@ import com.example.studentmanagementfa22.exception.customExceptions.ElementAlrea
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.AccountService;
 import com.example.studentmanagementfa22.service.RoleService;
-import com.example.studentmanagementfa22.utility.AccountMapper;
+import com.example.studentmanagementfa22.utility.mapper.AccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

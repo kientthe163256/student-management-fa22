@@ -2,7 +2,7 @@ package com.example.studentmanagementfa22.exception;
 
 import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
-import com.example.studentmanagementfa22.utility.MessageCode;
+import com.example.studentmanagementfa22.utility.i18n.MessageCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

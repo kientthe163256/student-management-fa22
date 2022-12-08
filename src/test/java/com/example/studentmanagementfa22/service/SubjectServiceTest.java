@@ -8,7 +8,7 @@ import com.example.studentmanagementfa22.exception.customExceptions.ElementAlrea
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidInputException;
 import com.example.studentmanagementfa22.repository.SubjectRepository;
 import com.example.studentmanagementfa22.service.impl.SubjectServiceImpl;
-import com.example.studentmanagementfa22.utility.SubjectMapper;
+import com.example.studentmanagementfa22.utility.mapper.SubjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

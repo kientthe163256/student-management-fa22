@@ -2,14 +2,13 @@ package com.example.studentmanagementfa22.service.impl;
 
 import com.example.studentmanagementfa22.dto.MarkTypeDTO;
 import com.example.studentmanagementfa22.dto.SubjectDTO;
-import com.example.studentmanagementfa22.entity.Mark;
 import com.example.studentmanagementfa22.entity.Subject;
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.exception.customExceptions.InvalidInputException;
 import com.example.studentmanagementfa22.exception.customExceptions.ActionNotAllowedException;
 import com.example.studentmanagementfa22.repository.SubjectRepository;
 import com.example.studentmanagementfa22.service.SubjectService;
-import com.example.studentmanagementfa22.utility.SubjectMapper;
+import com.example.studentmanagementfa22.utility.mapper.SubjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -22,7 +21,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Tuple;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service

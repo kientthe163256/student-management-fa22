@@ -9,7 +9,7 @@ import com.example.studentmanagementfa22.entity.Pagination;
 import com.example.studentmanagementfa22.service.ClassroomService;
 import com.example.studentmanagementfa22.service.StudentService;
 import com.example.studentmanagementfa22.service.TeacherService;
-import com.example.studentmanagementfa22.utility.MessageCode;
+import com.example.studentmanagementfa22.utility.i18n.MessageCode;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

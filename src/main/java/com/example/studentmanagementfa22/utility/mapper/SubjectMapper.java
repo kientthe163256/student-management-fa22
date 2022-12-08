@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.utility;
+package com.example.studentmanagementfa22.utility.mapper;
 
 import com.example.studentmanagementfa22.dto.SubjectDTO;
 import com.example.studentmanagementfa22.entity.Subject;

@@ -11,7 +11,7 @@ import com.example.studentmanagementfa22.repository.StudentRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.StudentServiceImpl;
 import com.example.studentmanagementfa22.service.impl.TeacherServiceImpl;
-import com.example.studentmanagementfa22.utility.TeacherMapper;
+import com.example.studentmanagementfa22.utility.mapper.TeacherMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

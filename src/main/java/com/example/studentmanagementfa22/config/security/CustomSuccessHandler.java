@@ -39,8 +39,9 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             session.setAttribute("account", account);
 
             Role role = roleService.findRoleById(account.getRoleId());
+            response.getWriter().println("Login successfully");
             if (role.getRoleName().equals("ROLE_ADMIN")) {
-//                redirectStrategy.sendRedirect(request, response, "/admin");
+                redirectStrategy.sendRedirect(request, response, "/admin");
             } else if (role.getRoleName().equals("ROLE_TEACHER")) {
                 redirectStrategy.sendRedirect(request, response, "/teacher");
             } else if (role.getRoleName().equals("ROLE_STUDENT")) {

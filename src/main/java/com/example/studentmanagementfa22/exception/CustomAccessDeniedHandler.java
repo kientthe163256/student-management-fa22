@@ -1,7 +1,7 @@
 package com.example.studentmanagementfa22.exception;
 
 import com.example.studentmanagementfa22.dto.ErrorResponseDTO;
-import com.example.studentmanagementfa22.utility.MessageCode;
+import com.example.studentmanagementfa22.utility.i18n.MessageCode;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;

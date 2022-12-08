@@ -7,7 +7,7 @@ import com.example.studentmanagementfa22.entity.Role;
 import com.example.studentmanagementfa22.exception.customExceptions.ElementAlreadyExistException;
 import com.example.studentmanagementfa22.repository.AccountRepository;
 import com.example.studentmanagementfa22.service.impl.AccountServiceImpl;
-import com.example.studentmanagementfa22.utility.AccountMapper;
+import com.example.studentmanagementfa22.utility.mapper.AccountMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

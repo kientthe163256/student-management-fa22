@@ -1,4 +1,4 @@
-package com.example.studentmanagementfa22.controller;
+package com.example.studentmanagementfa22.controller.auth;
 
 import com.example.studentmanagementfa22.dto.StudentDTO;
 import com.example.studentmanagementfa22.entity.Account;

@@ -9,7 +9,7 @@ import com.example.studentmanagementfa22.exception.customExceptions.InvalidSortF
 import com.example.studentmanagementfa22.repository.ClassroomRepository;
 import com.example.studentmanagementfa22.repository.TeacherRepository;
 import com.example.studentmanagementfa22.service.impl.ClassroomServiceImpl;
-import com.example.studentmanagementfa22.utility.ClassroomMapper;
+import com.example.studentmanagementfa22.utility.mapper.ClassroomMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
