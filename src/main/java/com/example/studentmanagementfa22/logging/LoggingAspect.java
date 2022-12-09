@@ -1,19 +1,16 @@
 package com.example.studentmanagementfa22.logging;
 
-import com.example.studentmanagementfa22.dto.SubjectDTO;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
-import org.aspectj.lang.annotation.*;
-import org.hibernate.Filter;
-import org.hibernate.Session;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,7 +53,7 @@ public class LoggingAspect {
         return objectProceed;
     }
 
-    @AfterReturning("execution(* com.example.studentmanagementfa22.config.security.filters.JWTLoginFilter.*(..))")
+    @AfterReturning("execution(* com.example.studentmanagementfa22.config.security.filter.JwtAuthenticationFilter.*(..))")
     public void afterLogin(){
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         logger.info(currentUser + " logged in");

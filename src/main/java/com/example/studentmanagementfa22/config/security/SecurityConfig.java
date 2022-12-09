@@ -20,8 +20,8 @@ public class SecurityConfig {
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
 
-    @Autowired
-    private CustomSuccessHandler customSuccessHandler;
+//    @Autowired
+//    private CustomSuccessHandler customSuccessHandler;
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
