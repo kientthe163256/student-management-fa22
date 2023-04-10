@@ -53,10 +53,10 @@ public class LoggingAspect {
         return objectProceed;
     }
 
-    @AfterReturning("execution(* com.example.studentmanagementfa22.config.security.filter.JwtAuthenticationFilter.*(..))")
-    public void afterLogin(){
-        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-        logger.info(currentUser + " logged in");
-    }
+//    @AfterReturning("execution(* com.example.studentmanagementfa22.config.security.filters.JwtAuthenticationFilter.*(..))")
+//    public void afterLogin(){
+//        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+//        logger.info(currentUser + " logged in");
+//    }
 
 }

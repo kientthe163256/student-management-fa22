@@ -25,6 +25,12 @@ public class LoginController {
         return "login";
     }
 
+    @GetMapping("/messages")
+    @ResponseBody
+    public String demo(){
+        return "This is protected message";
+    }
+
     @ApiOperation("Login")
     @PostMapping("/login")
     @ResponseBody

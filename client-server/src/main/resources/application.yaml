@@ -1,0 +1,33 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          student-client-oidc:
+            provider: spring
+            client-id: student-client
+            client-secret: my_destiny
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://client-server:8080/login/oauth2/code/student-client-oidc"
+            scope: openid
+            client-name: student-client-oidc
+          student-client-authorization-code:
+            provider: spring
+            client-id: student-client
+            client-secret: my_destiny
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://client-server:8080/authorized"
+            scope: messages
+            client-name: student-client-authorization-code
+        provider:
+          spring:
+            issuer-uri: http://auth-server:9000
+            #          google:
+            #            client-id: 349478923589-5rh5u0unv1b8ivvohtndho5k99agboie.apps.googleusercontent.com
+            #            client-secret: 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
+            #          github:
+            #            client-id: f55ed9d072e62cb99390
+            #            client-secret: 3d0ac6ea76f134281b189df8dbb4d4846051a71f

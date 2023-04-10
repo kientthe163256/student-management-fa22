@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Login Page</title>
+</head>
+<body>
+<div th:if="${param.error}">
+    Invalid username or password.
+</div>
+<div th:if="${param.logout}">
+    You have been logged out.
+</div>
+<div th:if="${param.deactivated}">
+    Your account has been deactivated.
+</div>
+<table>
+    <form th:action="@{/custom-login}" method="post">
+        <tr>
+            <td>Username</td>
+            <td><input type="text" name="username"/></td>
+        </tr>
+        <tr>
+            <td>Password</td>
+            <td><input type="password" name="password"/></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Sign In"/></td>
+        </tr>
+    </form>
+    <tr>
+        <td>
+            <div class="container unauthenticated">
+                <div>
+                    With GitHub: <a href="http://localhost:8080/oauth2/authorization/github">click here</a>
+                </div>
+                <div>
+                    With Google: <a href="http://localhost:8080/oauth2/authorization/google">click here</a>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

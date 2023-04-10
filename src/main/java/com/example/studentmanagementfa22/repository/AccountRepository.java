@@ -15,7 +15,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     Optional<Account> findById(Integer id);
 
     @Query(value = "SELECT a.* \n" +
-            "FROM student_management_fa22.account a\n" +
+            "FROM student_management_fa22t a\n.accoun" +
             "JOIN student_management_fa22.student AS s\n" +
             "ON a.id = s.account_id\n" +
             " JOIN student_management_fa22.student_classroom AS sc\n" +

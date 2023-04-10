@@ -1,0 +1,65 @@
+@startuml
+Actor Mentor_Mentee
+participant WebApplication
+participant NotificationController
+participant UserService
+participant NotificationService
+participant Utility
+participant NotificationRepository
+database MySQL
+
+autonumber 1.0
+activate Mentor_Mentee
+
+Mentor_Mentee -> WebApplication: View notifications
+activate WebApplication
+
+WebApplication -> NotificationController: getNotifications()
+activate NotificationController
+
+NotificationController -> UserService: findByEmail()
+activate UserService
+
+UserService --> NotificationController: return User
+deactivate UserService
+
+NotificationController -> NotificationService: getNotificationByRole()
+
+activate NotificationService
+
+NotificationService -> NotificationRepository: getNotificationsByNotificationToRolesIn()
+
+
+activate NotificationRepository
+
+NotificationRepository -> MySQL: select
+
+activate MySQL
+
+MySQL --> NotificationRepository: return response
+
+deactivate MySQL
+
+
+autonumber 2.0
+
+NotificationRepository --> NotificationService: return Notification page
+deactivate NotificationRepository
+
+NotificationService -> Utility: mapNotification()
+activate Utility
+
+Utility --> NotificationService: return NotificationDTO
+deactivate Utility
+
+NotificationService --> NotificationController: return NotificationDTO page
+deactivate NotificationService
+
+NotificationController --> WebApplication: return notifications
+deactivate NotificationController
+
+WebApplication --> Mentor_Mentee: display notifications
+deactivate WebApplication
+deactivate Mentor_Mentee
+
+@enduml
